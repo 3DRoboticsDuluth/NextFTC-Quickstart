@@ -51,11 +51,11 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Requirements:
-      - requirements/index.md
-      - FTC foundation: requirements/foundation.md
-      - Reusable platform: requirements/platform.md
-      - Seasonal scaffold: requirements/seasonal-base.md
+  - Guides:
+      - Start a new season: guides/new-season.md
+      - Build the first robot: guides/first-robot.md
+      - Hardware worksheet: guides/hardware-worksheet.md
+      - Add a subsystem: guides/subsystem.md
   - Architecture:
       - architecture/overview.md
       - Lifecycle: architecture/lifecycle.md
@@ -64,17 +64,16 @@ nav:
       - Telemetry and logging: architecture/diagnostics.md
       - Hardware: architecture/hardware.md
       - Drive and navigation: architecture/drive-navigation.md
-      - Quanomous: architecture/quanomous.md
+  - Requirements:
+      - requirements/index.md
+      - FTC foundation: requirements/foundation.md
+      - Reusable platform: requirements/platform.md
+      - Seasonal scaffold: requirements/seasonal-base.md
   - Rebuild:
       - rebuild/index.md
       - Phase 1 — FTC foundation: rebuild/phase-1.md
       - Phase 2 — reusable platform: rebuild/phase-2.md
       - Verification: rebuild/verification.md
-  - Guides:
-      - Start a new season: guides/new-season.md
-      - Build the first robot: guides/first-robot.md
-      - Hardware worksheet: guides/hardware-worksheet.md
-      - Add a subsystem: guides/subsystem.md
   - Reference:
       - Modules and dependencies: reference/modules-dependencies.md
       - Upstream resources: reference/upstream.md

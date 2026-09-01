@@ -38,7 +38,7 @@ a zip file; it loses the upstream ancestry this architecture requires.
 | Phase | End reference | Gate |
 |---|---|---|
 | 1 — FTC foundation | `e4d71312` | FTC project syncs/builds; ADB tools exist; only targeted warning policy changed |
-| 2 — reusable platform | `reusable-season-base` | Full mandated verification passes with neutral TeamCode |
+| 2 — reusable platform | Quickstart `main` | Full mandated verification passes with neutral TeamCode |
 
 Follow the phase pages in order:
 
