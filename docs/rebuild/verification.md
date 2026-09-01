@@ -9,31 +9,28 @@ hardware behavior.
 From the repository root on Windows:
 
 ```powershell
-.\gradlew :3drdNextFTC:check :3drdNextFTC:unitTestCoverage :3drdQuanomous:check :3drdQuanomous:unitTestCoverage :TeamCode:check :TeamCode:unitTestCoverage :TeamCode:assembleDebug
+.\gradlew :3drdNextFTC:check :3drdNextFTC:unitTestCoverage :TeamCode:check :TeamCode:unitTestCoverage :TeamCode:assembleDebug
 ```
 
 On a POSIX runner use `./gradlew` with the same tasks.
 
-This verifies reusable-library tests, independent Quanomous tests, TeamCode tests,
-100% line and branch thresholds, lint/check tasks, dependency compatibility, and
-debug APK assembly. Do not weaken a threshold to make the command pass.
+This verifies reusable-library tests, TeamCode tests, 100% line and branch
+thresholds, lint/check tasks, dependency compatibility, and debug APK assembly. Do
+not weaken a threshold to make the command pass.
 
 ## Reusable endpoint
 
-Validate the tag independently in a detached worktree so current work is untouched:
+Validate Quickstart `main` independently in a fresh clone so local state cannot
+mask a missing file or dependency:
 
 ```powershell
-git worktree add ..\NextFTC-season-base reusable-season-base
-Push-Location ..\NextFTC-season-base
-.\gradlew :3drdNextFTC:check :3drdNextFTC:unitTestCoverage :3drdQuanomous:check :3drdQuanomous:unitTestCoverage :TeamCode:check :TeamCode:unitTestCoverage :TeamCode:assembleDebug
+git clone https://github.com/3DRoboticsDuluth/NextFTC-Quickstart.git ..\NextFTC-Quickstart-audit
+Push-Location ..\NextFTC-Quickstart-audit
+.\gradlew :3drdNextFTC:check :3drdNextFTC:unitTestCoverage :TeamCode:check :TeamCode:unitTestCoverage :TeamCode:assembleDebug
 Pop-Location
 ```
 
-Remove the worktree only after checking the resolved absolute path:
-
-```powershell
-git worktree remove ..\NextFTC-season-base
-```
+Remove the audit clone only after checking its resolved absolute path.
 
 ## Documentation
 

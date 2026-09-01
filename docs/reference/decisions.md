@@ -15,11 +15,12 @@ site.
 
 ## Reuse is separated from season policy
 
-**Decision:** Use independent `3drdNextFTC` and `3drdQuanomous` modules, with
-TeamCode as the consumer/policy layer.
+**Decision:** Use `3drdNextFTC` as the reusable module, with TeamCode as the
+consumer/policy layer.
 
 **Why:** Multiple teams/seasons can share fixes without inheriting a field model or
-hardware. Quanomous remains useful without NextFTC.
+hardware. Optional strategy systems remain in the robot repository until they are
+deliberately adopted as part of the Quickstart contract.
 
 ## Reflection is allowed at initialization boundaries
 

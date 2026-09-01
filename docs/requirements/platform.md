@@ -9,8 +9,7 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 |---|---|---|---|
 | `REQ-PLT-001` | The build MUST support Kotlin in Android library and TeamCode modules. | Kotlin makes subsystem and command declarations concise enough for student robot code. | Kotlin sources compile in all owned modules. |
 | `REQ-PLT-002` | `3drdNextFTC` MUST contain reusable 3DRD extensions around NextFTC, Panels, Pedro Pathing, and FTC hardware. | Shared fixes and conventions should be implemented once across teams. | No `org.firstinspires.ftc.teamcode` dependency exists in the module. |
-| `REQ-PLT-003` | `3drdQuanomous` MUST remain independent of `3drdNextFTC`. | Program parsing/compilation/storage is useful without a particular command framework. | Its Gradle dependencies do not include `3drdNextFTC` or NextFTC. |
-| `REQ-PLT-004` | `TeamCode` MUST depend on both reusable modules and contain robot policy. | Dependency direction must prevent reusable code from importing a season. | Module dependency graph matches [Architecture overview](../architecture/overview.md). |
+| `REQ-PLT-004` | `TeamCode` MUST depend on the reusable module and contain robot policy. | Dependency direction must prevent reusable code from importing a season. | Module dependency graph matches [Architecture overview](../architecture/overview.md). |
 | `REQ-PLT-005` | NextFTC FTC, hardware, bindings, control, and Pedro extension artifacts MUST be declared centrally enough to reproduce the build. | A fresh clone must resolve the same architecture without manual IDE installation. | Versions are recorded in [Modules and dependencies](../reference/modules-dependencies.md). |
 
 ## Lifecycle and commands
@@ -51,10 +50,8 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 | `REQ-PLT-036` | Pedro helpers MUST provide tile distances, pose transformations, field drawing, driver control, start-pose reset, and typed path/T progress. | These bridge common gaps between Pedro's API and readable FTC intent. | Pedro helper tests pass. |
 | `REQ-PLT-037` | Next Control MUST be available for robot-level closed-loop controllers while embedded motor velocity control remains available for high-rate motor loops. | The correct controller depends on where feedback is sampled and applied. | Control dependency resolves; TeamCode controller tests pass. |
 
-## Reusable program data
+## Reusable utilities
 
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|
-| `REQ-PLT-040` | Quanomous MUST parse named program JSON, expose stored program names, and compile steps through caller-supplied handlers. | Autonomous strategy data should be editable separately from robot command implementations. | All `3drdQuanomous` tests pass. |
-| `REQ-PLT-041` | Quanomous storage errors MUST be explicit rather than silently substituting a sample routine. | Missing competition strategy is a critical setup failure. | Missing/invalid program tests fail with useful errors. |
 | `REQ-PLT-042` | A reusable debounce utility MUST detect stable boolean transitions using elapsed time. | Sensors often chatter; behavior should trigger once on a stable edge. | Debounce tests cover timing and reset. |

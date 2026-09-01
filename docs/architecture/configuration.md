@@ -68,7 +68,7 @@ sampling preserves it until it once again matches the configured value.
 
 ## Season-specific validation
 
-The reusable subsystem does not know about alliance or autonomous selection.
-Decode's `Config` specialization resets Alliance, Side, and Quanomous for Auto,
-warns while they are missing, rejects Start if necessary, and resets Pedro pose when
-alliance/side changes. That policy correctly remains in TeamCode.
+The reusable subsystem does not know about alliance, side, or autonomous strategy
+selection. A season may add those settings and validate them before Auto starts.
+That policy correctly remains in TeamCode rather than the reusable configuration
+library.

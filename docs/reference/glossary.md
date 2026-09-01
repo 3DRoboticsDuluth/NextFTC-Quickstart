@@ -36,16 +36,12 @@
 : The FTC localization, path generation, follower, and field visualization library
 used by Drive and Nav.
 
-**Quanomous**
-: 3DRD's stored autonomous program format and compiler approach. Strategy data is
-translated into the current season's commands by TeamCode.
-
 **Robot-centric**
 : Drive inputs interpreted in the robot's current frame.
 
 **Seasonal base**
-: The verified neutral endpoint tagged `reusable-season-base`, suitable for branching
-a different robot/season.
+: The verified neutral Quickstart `main`, suitable for creating a different
+robot/season.
 
 **Subsystem**
 : A cohesive owner of robot state, hardware, commands, controls, periodic behavior,
