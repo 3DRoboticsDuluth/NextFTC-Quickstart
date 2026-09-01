@@ -3,7 +3,7 @@
 Hardware wrappers make lazy FTC device acquisition, subsystem fault isolation,
 configuration, telemetry hooks, and tests consistent across device types.
 
-## Wrapper families
+## Wrapper Families
 
 | Wrapper | Underlying device | Added behavior |
 |---|---|---|
@@ -31,7 +31,7 @@ The wrapper constructor does not require an active hardware map. Actual acquisit
 happens during subsystem hardware initialization, which keeps singleton subsystem
 construction safe in unit tests and before an OpMode is active.
 
-## Update hook
+## Update Hook
 
 ```kotlin
 servo.update { position = POS }
@@ -66,7 +66,7 @@ normal loops, `update` is the single place where desired state reaches hardware 
 telemetry. During `stop()`, motor mechanisms directly set a safe output because the
 framework may not call `periodic()` again.
 
-## Vendor devices
+## Vendor Devices
 
 `Device<T>` supports types such as Limelight, digital channels, and the GoBilda
 Prism. Vendor source is not mechanically converted to Kotlin merely for uniformity.

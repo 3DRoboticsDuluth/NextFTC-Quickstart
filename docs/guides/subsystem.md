@@ -1,9 +1,9 @@
-# Add a subsystem
+# Add a Subsystem
 
 This is the established student-facing pattern. Start with the smallest complete
 subsystem and add abstraction only when behavior requires it.
 
-## 1. Declare a singleton
+## 1. Declare a Singleton
 
 ```kotlin
 @Configurable
@@ -31,7 +31,7 @@ object Example : Subsystem() {
 
 Discovery means no central registration edit is necessary.
 
-## 2. Assign lifecycle responsibilities
+## 2. Assign Lifecycle Responsibilities
 
 - Declare wrapper fields near tunables.
 - Use `initialize()` to reset internal state after hardware is ready.
@@ -45,7 +45,7 @@ Discovery means no central registration edit is necessary.
 The config menu is the important exception: its init-time bindings belong in the
 reusable Config subsystem because setup must work before Start and in Auto.
 
-## 3. Choose command shape
+## 3. Choose Command Shape
 
 - `val open by instant { ... }` for a stable reusable no-argument command.
 - `fun set(value: Double) = instant { ... }` for a command factory with an input.
@@ -55,7 +55,7 @@ reusable Config subsystem because setup must work before Start and in Auto.
 Avoid putting the word `Command` in property names; the type and usage already
 communicate that detail.
 
-## 4. Report diagnostics
+## 4. Report Diagnostics
 
 - Use `tel.info` for useful default current state.
 - Use `tel.debug` for developer state.
@@ -63,7 +63,7 @@ communicate that detail.
 - Use `log` for transitions, decisions, warnings, and failures—not repeated state.
 - Use `hardware.update { ... }` so TeamCode hardware telemetry follows writes.
 
-## 5. Handle failure and stop
+## 5. Handle Failure and Stop
 
 Do not catch hardware lookup exceptions in the subsystem. The base lifecycle records
 the device name, disables only the owner, and keeps the rest of the robot available
@@ -73,18 +73,18 @@ For a motor subsystem, `stop()` should normally update its target and set motor
 power/velocity directly. A servo may intentionally remain at its last position and
 need no stop hook.
 
-## 6. Add one dedicated test file
+## 6. Add One Dedicated Test File
 
 Place `ExampleTests.kt` in the matching TeamCode subsystem test package. Extend the
 shared subsystem test harness when hardware-map behavior is needed. Cover:
 
-- initial/reset state;
-- hardware name and configuration;
-- each command;
-- each binding edge/chord;
-- periodic calculations, output, and telemetry;
-- boundary/error branches;
-- direct stop output when applicable.
+- Initial/reset state;
+- Hardware name and configuration;
+- Each command;
+- Each binding edge/chord;
+- Periodic calculations, output, and telemetry;
+- Boundary/error branches;
+- Direct stop output when applicable.
 
 Run TeamCode tests/coverage, then the complete repository verification command.
 Finally test physical direction and safety on the robot.

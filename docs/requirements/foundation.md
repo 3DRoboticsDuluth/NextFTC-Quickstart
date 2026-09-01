@@ -1,4 +1,4 @@
-# FTC foundation requirements
+# FTC Foundation Requirements
 
 The foundation preserves the official FTC v11.2 history and applies only the
 small, generally useful changes needed before adding Kotlin or third-party robot

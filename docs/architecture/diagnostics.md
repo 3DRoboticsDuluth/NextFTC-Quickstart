@@ -1,4 +1,4 @@
-# Telemetry and logging
+# Telemetry and Logging
 
 Telemetry and logging share level names and optional filters, but they solve
 different problems and have different lifetimes.
@@ -16,8 +16,8 @@ Visible entries are rebuilt every frame and sent through a joined output to the 
 Driver Station and Panels. A line is shown only when:
 
 1. `Telemetry.LEVEL` accepts its level;
-2. the shared display filter matches the combined level/source/caption/value text;
-3. the telemetry-specific filter also matches.
+2. The shared display filter matches the combined level/source/caption/value text;
+3. The telemetry-specific filter also matches.
 
 Lazy value overloads avoid computing expensive diagnostic values when the level is
 not accepted. Stable numeric display should use an explicit format string so the
@@ -59,7 +59,7 @@ The default is `INFO`: routine subsystem state may be visible while detailed
 hardware state remains debug/verbose. The reusable base is capable of defaulting
 off if no compatible config exists.
 
-## Display sections
+## Display Sections
 
 The Driver Station output is deliberately structured:
 

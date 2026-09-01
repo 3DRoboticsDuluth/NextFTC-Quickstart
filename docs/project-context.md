@@ -1,4 +1,4 @@
-# Project context
+# Project Context
 
 This page is the concise handoff for mentors, contributors, and coding agents. The
 linked pages are canonical when more detail is needed.
@@ -10,7 +10,7 @@ Kotlin/NextFTC platform plus a neutral TeamCode scaffold. Current `main` is the
 season template. Decode/Osiris behavior and Quanomous remain in the separate
 `LeastOne/NextFTC` implementation repository.
 
-## Read first
+## Read First
 
 - [Start a new season](guides/new-season.md)
 - [Build the first robot](guides/first-robot.md)
@@ -19,7 +19,7 @@ season template. Decode/Osiris behavior and Quanomous remain in the separate
 - [Rebuild guide](rebuild/index.md)
 - [Architectural decisions](reference/decisions.md)
 
-## Non-negotiable boundaries
+## Non-Negotiable Boundaries
 
 - Reusable NextFTC behavior belongs in `3drdNextFTC`.
 - Hardware names, constants, game concepts, controls, mechanisms, vision, and

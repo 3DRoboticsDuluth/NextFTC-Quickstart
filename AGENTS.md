@@ -91,6 +91,7 @@ Read `docs/project-context.md` for the project's purpose, architectural rational
 ## Git history
 
 - Use `3drdProgramming <programming@3droboticsduluth.com>` as the repository Git identity.
+- Start a season by preserving Quickstart history and retaining this repository as the `quickstart` remote. Incorporate later Quickstart corrections with a coordinated rebase and `--force-with-lease`; do not use a history-free template copy as the standard workflow.
 - Maintain clean, organized commits as work proceeds and push verified completed work without waiting for a separate request.
 - Organize affected history sensibly by default, including folding fixups into their logical commits and rebasing when useful.
 - When asked to organize commits, keep tests in the same logical commit as the behavior they test, fold fixups into the commit they refine, and avoid miscellaneous cleanup commits when a clearer logical placement exists.
