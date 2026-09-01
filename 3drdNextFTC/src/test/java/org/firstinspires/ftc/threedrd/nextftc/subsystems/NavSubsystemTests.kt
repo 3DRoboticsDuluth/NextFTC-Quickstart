@@ -12,10 +12,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class NavSubsystemTests {
-    val nav = object : NavSubsystem() {
-        override val robotLength = 10.inches
-        override val robotWidth = 6.inches
-    }
+    val nav = object : NavSubsystem(10.inches, 6.inches) {}
 
     @Test
     fun createsCenteredAndRobotRelativePoses() {

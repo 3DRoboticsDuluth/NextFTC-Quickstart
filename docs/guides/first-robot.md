@@ -1,25 +1,25 @@
-# Build the first robot from the seasonal base
+# Build the First Robot From the Seasonal Base
 
 This walkthrough starts at Quickstart `main` and ends with a small, tested,
-deployable robot: tuned Pedro construction, a concrete Drive/Nav pair, one servo
+deployable robot: configured Pedro construction, the included Drive/Nav pair, one servo
 mechanism, Teleop, diagnostics, and a safe physical smoke test. It is the shortest
 complete example of how a season should begin.
 
-## Definition of done
+## Definition of Done
 
 The first-robot milestone is complete when:
 
-- the neutral base still passes before changes;
-- the Control Hub configuration matches the documented hardware worksheet;
-- Pedro constructs from measured and tuned robot values;
-- left-stick Y/X and right-stick X drive forward/strafe/turn correctly;
-- robot-centric and field-centric behavior are deliberately verified;
-- one mechanism responds only after Teleop Start and stops safely;
-- the follower pose agrees with Panels field drawing;
-- every owned line and branch remains covered; and
-- the full verification command and `assembleDebug` pass.
+- The neutral base still passes before changes.
+- The Control Hub configuration matches the documented hardware worksheet.
+- Pedro constructs from measured and tuned robot values.
+- Left-stick Y/X and right-stick X drive forward/strafe/turn correctly.
+- Robot-centric and field-centric behavior are deliberately verified.
+- One mechanism responds only after Teleop Start and stops safely.
+- The follower pose agrees with Panels field drawing.
+- Every owned line and branch remains covered.
+- The full verification command and `assembleDebug` pass.
 
-## 1. Branch and prove the baseline
+## 1. Branch and Prove the Baseline
 
 ```powershell
 git config user.name 3drdProgramming
@@ -30,7 +30,7 @@ git config user.email programming@3droboticsduluth.com
 Commit no robot code until this passes. A failure here belongs to the base,
 toolchain, or local environment—not the new robot.
 
-## 2. Inventory hardware before coding
+## 2. Inventory Hardware Before Coding
 
 Complete the [hardware worksheet](hardware-worksheet.md). Create the Robot
 Controller configuration with exactly those names. Photograph or export the
@@ -39,7 +39,7 @@ configuration if practical, and add its review date to the season documentation.
 Keep hardware names in TeamCode. A name such as `arm` is a robot fact and must not
 be added to `3drdNextFTC`.
 
-## 3. Specialize Pedro constants
+## 3. Configure Pedro Constants
 
 The base `Constants` intentionally contains 18-inch template dimensions and Pedro
 defaults. Replace them in the upstream-recognizable Pedro shape:
@@ -63,18 +63,54 @@ object Constants {
         .leftRearMotorName("<back-left>")
         .rightRearMotorName("<back-right>")
 
-    var localizerConstants = PinpointConstants()
-        .forwardPodY(MEASURED_FORWARD_POD_Y)
-        .strafePodX(MEASURED_STRAFE_POD_X)
+    var localizerConstants = DriveEncoderConstants()
+        .forwardTicksToInches(TUNED_FORWARD_TICKS_TO_INCHES)
+        .strafeTicksToInches(TUNED_STRAFE_TICKS_TO_INCHES)
+        .turnTicksToInches(TUNED_TURN_TICKS_TO_INCHES)
+        .robotLength(robotLength.inIn)
+        .robotWidth(robotWidth.inIn)
+        .leftFrontMotorName("<front-left>")
+        .rightFrontMotorName("<front-right>")
+        .leftRearMotorName("<back-left>")
+        .rightRearMotorName("<back-right>")
 
     fun createFollower(hardwareMap: HardwareMap): Follower =
         FollowerBuilder(followerConstants, hardwareMap)
             .pathConstraints(pathConstraints)
             .mecanumDrivetrain(driveConstants)
-            .pinpointLocalizer(localizerConstants)
+            .driveEncoderLocalizer(localizerConstants)
             .build()
 }
 ```
+
+The Quickstart uses Pedro's drivetrain-encoder localizer because it requires no
+separate localization device. Its conversion factors, dimensions, motor names,
+and encoder directions are still template values and must be configured or tuned.
+Pedro defaults both the drivetrain and drive-encoder localizer motor names to
+`leftFront`, `leftRear`, `rightFront`, and `rightRear`. If the Robot Controller
+configuration uses those exact names, omit the corresponding motor-name calls
+from both constants objects. Use explicit calls when the configured names differ.
+
+A dedicated localizer is optional. If the robot has a GoBilda Pinpoint, replace
+the localizer type and builder call while keeping Pedro's documented structure:
+
+```kotlin
+var localizerConstants = PinpointConstants()
+    .hardwareMapName("<pinpoint>")
+    .forwardPodY(MEASURED_FORWARD_POD_Y)
+    .strafePodX(MEASURED_STRAFE_POD_X)
+
+fun createFollower(hardwareMap: HardwareMap): Follower =
+    FollowerBuilder(followerConstants, hardwareMap)
+        .pathConstraints(pathConstraints)
+        .mecanumDrivetrain(driveConstants)
+        .pinpointLocalizer(localizerConstants)
+        .build()
+```
+
+Pedro also supports OTOS, two-wheel, three-wheel, and three-wheel-plus-IMU
+localizers. Select exactly one localizer builder method and follow the matching
+Pedro tuning instructions.
 
 Do not copy Osiris tuning into a different robot. Keep this integration surface
 close to current Pedro documentation so the tuning output can be transferred
@@ -83,15 +119,16 @@ without translating through another abstraction.
 Add constants tests that assert every measured name/value and that a follower can
 be built with mocked hardware.
 
-## 4. Add the smallest useful navigation model
+## 4. Customize the Included Nav Subsystem
 
-Create `subsystems/Nav.kt` as the season-specific specialization:
+Quickstart already includes `subsystems/Nav.kt` as the season-specific
+specialization point:
 
 ```kotlin
-object Nav : NavSubsystem() {
-    override val robotLength = Constants.robotLength
-    override val robotWidth = Constants.robotWidth
+import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants.robotLength
+import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants.robotWidth
 
+object Nav : NavSubsystem(robotLength, robotWidth) {
     val start = pose(0.inches, 0.inches, 0.deg)
     val test = pose(24.inches, 0.inches, 0.deg)
 }
@@ -101,10 +138,11 @@ Before adding game poses, document the field axis, heading-zero direction, and
 Driver Station viewpoint. Test `start`, `test`, and at least one dimension-aware
 `FRONT`/`LEFT` pose. Use typed distances and angles in every public navigation API.
 
-## 5. Add a concrete drive subsystem
+## 5. Customize the Included Drive Subsystem
 
-Create `subsystems/Drive.kt` by extending the reusable `DriveSubsystem`. Retain one
-long-lived driver command and use live suppliers so mode changes do not rebuild it:
+Quickstart already includes `subsystems/Drive.kt`. Retain its one long-lived driver
+command and live suppliers so mode changes do not rebuild it; adjust its powers,
+controls, telemetry, and assists for the robot:
 
 ```kotlin
 @Configurable
@@ -112,14 +150,10 @@ object Drive : DriveSubsystem() {
     var POWER_LOW = 0.35
     var POWER_HIGH = 0.70
 
-    private lateinit var forwardInput: Range
-    private lateinit var strafeInput: Range
-    private lateinit var turnInput: Range
-
     val driverControlled = PedroDriverControlled(
-        { -forwardInput.get() },
-        { -strafeInput.get() },
-        { -turnInput.get() },
+        { -gamepad1.leftStickY.get() },
+        { -gamepad1.leftStickX.get() },
+        { -gamepad1.rightStickX.get() },
         { Config.config.robotCentric }
     ).apply { requires(this@Drive) }
 
@@ -129,12 +163,7 @@ object Drive : DriveSubsystem() {
     override val defaultCommand
         get() = if (state.teleop) driverControlled else super.defaultCommand
 
-    override fun initialize() {
-        forwardInput = gamepad1.leftStickY
-        strafeInput = gamepad1.leftStickX
-        turnInput = gamepad1.rightStickX
-        driverControlled.scalar = POWER_HIGH
-    }
+    override fun initialize() { driverControlled.scalar = POWER_HIGH }
 
     override fun controls() {
         gamepad1.dpadDown whenBecomesTrue low
@@ -155,13 +184,18 @@ them on the new chassis. The default command is Teleop-only so Auto cannot accep
 manual drive input. `SubsystemComponent` discovers the singleton; do not add a
 manual subsystem list.
 
+`Gamepads.gamepad1` and its ranges are lazy NextFTC wrappers around the current
+active OpMode. Referencing the ranges inside the command suppliers keeps the input
+live without separate `lateinit` aliases. The command is scheduled only after the
+OpMode exists, so a null-to-zero fallback would hide a lifecycle error rather than
+solve one.
+
 Tests must prove the input mapping, speed commands, Teleop-only default command,
 requirements, telemetry, and lifecycle stop.
 
-## 6. Extend configuration only when needed
+## 6. Extend Configuration Only When Needed
 
-Add a live `robotCentric` setting to the `Config.Config` primary constructor if the
-driver should switch modes:
+The included `Config.Config` already provides a live `robotCentric` setting:
 
 ```kotlin
 @Setting(live = true)
@@ -172,11 +206,7 @@ Settings appear in declaration order. Put competition setup choices first,
 diagnostic `level` near the end, and keep `filter` transient. Do not add a setting
 merely because Panels can expose a subsystem tuning value.
 
-Also review the scaffold Timing subsystem's `75.0 s` rumble threshold. It is a
-visible template rather than a promise that every FTC game or team wants that
-alert time.
-
-## 7. Add one mechanism end to end
+## 7. Add One Mechanism End to End
 
 Use a harmless servo mechanism as the first complete vertical slice:
 
@@ -213,7 +243,7 @@ never assume another `periodic()` will run after stop. Add `ArmTests` in the sam
 package and cover configuration, commands, controls, initialization, periodic
 output, hardware failure isolation, and stop behavior.
 
-## 8. Use the existing OpMode scaffold
+## 8. Use the Existing OpMode Scaffold
 
 The base already provides `OpMode`, `Teleop`, and `Auto`. `OpMode` composes
 telemetry, bindings, bulk reads, Pedro, drawing, config, and discovered subsystems.
@@ -230,26 +260,26 @@ Subsystem controls are registered once and activate after Teleop Start. The conf
 menu remains available during init. Auto must explicitly schedule its entry command
 from `onStartButtonPressed()` when an autonomous routine exists.
 
-## 9. Desktop and robot gates
+## 9. Desktop and Robot Gates
 
 Run the full verification command. Then deploy with drive wheels lifted and the
 servo linkage disconnected or safely constrained.
 
 Validate in this order:
 
-1. initialize and stop repeatedly; bindings must not duplicate;
-2. confirm controls do nothing before Teleop Start except the config menu;
-3. start and test forward, strafe, and turn at low power;
-4. move the robot by hand and compare Pinpoint pose with Panels drawing;
-5. test robot-centric and field-centric behavior deliberately;
-6. test each servo endpoint and direction;
-7. stop during motion and verify immediate safe output;
-8. reconnect mechanical loads and repeat at controlled power.
+1. Initialize and stop repeatedly; bindings must not duplicate.
+2. Confirm controls do nothing before Teleop Start except the config menu.
+3. Start and test forward, strafe, and turn at low power.
+4. Move the robot by hand and compare the selected localizer pose with Panels drawing.
+5. Test robot-centric and field-centric behavior deliberately.
+6. Test each servo endpoint and direction.
+7. Stop during motion and verify immediate safe output.
+8. Reconnect mechanical loads and repeat at controlled power.
 
 Record outcomes in the hardware worksheet. Commit in dependency order: constants
 and coordinates, Drive/Nav/config, first mechanism, then field-proven corrections.
 
-## Common failures
+## Common Failures
 
 | Symptom | Likely contract violation |
 |---|---|
