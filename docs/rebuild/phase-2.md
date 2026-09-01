@@ -7,14 +7,17 @@ describe how 3DRD builds robots, but it must not describe Decode or Osiris.
 
 ### 1. Module and dependency structure — `69db65e6`
 
-Create Android library modules `3drdNextFTC` and `3drdQuanomous`, enable Kotlin, and
-make TeamCode depend on both. Add shared test/coverage configuration with 100% line
-and branch thresholds. Declare the versions in
+Create the Android library module `3drdNextFTC`, enable Kotlin, and make TeamCode
+depend on it. Add shared test/coverage configuration with 100% line and branch
+thresholds. Declare the versions in
 [Modules and dependencies](../reference/modules-dependencies.md), including Next
 Control, NextFTC, Panels, and Pedro repositories/artifacts.
 
 Why first: every later reusable type and test needs a correct ownership boundary.
-`3drdQuanomous` must not depend on `3drdNextFTC`.
+
+The historical `69db65e6` commit also created `3drdQuanomous`. That optional module
+is retained in the Osiris repository but removed from Quickstart by `571c2b2b`.
+A clean implementation of Quickstart should create only `3drdNextFTC`.
 
 Checkpoint: all empty modules compile and Gradle can resolve every artifact.
 
@@ -86,17 +89,7 @@ Add the stable-edge `Debounce` utility and exhaustive timing/reset tests.
 
 Why: sensor chatter is cross-season behavior and does not belong in one intake.
 
-### 8. Quanomous — `d7441bc7`
-
-Add framework-independent program parsing, storage, options discovery, and generic
-step compilation in `3drdQuanomous`.
-
-Why: the reusable data language should not import NextFTC commands or a season's
-handler vocabulary.
-
-Checkpoint: the standalone module's check and coverage tasks pass.
-
-### 9. Neutral TeamCode scaffold — `29075d09`
+### 8. Neutral TeamCode scaffold — `29075d09`
 
 Create:
 
@@ -115,28 +108,26 @@ demonstrates correct integration.
     The neutral Pedro constants exist to compile. They must be replaced and tuned
     before driving a physical robot.
 
-### 10. Conventions and documented endpoint — `3d35384f`, then `reusable-season-base`
+### 9. Conventions and documented endpoint — `3d35384f`
 
 Add `AGENTS.md`, the repository spelling dictionary, inspection profile, and ignore
-rules. Verify the entire platform, then create the annotated tag:
-
-```powershell
-git tag -a reusable-season-base -m "Reusable season base"
-```
+rules. Verify the entire platform, then apply the Quickstart scope/documentation
+commits so `main` is the season-neutral launch point.
 
 ## Exact replay
 
 ```powershell
 git cherry-pick 69db65e6 276be2ef d498d2e0 c0b42867 8b70be56 19604a24 4b3855f1 d7441bc7 29075d09 3d35384f
-# Apply the reusable documentation commit from this history, then tag that endpoint.
+git cherry-pick 571c2b2b
+# Apply the Quickstart documentation commits from this history.
 ```
 
 ## Phase gate
 
 Run the exact command in [Verification](verification.md) at this commit. Also verify:
 
-- `rg "teamcode|Osiris|Decode" 3drdNextFTC/src/main 3drdQuanomous/src/main`
+- `rg "teamcode|Osiris|Decode" 3drdNextFTC/src/main`
   finds no forbidden dependency or robot policy;
 - neutral TeamCode contains no real hardware-map names or tuned robot constants;
 - both OpModes are discoverable and the debug APK assembles;
-- the annotated tag points to the verified commit.
+- Quickstart `main` points to the verified commit.

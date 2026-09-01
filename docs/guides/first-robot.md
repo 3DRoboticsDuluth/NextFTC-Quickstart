@@ -1,6 +1,6 @@
 # Build the first robot from the seasonal base
 
-This walkthrough starts at `reusable-season-base` and ends with a small, tested,
+This walkthrough starts at Quickstart `main` and ends with a small, tested,
 deployable robot: tuned Pedro construction, a concrete Drive/Nav pair, one servo
 mechanism, Teleop, diagnostics, and a safe physical smoke test. It is the shortest
 complete example of how a season should begin.
@@ -22,11 +22,9 @@ The first-robot milestone is complete when:
 ## 1. Branch and prove the baseline
 
 ```powershell
-git fetch origin --tags
-git switch --create season/<season-name> reusable-season-base
 git config user.name 3drdProgramming
 git config user.email programming@3droboticsduluth.com
-./gradlew.bat :3drdNextFTC:check :3drdNextFTC:unitTestCoverage :3drdQuanomous:check :3drdQuanomous:unitTestCoverage :TeamCode:check :TeamCode:unitTestCoverage :TeamCode:assembleDebug
+./gradlew.bat :3drdNextFTC:check :3drdNextFTC:unitTestCoverage :TeamCode:check :TeamCode:unitTestCoverage :TeamCode:assembleDebug
 ```
 
 Commit no robot code until this passes. A failure here belongs to the base,

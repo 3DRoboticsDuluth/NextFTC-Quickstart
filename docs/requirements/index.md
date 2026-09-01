@@ -24,14 +24,14 @@ way the contract is met, not permission to bypass the contract when refactoring.
 
 | ID | Requirement | Why | Verification |
 |---|---|---|---|
-| `REQ-QLT-001` | Owned production code MUST maintain 100% line and branch coverage. | Robot code changes rapidly; exhaustive executable examples keep reuse safe. | Run all three `unitTestCoverage` tasks. |
+| `REQ-QLT-001` | Owned production code MUST maintain 100% line and branch coverage. | Robot code changes rapidly; exhaustive executable examples keep reuse safe. | Run both `unitTestCoverage` tasks. |
 | `REQ-QLT-002` | Tests MUST live with the module and package of the behavior they cover. | Proximity makes examples discoverable and keeps library boundaries honest. | Inspect test packages and Gradle source sets. |
 | `REQ-QLT-003` | Tests MUST verify behavior and externally relevant state, not private implementation trivia. | Refactoring should not require needless test rewrites. | Review tests with the associated behavior. |
 | `REQ-QLT-004` | The complete verification command MUST pass before published changes are considered complete. | Unit success alone does not prove Android assembly or cross-module compatibility. | Follow [Verification](../rebuild/verification.md). |
-| `REQ-QLT-005` | Reusable code MUST remain independent of Decode and Osiris policy. | A season base is useful only if it can compile without last season's robot. | Check out `reusable-season-base` and run the full verification command. |
+| `REQ-QLT-005` | Reusable code MUST remain independent of Decode and Osiris policy. | A season base is useful only if it can compile without last season's robot. | Check out Quickstart `main` and run the full verification command. |
 | `REQ-QLT-006` | Requirements, architecture, rebuild guidance, and implementation MUST evolve together. | Documentation must remain capable of reconstructing the system. | Build docs with `mkdocs build --strict`; review traceability. |
 | `REQ-QLT-007` | Tests and fixes SHOULD be folded into the conceptual commit they complete. | History should teach the architecture in dependency order. | Review `git log --reverse` and changed paths. |
-| `REQ-QLT-008` | Documentation MUST support a first robot built from the reusable endpoint. | A reusable platform is useful only if a team can apply it without copying a completed robot. | Follow the first-robot guide from `reusable-season-base`. |
+| `REQ-QLT-008` | Documentation MUST support a first robot built from the reusable endpoint. | A reusable platform is useful only if a team can apply it without copying a completed robot. | Follow the first-robot guide from Quickstart `main`. |
 
 Continue with the requirements for the [FTC foundation](foundation.md),
 [reusable platform](platform.md), and [seasonal scaffold](seasonal-base.md).

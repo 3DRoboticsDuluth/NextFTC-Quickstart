@@ -6,12 +6,13 @@ and adds a reusable Kotlin and NextFTC platform for starting a robot season.
 
 ## Documentation
 
-The canonical documentation lives in [`docs/`](docs/index.md). It includes:
+The canonical documentation lives in [`docs/`](docs/index.md). Begin with the
+[guides](docs/guides/new-season.md), then use the deeper material as needed:
 
-- [requirements and traceability](docs/requirements/index.md);
+- [start a new season and build the first robot](docs/guides/new-season.md);
 - [architecture and design rationale](docs/architecture/overview.md);
+- [requirements and traceability](docs/requirements/index.md);
 - [a complete reconstruction guide](docs/rebuild/index.md);
-- [guides for starting a season and adding robot behavior](docs/guides/new-season.md);
 - [reference tables for dependencies, settings, hardware, and controls](docs/reference/modules-dependencies.md).
 
 The same Markdown is published as a searchable, navigable GitHub Pages site by the
@@ -26,12 +27,12 @@ python -m venv .venv-docs
 .\.venv-docs\Scripts\mkdocs serve
 ```
 
-## Seasonal base
+## Start a season
 
-The annotated tag [`reusable-season-base`](../../tree/reusable-season-base) identifies
-the tested, season-neutral launch point. Start a new robot season there, not from the
-Decode/Osiris tip. See [Start a new season](docs/guides/new-season.md) for the exact
-workflow and replacement checklist.
+Use **Use this template** on GitHub for a clean, independent season repository, or
+clone this repository when retaining the complete FTC/platform history is useful.
+See [Start a new season](docs/guides/new-season.md) for the exact workflow and
+replacement checklist.
 
 ## Verification
 
@@ -39,7 +40,7 @@ All reusable modules and TeamCode enforce 100% line and branch coverage. Run the
 repository verification command before merging:
 
 ```powershell
-.\gradlew :3drdNextFTC:check :3drdNextFTC:unitTestCoverage :3drdQuanomous:check :3drdQuanomous:unitTestCoverage :TeamCode:check :TeamCode:unitTestCoverage :TeamCode:assembleDebug
+.\gradlew :3drdNextFTC:check :3drdNextFTC:unitTestCoverage :TeamCode:check :TeamCode:unitTestCoverage :TeamCode:assembleDebug
 ```
 
 The upstream FTC release notes remain available in the Git history at the

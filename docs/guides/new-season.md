@@ -1,16 +1,30 @@
 # Start a new season
 
-Use the verified seasonal tag as the branch point. Do not delete Decode code from
-`main` and assume the result is equivalent; the tag proves exactly where robot
-policy begins.
+Quickstart `main` is the verified season-neutral source. Choose whether the new
+season benefits more from a fresh repository or retained history.
 
-## Create the branch
+## Create the repository
+
+For the simplest team workflow, open the Quickstart repository, select **Use this
+template**, choose the organization/name/visibility, and create the new repository.
+Clone the generated repository and configure the maintainer identity:
 
 ```powershell
-git fetch origin --tags
-git switch --create season/<season-name> reusable-season-base
+git clone https://github.com/<organization>/<season-repository>.git
+cd <season-repository>
 git config user.name 3drdProgramming
 git config user.email programming@3droboticsduluth.com
+```
+
+The generated repository contains the current files but starts with fresh history
+and has no fork relationship. To retain the FTC/platform commit history instead,
+clone Quickstart, replace `origin`, and push to an empty season repository:
+
+```powershell
+git clone https://github.com/3DRoboticsDuluth/NextFTC-Quickstart.git <season-repository>
+cd <season-repository>
+git remote set-url origin https://github.com/<organization>/<season-repository>.git
+git push -u origin main
 ```
 
 Immediately run the full verification command from
@@ -39,16 +53,12 @@ writing hardware declarations.
 7. **Mechanisms:** add one subsystem and its test at a time.
 8. **Autonomous:** add a top-level Auto subsystem when enough mechanism commands
    exist to compose a meaningful routine.
-9. **Quanomous:** keep the generic module untouched; define this season's JSON step
-   handlers in a TeamCode subsystem.
-10. **Timing:** review the template 75-second rumble threshold against the new game
+9. **Timing:** review the template 75-second rumble threshold against the new game
     and driver preference; change or remove it deliberately.
 
 ## Preserve module boundaries
 
 - A reusable fix goes into `3drdNextFTC` with tests.
-- Program parsing/compiler/storage improvements go into `3drdQuanomous` and must
-  keep it independent of NextFTC.
 - Hardware-map names, driver preference, diagnostic field choices, constants,
   paths, mechanisms, and game logic stay in TeamCode.
 
