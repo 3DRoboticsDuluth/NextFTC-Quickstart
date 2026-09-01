@@ -130,12 +130,12 @@ import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants.robotWi
 
 object Nav : NavSubsystem(robotLength, robotWidth) {
     val start = pose(0.inches, 0.inches, 0.deg)
-    val test = pose(24.inches, 0.inches, 0.deg)
+    val end = pose(24.inches, 0.inches, 0.deg)
 }
 ```
 
 Before adding game poses, document the field axis, heading-zero direction, and
-Driver Station viewpoint. Test `start`, `test`, and at least one dimension-aware
+Driver Station viewpoint. Test `start`, `end`, and at least one dimension-aware
 `FRONT`/`LEFT` pose. Use typed distances and angles in every public navigation API.
 
 ## 5. Customize the Included Drive Subsystem
@@ -179,8 +179,8 @@ object Drive : DriveSubsystem() {
 }
 ```
 
-The signs shown are the Osiris/Pedro precedent, not a universal promise. Verify
-them on the new chassis. The default command is Teleop-only so Auto cannot accept
+The signs shown follow the Pedro input convention, not a universal chassis promise.
+Verify them on the new robot. The default command is Teleop-only so Auto cannot accept
 manual drive input. `SubsystemComponent` discovers the singleton; do not add a
 manual subsystem list.
 
@@ -245,7 +245,8 @@ output, hardware failure isolation, and stop behavior.
 
 ## 8. Use the Existing OpMode Scaffold
 
-The base already provides `OpMode`, `Teleop`, and `Auto`. `OpMode` composes
+The base already provides `OpMode`, `Teleop`, and an intentionally small Auto
+example. `OpMode` composes
 telemetry, bindings, bulk reads, Pedro, drawing, config, and discovered subsystems.
 Do not duplicate those components in each OpMode.
 
@@ -257,8 +258,35 @@ class Teleop : OpMode()
 ```
 
 Subsystem controls are registered once and activate after Teleop Start. The config
-menu remains available during init. Auto must explicitly schedule its entry command
-from `onStartButtonPressed()` when an autonomous routine exists.
+menu remains available during init. Quickstart's Auto subsystem establishes
+`Nav.start` during autonomous initialization and exposes a named, deferred command:
+
+```kotlin
+object Auto : Subsystem() {
+    val execute = Drive.to(Nav.end)
+
+    override fun initialize() {
+        if (ActiveOpMode.isAutonomous) follower.resetStartingPose(Nav.start)
+    }
+}
+```
+
+The Auto OpMode schedules that entry command only after Start:
+
+```kotlin
+@Autonomous
+class Auto : OpMode() {
+    override fun onStartButtonPressed() {
+        execute.schedule()
+    }
+}
+```
+
+`Drive.to()` is already deferred and owns Drive, so another deferred wrapper and
+duplicate requirement declaration would add no behavior. It reads the live follower
+pose when execution begins. Replace `Nav.start`, `Nav.end`, and the command
+composition with the new season's coordinates and routine rather than treating the
+24-inch sample as tuned autonomous behavior.
 
 ## 9. Desktop and Robot Gates
 

@@ -59,8 +59,8 @@ writing hardware declarations.
    and named field poses. Prefer typed distance/angle and reusable mirror functions.
 6. **Vision:** Add only pipelines and coordinate conversions required by the game.
 7. **Mechanisms:** Add one subsystem and its test at a time.
-8. **Autonomous:** Add a top-level Auto subsystem when enough mechanism commands
-   exist to compose a meaningful routine.
+8. **Autonomous:** Replace the included start-to-end Auto example with the season's
+   validated starting pose and command composition as mechanisms become available.
 
 ## Preserve Module Boundaries
 

@@ -46,8 +46,9 @@ hardware telemetry policy and adds components in an intentional order:
 6. `ConfigComponent` restores and persists settings.
 7. `SubsystemComponent.all()` discovers and runs subsystems.
 
-Teleop inherits this root without extra code. Auto schedules its top-level command
-in `onStartButtonPressed()`.
+Teleop inherits this root without extra code. The sample Auto subsystem establishes
+the neutral starting pose during autonomous initialization, and the Auto OpMode
+schedules its top-level deferred command in `onStartButtonPressed()`.
 
 ## Data and Control Flow
 
