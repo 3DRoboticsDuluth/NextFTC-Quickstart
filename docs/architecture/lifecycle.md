@@ -4,7 +4,7 @@ NextFTC supplies the component and command scheduler model. The 3DRD layer adds
 automatic subsystem discovery, staged hardware initialization, fault isolation,
 bindings lifecycle, default scheduling, and explicit subsystem start/stop hooks.
 
-## OpMode sequence
+## OpMode Sequence
 
 | FTC phase | Component action | Subsystem action | Reason |
 |---|---|---|---|
@@ -26,15 +26,15 @@ Reflection is justified here because discovery occurs once per OpMode initializa
 removes a frequently forgotten registry, and is thoroughly tested. It is not used
 inside the high-frequency periodic loop.
 
-## Hardware failure isolation
+## Hardware Failure Isolation
 
 The base `Subsystem` reflects over its own declared fields and finds reusable
 `Hardware` wrappers. Each wrapper initializes independently. If any initialization
 throws:
 
-- the error is retained on the owning subsystem;
-- the error is written to Logcat;
-- subsystem `initialize()`, `start()`, `periodic()`, controls, commands, and `stop()`
+- The error is retained on the owning subsystem;
+- The error is written to Logcat;
+- Subsystem `initialize()`, `start()`, `periodic()`, controls, commands, and `stop()`
   are skipped as appropriate;
 - Driver Station telemetry reports that the subsystem is disabled.
 
@@ -42,21 +42,21 @@ This supports a partially assembled robot and makes a missing device diagnosable
 It does not claim that running a competition robot with a disabled critical
 subsystem is safe; the OpMode or strategy can impose stricter readiness checks.
 
-## Why `stop()` is explicit
+## Why `stop()` Is Explicit
 
 Changing a target variable is not enough during shutdown because another periodic
 cycle is not guaranteed. Mechanism stop hooks therefore update desired state and
 write a safe actuator output directly. The subsystem component catches and logs a
 stop failure, then continues stopping the remaining subsystems in reverse order.
 
-## Binding lifecycle
+## Binding Lifecycle
 
 Bindings may be declared during `initialize()` when they support init-time UI such
 as the config menu. Robot controls belong in `controls()`, which is called once after
 Teleop start. `BindingsComponent` clears global bindings when a new OpMode begins,
 preventing the double-trigger behavior that otherwise appears after stop/re-init.
 
-## Default commands
+## Default Commands
 
 After a subsystem's active-loop `periodic()`, the component asks whether the
 command manager has a command using it. If not, a non-null default is scheduled.
