@@ -1,6 +1,6 @@
-# Modules and dependencies
+# Modules and Dependencies
 
-## Module ownership
+## Module Ownership
 
 | Module | Kind | Owns | Must not own |
 |---|---|---|---|
@@ -8,7 +8,7 @@
 | `3drdNextFTC` | Android library | Reusable 3DRD NextFTC lifecycle, commands, hardware, config, diagnostics, Pedro helpers | TeamCode imports, hardware-map names, season geometry |
 | `TeamCode` | Android application | OpModes, robot constants, game model, hardware telemetry policy, mechanisms, controls, vision, strategy | Cross-team reusable fixes that belong in a library |
 
-## Build versions
+## Build Versions
 
 These are the versions required to reproduce the documented tree:
 
@@ -36,7 +36,7 @@ These are the versions required to reproduce the documented tree:
 The FTC dependency set also includes version 11.2.1 of Inspection, Blocks,
 RobotCore, RobotServer, OnBotJava, Hardware, FtcCommon, and Vision.
 
-## Artifact repositories
+## Artifact Repositories
 
 - Maven Central
 - Google Maven
@@ -45,14 +45,14 @@ RobotCore, RobotServer, OnBotJava, Hardware, FtcCommon, and Vision.
 
 No IDE plugin installation should be required to resolve runtime libraries.
 
-## Why versions are pinned
+## Why Versions Are Pinned
 
 FTC robot builds combine Android, Gradle, Kotlin, device SDK, command framework,
 pathing, and dashboard code. Advancing one can change binary compatibility or API
 shape. Upgrade versions as a deliberate conceptual change with full verification
 and robot smoke tests, not as incidental cleanup.
 
-## Coverage configuration
+## Coverage Configuration
 
 Both owned modules apply JaCoCo and require a ratio of `1.0` for line and branch
 counters. Generated Android classes, build configuration, Kotlin default-interface

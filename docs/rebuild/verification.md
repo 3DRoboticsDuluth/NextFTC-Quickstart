@@ -4,7 +4,7 @@ Verification has three layers: fast focused tests while editing, mandatory full
 repository verification before completion, and physical robot validation for
 hardware behavior.
 
-## Mandatory command
+## Mandatory Command
 
 From the repository root on Windows:
 
@@ -18,7 +18,7 @@ This verifies reusable-library tests, TeamCode tests, 100% line and branch
 thresholds, lint/check tasks, dependency compatibility, and debug APK assembly. Do
 not weaken a threshold to make the command pass.
 
-## Reusable endpoint
+## Reusable Endpoint
 
 Validate Quickstart `main` independently in a fresh clone so local state cannot
 mask a missing file or dependency:
@@ -45,22 +45,22 @@ python -m venv .venv-docs
 Strict mode fails on navigation omissions and invalid internal documentation links.
 The generated `site/` directory is disposable and must not be committed.
 
-## Focused test workflow
+## Focused Test Workflow
 
 During implementation, run the narrowest relevant module/test task first, then the
 mandatory command. Each production subsystem has a dedicated test class. Shared
 test harnesses provide mocked FTC hardware by configured name and reset global
 NextFTC/Panels state between tests.
 
-## Physical validation
+## Physical Validation
 
 Unit tests can prove signs, values, and calls against mocks. They cannot prove:
 
-- a hardware-map name matches the configured Control Hub;
-- a motor/servo is physically mounted in the assumed direction;
+- A hardware-map name matches the configured Control Hub;
+- A motor/servo is physically mounted in the assumed direction;
 - PID/constraints are safe and tuned;
-- a sensor sees the real field/environment;
-- network deployment, Driver Station, Panels, and robot firmware interoperate.
+- A sensor sees the real field/environment;
+- Network deployment, Driver Station, Panels, and robot firmware interoperate.
 
 Use the [hardware worksheet](../guides/hardware-worksheet.md) as mandatory evidence
 before competition use.

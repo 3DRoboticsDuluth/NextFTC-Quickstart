@@ -1,10 +1,10 @@
-# Upstream resources
+# Upstream Resources
 
 This repository records its integration choices but does not duplicate upstream
 installation, tuning, or API manuals. Use documentation matching the pinned version
 where APIs differ from the current site.
 
-## Official sources
+## Official Sources
 
 - [FIRST Tech Challenge Robot Controller](https://github.com/FIRST-Tech-Challenge/FtcRobotController)
 - [FIRST Tech Challenge documentation](https://ftc-docs.firstinspires.org/)
@@ -17,7 +17,7 @@ where APIs differ from the current site.
 - [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/)
 - [GitHub Pages custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 
-## Version caution
+## Version Caution
 
 The current Pedro website may describe a version newer than the repository's pinned
 2.0.6, while NextFTC's Pedro extension is pinned at 1.0.0. Follow this repository's

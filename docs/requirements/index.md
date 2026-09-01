@@ -20,7 +20,7 @@ platform.
 The requirement is the durable contract. A listed implementation is the current
 way the contract is met, not permission to bypass the contract when refactoring.
 
-## Global quality requirements
+## Global Quality Requirements
 
 | ID | Requirement | Why | Verification |
 |---|---|---|---|

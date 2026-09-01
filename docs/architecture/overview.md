@@ -1,4 +1,4 @@
-# Architecture overview
+# Architecture Overview
 
 The architecture separates stable mechanisms for building a robot from the policy
 of one robot and game.
@@ -20,7 +20,7 @@ Dependencies point downward toward more reusable behavior:
 TeamCode ───────► 3drdNextFTC ─────► NextFTC / FTC / Panels / Pedro
 ```
 
-## Ownership rule
+## Ownership Rule
 
 A practical test decides where code belongs:
 
@@ -33,7 +33,7 @@ A practical test decides where code belongs:
 - Vendor code, such as the GoBilda Prism driver, stays recognizable and close to
   the vendor source in `TeamCode/adaptations`.
 
-## The composition root
+## The Composition Root
 
 The shared TeamCode `OpMode` is the composition root. Its initializer installs
 hardware telemetry policy and adds components in an intentional order:
@@ -49,22 +49,22 @@ hardware telemetry policy and adds components in an intentional order:
 Teleop inherits this root without extra code. Auto schedules its top-level command
 in `onStartButtonPressed()`.
 
-## Data and control flow
+## Data and Control Flow
 
 During a normal loop:
 
-1. configuration and sensor state are current;
-2. telemetry opens a fresh frame;
-3. enabled subsystems run `periodic()` in deterministic order;
-4. the scheduler runs active commands and supplies idle default commands;
-5. hardware wrappers apply output and team-selected hardware telemetry;
-6. current telemetry is updated to Driver Station and Panels;
-7. event logs have already gone to RobotLog and, when visible, Driver Station log.
+1. Configuration and sensor state are current;
+2. Telemetry opens a fresh frame;
+3. Enabled subsystems run `periodic()` in deterministic order;
+4. The scheduler runs active commands and supplies idle default commands;
+5. Hardware wrappers apply output and team-selected hardware telemetry;
+6. Current telemetry is updated to Driver Station and Panels;
+7. Event logs have already gone to RobotLog and, when visible, Driver Station log.
 
 See [Lifecycle](lifecycle.md) for exact callback timing and
 [Telemetry and logging](diagnostics.md) for destination behavior.
 
-## Reuse boundary
+## Reuse Boundary
 
 Quickstart `main` contains real implementations of the generic classes and a
 minimal compilable `TeamCode` scaffold. Its Pedro constants are explicitly

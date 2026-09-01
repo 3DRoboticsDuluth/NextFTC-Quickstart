@@ -4,7 +4,7 @@ Configuration serves three distinct clients: the Driver Station menu, Panels
 configurables, and persisted Robot Controller state. The system keeps one ordinary
 data object as the source of truth rather than maintaining parallel definitions.
 
-## Declaring settings
+## Declaring Settings
 
 ```kotlin
 data class Config(
@@ -30,7 +30,7 @@ dynamic string-options provider.
 `@Transient` keeps `filter` out of JSON persistence while Panels can still expose
 the field. This is useful for temporary diagnostic text.
 
-## Driver Station editing
+## Driver Station Editing
 
 Either gamepad can hold Back to enter config editing:
 
@@ -54,7 +54,7 @@ Panels is intentionally not wired into the dirty notification path. Panels is a
 debugging tool rather than a competition control surface. A future requirement can
 add that path if persistent Panels edits become important.
 
-## Diagnostics convention
+## Diagnostics Convention
 
 The reusable `Diagnostics` adapter looks for `level` and `filter` by convention.
 No base config interface is required. If the fields are absent or incompatible,
@@ -66,7 +66,7 @@ override `Telemetry.LEVEL`, `Telemetry.FILTER`, `Logging.LEVEL`, and `Logging.FI
 individually. If an override remains different from the configured value, live
 sampling preserves it until it once again matches the configured value.
 
-## Season-specific validation
+## Season-Specific Validation
 
 The reusable subsystem does not know about alliance, side, or autonomous strategy
 selection. A season may add those settings and validate them before Auto starts.

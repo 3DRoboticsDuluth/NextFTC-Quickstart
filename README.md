@@ -1,4 +1,4 @@
-# 3DRD NextFTC
+# 3DRD NextFTC Quickstart
 
 This repository is 3D Robotics Duluth's requirements-driven FTC robot platform.
 It starts from the official FIRST Tech Challenge Robot Controller v11.2 repository
@@ -27,12 +27,12 @@ python -m venv .venv-docs
 .\.venv-docs\Scripts\mkdocs serve
 ```
 
-## Start a season
+## Start a Season
 
-Use **Use this template** on GitHub for a clean, independent season repository, or
-clone this repository when retaining the complete FTC/platform history is useful.
-See [Start a new season](docs/guides/new-season.md) for the exact workflow and
-replacement checklist.
+Clone Quickstart and retain it as the `quickstart` remote so a season preserves the
+complete FTC/platform history and can rebase onto future Quickstart corrections.
+See [Start a new season](docs/guides/new-season.md) for the exact workflow,
+collaboration cautions, and replacement checklist.
 
 ## Verification
 
