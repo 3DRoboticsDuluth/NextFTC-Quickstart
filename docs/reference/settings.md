@@ -1,11 +1,12 @@
 # Settings
 
-## Quickstart Driver Station settings
+## Quickstart Driver Station Settings
 
 Settings appear in source declaration order.
 
 | Setting | Type/default | Edit policy | Purpose |
 |---|---|---|---|
+| Robot Centric | `true` Boolean | Live | Chooses robot-centric or field-centric driver control. |
 | Level | `INFO` enum | Live | Sets the shared default telemetry/log display level. |
 
 The scaffold intentionally contains no game, robot, or autonomous-strategy
@@ -15,7 +16,7 @@ init-time selections first.
 `filter` is transient and not a Driver Station `@Setting`. Panels may edit it as a
 temporary shared substring filter without persisting it into the next run.
 
-## `@Setting` fields
+## `@Setting` Fields
 
 | Attribute | Default | Meaning |
 |---|---|---|
@@ -31,7 +32,7 @@ Supported setting types are Boolean, enum, numeric fields supported by the
 reflection factory, and string fields with an options provider. Invalid increments,
 ranges, empty enums/providers, and unsupported types fail explicitly.
 
-## Panels configurables
+## Panels Configurables
 
 Panels also exposes `@Configurable` objects such as mechanism tunables, `Logging`,
 and `Telemetry`. Those values are debugging/tuning surfaces, not automatically

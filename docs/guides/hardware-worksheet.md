@@ -1,4 +1,4 @@
-# Hardware worksheet
+# Hardware Worksheet
 
 Complete this worksheet with the mechanical and electrical team before declaring
 hardware in code. Names are contracts shared by the Control Hub configuration,
@@ -12,7 +12,7 @@ Copy the table into the season's documentation and replace every placeholder.
 | Drive | `<front-right>` | Pedro mecanum motor | `<hub:port>` | `<forward/reverse>` | zero | zero | no |
 | Drive | `<back-left>` | Pedro mecanum motor | `<hub:port>` | `<forward/reverse>` | zero | zero | no |
 | Drive | `<back-right>` | Pedro mecanum motor | `<hub:port>` | `<forward/reverse>` | zero | zero | no |
-| Localization | `<pinpoint>` | GoBilda Pinpoint | `<hub:i2c>` | `<pod directions>` | current pose | n/a | no |
+| Localization (optional) | `<pinpoint>` | GoBilda Pinpoint or another dedicated localizer | `<hub:i2c>` | `<pod directions>` | current pose | n/a | no |
 | Example | `<arm>` | `MotorEx` | `<hub:port>` | `<forward/reverse>` | zero | zero | no |
 
 For every motor also record run mode, zero-power behavior, encoder type, current
@@ -21,18 +21,18 @@ servo record the safe physical endpoints before assigning a logical `0.0`–`1.0
 range. For every sensor record units, active-high/active-low behavior, expected
 range, and failure indication.
 
-## Measurement worksheet
+## Measurement Worksheet
 
 | Measurement | Value | Method/date |
 |---|---:|---|
 | Robot length | `<in>` | `<method>` |
 | Robot width | `<in>` | `<method>` |
 | Robot mass | `<kg>` | `<method>` |
-| Forward odometry pod Y offset | `<in>` | `<method>` |
-| Strafe odometry pod X offset | `<in>` | `<method>` |
+| Forward odometry pod Y offset (if used) | `<in>` | `<method>` |
+| Strafe odometry pod X offset (if used) | `<in>` | `<method>` |
 | Wheel/encoder details | `<value>` | `<source>` |
 
-## Physical bring-up record
+## Physical Bring-Up Record
 
 For each output, lift the robot or disconnect the mechanism load, use a deliberately
 low command, and record the result. Do not compensate for reversed hardware by

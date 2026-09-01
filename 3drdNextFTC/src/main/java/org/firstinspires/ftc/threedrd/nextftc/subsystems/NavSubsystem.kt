@@ -11,9 +11,10 @@ import kotlin.math.cos
 import kotlin.math.sin
 import org.firstinspires.ftc.threedrd.pedropathing.normalizeHeading
 
-abstract class NavSubsystem {
-    abstract val robotLength: Distance
-    abstract val robotWidth: Distance
+abstract class NavSubsystem(
+    val robotLength: Distance,
+    val robotWidth: Distance
+) {
 
     fun pose(
         x: Distance,

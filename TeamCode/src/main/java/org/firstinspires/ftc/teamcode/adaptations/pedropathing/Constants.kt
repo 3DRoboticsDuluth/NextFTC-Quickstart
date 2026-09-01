@@ -4,7 +4,7 @@ import com.pedropathing.follower.Follower
 import com.pedropathing.follower.FollowerConstants
 import com.pedropathing.ftc.FollowerBuilder
 import com.pedropathing.ftc.drivetrains.MecanumConstants
-import com.pedropathing.ftc.localization.constants.PinpointConstants
+import com.pedropathing.ftc.localization.constants.DriveEncoderConstants
 import com.pedropathing.paths.PathConstraints
 import com.qualcomm.robotcore.hardware.HardwareMap
 import dev.nextftc.core.units.inches
@@ -19,12 +19,12 @@ object Constants {
     var followerConstants = FollowerConstants()
     var pathConstraints = PathConstraints.defaultConstraints
     var driveConstants = MecanumConstants()
-    var localizerConstants = PinpointConstants()
+    var localizerConstants = DriveEncoderConstants()
 
     fun createFollower(hardwareMap: HardwareMap): Follower =
         FollowerBuilder(followerConstants, hardwareMap)
             .pathConstraints(pathConstraints)
             .mecanumDrivetrain(driveConstants)
-            .pinpointLocalizer(localizerConstants)
+            .driveEncoderLocalizer(localizerConstants)
             .build()
 }
