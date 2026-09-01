@@ -1,5 +1,7 @@
 # Repository Instructions
 
+Read `docs/project-context.md` for the project's purpose, architectural rationale, reference repositories, validation status, and open decisions. Follow its linked requirements and architecture pages when more detail is needed. This documentation remains authoritative for project context when working conventions do not already decide the issue.
+
 ## Design and Kotlin style
 
 - Favor the smallest straightforward implementation that remains readable to student programmers.
@@ -25,7 +27,7 @@
 - Before adding code to `TeamCode/adaptations`, decide whether it is genuinely robot-specific. Prefer the reusable library for stable cross-team behavior, but do not force policy or likely customization points into the library merely to reduce TeamCode size.
 - Preserve third-party source code in its supplied language and recognizable form when practical. Do not translate vendor code such as the goBILDA Prism driver into Kotlin or substantially restyle it unless maintaining a deliberate fork.
 - Keep integration surfaces that students will compare with upstream documentation—especially Pedro Pathing constants and tuning setup—close to the documented upstream shape. Avoid clever wrappers there unless they solve a concrete project requirement.
-- When porting from an older robot repository, preserve observable robot behavior unless a behavior change is intentional and documented. Convert the implementation to the NextFTC model rather than mechanically carrying forward every helper or abstraction.
+- When porting from the older `Decode` repository, preserve observable robot behavior unless a behavior change is intentional and documented. Convert the implementation to the NextFTC model rather than mechanically carrying forward every helper or abstraction.
 - Reflection is acceptable for one-time discovery, configuration metadata, or lifecycle setup when it removes a maintenance hotspot. Resolve and cache reflective metadata outside periodic loops; do not repeatedly scan classes or fields on the robot's hot path.
 
 ## Subsystems and commands
@@ -43,7 +45,7 @@
 - Implement subsystem hardware with the project's `Hardware` wrappers. The adapted `SubsystemComponent` discovers and initializes them automatically, disabling only the subsystem containing failed hardware.
 - Use a subsystem's lifecycle `stop()` for immediate, minimal, idempotent cleanup. Directly stop powered hardware there rather than relying on another `periodic()` call; keep command-level `stop` behavior distinct for normal operation.
 - Organize reusable NextFTC integration code in `3drdNextFTC` by concern, such as `commands`, `hardware`, `logging`, `subsystems`, or `telemetry`; reserve TeamCode adaptations for robot-specific integration and customization.
-- Qualify commands with common names through their owning subsystem when static imports would obscure which mechanism acts. Static imports remain appropriate for unambiguous project-wide vocabulary.
+- Qualify commands with common names through their owning subsystem—for example, `Gate.open`—when static imports would obscure which mechanism acts. Static imports remain appropriate for unambiguous project-wide vocabulary.
 - Register subsystem controls once per OpMode lifecycle. Configuration controls must remain usable during initialization, while robot-driving controls must not become active until a Teleop starts; stopping or reinitializing an OpMode must not accumulate duplicate bindings.
 - Express navigation distances, angles, and path progress with the project's unit types and overloads rather than ambiguous raw `Double` parameters when a suitable unit exists.
 - Implement continuously available behavior, such as driver control, as a NextFTC subsystem default command so command requirements and interruptions remain scheduler-managed.
@@ -54,6 +56,8 @@
 - Name the general driver-controlled OpMode `Teleop`.
 - Use `@TeleOp` without an explicit name when the class name already supplies the intended Driver Station name.
 - Prefer a clear class name over aliasing a conflicting import.
+- Autonomous initialization must preserve pose adjustments made after selecting the starting configuration. Do not silently reset the follower pose when Auto starts.
+- Treat required autonomous selections as required input: reset the applicable selections on Auto initialization, show their absence during initialization, and fail clearly rather than starting a fallback routine.
 
 ## Logging
 
@@ -75,6 +79,15 @@
 - Keep each subsystem's tests in the corresponding subsystem package, with one test class/file per subsystem.
 - Keep the subsystem test harness generic. It may provide hardware mocks by hardware type and configured name, but must not contain knowledge of specific subsystem devices.
 - Before completing robot or library changes, run `./gradlew :3drdNextFTC:check :3drdNextFTC:unitTestCoverage :3drdQuanomous:check :3drdQuanomous:unitTestCoverage :TeamCode:check :TeamCode:unitTestCoverage :TeamCode:assembleDebug` (use `gradlew.bat` on Windows) and report any failures or intentionally untested hardware-only behavior.
+
+## Documentation
+
+- Keep `docs/` as the canonical requirements, architecture, reconstruction, guide, and reference source. Do not create competing authoritative content in a GitHub wiki.
+- Update the relevant requirement, rationale, reconstruction step, and traceability entry whenever behavior or an architectural boundary changes.
+- Preserve stable requirement IDs; add a new ID for a new contract and do not silently reuse a retired ID for different behavior.
+- Keep robot-specific facts out of reusable-platform requirements and keep reusable contracts out of Decode/Osiris requirements.
+- Build documentation with `mkdocs build --strict` after documentation changes and keep every Markdown page in the explicit `mkdocs.yml` navigation.
+- Do not commit the generated `site/` directory or a local documentation virtual environment.
 
 ## Git history
 

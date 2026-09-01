@@ -88,3 +88,7 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+# Documentation builds and local preview environments
+site/
+.venv-docs/
