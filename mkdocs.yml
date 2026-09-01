@@ -1,8 +1,8 @@
-site_name: 3DRD NextFTC
+site_name: 3DRD NextFTC Quickstart
 site_description: Requirements, architecture, reconstruction, and operating guidance for the 3DRD FTC robot platform
-site_url: https://leastone.github.io/NextFTC/
-repo_url: https://github.com/LeastOne/NextFTC
-repo_name: LeastOne/NextFTC
+site_url: https://3droboticsduluth.github.io/NextFTC-Quickstart/
+repo_url: https://github.com/3DRoboticsDuluth/NextFTC-Quickstart
+repo_name: 3DRoboticsDuluth/NextFTC-Quickstart
 edit_uri: edit/main/docs/
 
 theme:
