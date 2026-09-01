@@ -97,9 +97,11 @@ Create:
 - Template Pedro constants with 18-inch placeholder dimensions, drivetrain-encoder
   localization, and defaults;
 - Shared `OpMode` composition root;
-- Empty FTC-discoverable Teleop and Auto;
+- FTC-discoverable Teleop and an Auto that schedules a neutral example routine;
 - Reusable driving/diagnostic `Config`;
-- Concrete, customizable `Drive` and `Nav` subsystems;
+- Concrete, customizable `Drive` and `Nav` subsystems with start/end poses;
+- A small `Auto.execute` command that drives from the initialized start toward the
+  example end pose;
 - Hardware-free `Timing` subsystem;
 - Tests for all scaffold code.
 
