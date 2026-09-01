@@ -7,6 +7,7 @@ import org.junit.Test
 class ConfigTests {
     @Test
     fun startsWithNeutralDiagnostics() {
+        assertEquals(true, Config.config.robotCentric)
         assertEquals(INFO, Config.config.level)
         assertEquals("", Config.config.filter)
     }

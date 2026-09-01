@@ -41,6 +41,8 @@ writing hardware declarations.
 
 1. **Pedro constants:** replace 18-inch template dimensions, follower defaults,
    drivetrain names/kinematics, localizer configuration, constraints, and tuning.
+   Keep Pedro's default motor names when they match the Robot Controller
+   configuration; add explicit name calls only when they differ.
 2. **Game model:** add the season's alliance/side/field concepts only when they are
    actually useful. Do not copy Decode coordinates by habit.
 3. **Config:** put frequently selected values first. Keep diagnostic `level` and
@@ -53,8 +55,6 @@ writing hardware declarations.
 7. **Mechanisms:** add one subsystem and its test at a time.
 8. **Autonomous:** add a top-level Auto subsystem when enough mechanism commands
    exist to compose a meaningful routine.
-9. **Timing:** review the template 75-second rumble threshold against the new game
-    and driver preference; change or remove it deliberately.
 
 ## Preserve module boundaries
 

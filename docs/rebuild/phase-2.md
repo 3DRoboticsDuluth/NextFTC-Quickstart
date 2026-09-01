@@ -1,11 +1,11 @@
-# Phase 2 — reusable platform
+# Phase 2 — Reusable Platform
 
 This phase creates the tested seasonal launch point. Every commit is neutral: it may
 describe how 3DRD builds robots, but it must not describe Decode or Osiris.
 
-## Ordered changes
+## Ordered Changes
 
-### 1. Module and dependency structure — `69db65e6`
+### 1. Module and Dependency Structure — `69db65e6`
 
 Create the Android library module `3drdNextFTC`, enable Kotlin, and make TeamCode
 depend on it. Add shared test/coverage configuration with 100% line and branch
@@ -33,7 +33,7 @@ destination contract must exist before them.
 
 Checkpoint: diagnostics, logging, telemetry, component, and mode-helper tests pass.
 
-### 3. Hardware wrappers — `d498d2e0`
+### 3. Hardware Wrappers — `d498d2e0`
 
 Implement lazy wrappers for servo, continuous servo, motor, IMU, and arbitrary
 hardware. Each implements the common `Hardware` initialization contract. Provide
@@ -45,7 +45,7 @@ uniform failure/testing seam.
 
 Checkpoint: one test file per wrapper passes without a robot.
 
-### 4. Commands and subsystem lifecycle — `c0b42867`
+### 4. Commands and Subsystem Lifecycle — `c0b42867`
 
 Implement bindings cleanup, delegated/named/logged instant commands, deferred
 command/factories, `alongWith`, repetition, base `Subsystem`, discovery, and
@@ -58,7 +58,7 @@ Why: this is the reusable execution model all student subsystems follow.
 Checkpoint: binding, composition, instant, deferred, repeat, discovery, subsystem,
 and component tests pass.
 
-### 5. Configuration and persistence — `8b70be56`
+### 5. Configuration and Persistence — `8b70be56`
 
 Implement FTC storage, debounced JSON persistence, `@Setting`, setting metadata,
 type-driven setting construction, options providers, `ConfigComponent`, and
@@ -71,7 +71,7 @@ persistence, and diagnostics without a parallel menu table.
 Checkpoint: storage, persistence, setting, diagnostics, config component, and config
 subsystem tests pass.
 
-### 6. Pedro drive/navigation foundation — `19604a24`
+### 6. Pedro Drive/Navigation Foundation — `19604a24`
 
 Add generic `DriveSubsystem` and `NavSubsystem`, tile distances, typed path/T
 progress, pose transforms, follower start-pose reset, Pedro driver command, and
@@ -83,23 +83,25 @@ Pedro-to-NextFTC command mechanics.
 
 Checkpoint: every Drive/Nav/Pedro helper test passes with neutral dimensions.
 
-### 7. Sensor debounce — `4b3855f1`
+### 7. Sensor Debounce — `4b3855f1`
 
 Add the stable-edge `Debounce` utility and exhaustive timing/reset tests.
 
 Why: sensor chatter is cross-season behavior and does not belong in one intake.
 
-### 8. Neutral TeamCode scaffold — `29075d09`
+### 8. Neutral TeamCode Scaffold — `29075d09`
 
 Create:
 
 - TeamCode hardware telemetry policy;
-- template Pedro constants with 18-inch placeholder dimensions and defaults;
-- shared `OpMode` composition root;
-- empty FTC-discoverable Teleop and Auto;
-- diagnostic-only `Config`;
-- hardware-free `Timing` subsystem;
-- tests for all scaffold code.
+- Template Pedro constants with 18-inch placeholder dimensions, drivetrain-encoder
+  localization, and defaults;
+- Shared `OpMode` composition root;
+- Empty FTC-discoverable Teleop and Auto;
+- Reusable driving/diagnostic `Config`;
+- Concrete, customizable `Drive` and `Nav` subsystems;
+- Hardware-free `Timing` subsystem;
+- Tests for all scaffold code.
 
 Why: a library is not a seasonal launch point until a minimal consumer compiles and
 demonstrates correct integration.
@@ -108,13 +110,13 @@ demonstrates correct integration.
     The neutral Pedro constants exist to compile. They must be replaced and tuned
     before driving a physical robot.
 
-### 9. Conventions and documented endpoint — `3d35384f`
+### 9. Conventions and Documented Endpoint — `3d35384f`
 
 Add `AGENTS.md`, the repository spelling dictionary, inspection profile, and ignore
 rules. Verify the entire platform, then apply the Quickstart scope/documentation
 commits so `main` is the season-neutral launch point.
 
-## Exact replay
+## Exact Replay
 
 ```powershell
 git cherry-pick 69db65e6 276be2ef d498d2e0 c0b42867 8b70be56 19604a24 4b3855f1 d7441bc7 29075d09 3d35384f
@@ -122,12 +124,12 @@ git cherry-pick 571c2b2b
 # Apply the Quickstart documentation commits from this history.
 ```
 
-## Phase gate
+## Phase Gate
 
 Run the exact command in [Verification](verification.md) at this commit. Also verify:
 
 - `rg "teamcode|Osiris|Decode" 3drdNextFTC/src/main`
   finds no forbidden dependency or robot policy;
-- neutral TeamCode contains no real hardware-map names or tuned robot constants;
-- both OpModes are discoverable and the debug APK assembles;
+- Neutral TeamCode contains no real hardware-map names or tuned robot constants;
+- Both OpModes are discoverable and the debug APK assembles;
 - Quickstart `main` points to the verified commit.

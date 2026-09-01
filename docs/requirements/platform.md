@@ -1,9 +1,9 @@
-# Reusable platform requirements
+# Reusable Platform Requirements
 
 The platform is the architecture shared by teams and seasons. It ends before any
 Osiris motor name, Decode field coordinate, or season strategy is introduced.
 
-## Modules and dependencies
+## Modules and Dependencies
 
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|
@@ -12,7 +12,7 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 | `REQ-PLT-004` | `TeamCode` MUST depend on the reusable module and contain robot policy. | Dependency direction must prevent reusable code from importing a season. | Module dependency graph matches [Architecture overview](../architecture/overview.md). |
 | `REQ-PLT-005` | NextFTC FTC, hardware, bindings, control, and Pedro extension artifacts MUST be declared centrally enough to reproduce the build. | A fresh clone must resolve the same architecture without manual IDE installation. | Versions are recorded in [Modules and dependencies](../reference/modules-dependencies.md). |
 
-## Lifecycle and commands
+## Lifecycle and Commands
 
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|
@@ -25,7 +25,7 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 | `REQ-PLT-016` | Deferred commands MUST construct children at execution time, forward lifecycle calls, and validate child requirements. | Paths and decisions depend on live pose/config, but command ownership must remain predictable. | Deferred command tests cover creation, reuse, failures, and requirements. |
 | `REQ-PLT-017` | Reusable composition MUST include sequential NextFTC composition, `alongWith`, and finite repetition. | Autonomous routines should read as a compact chain of intentions. | Composition and repeat tests pass. |
 
-## Configuration and diagnostics
+## Configuration and Diagnostics
 
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|
@@ -37,7 +37,7 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 | `REQ-PLT-025` | Logging MUST write to RobotLog/Logcat and retain a filtered Driver Station history, including command snapshot changes. | Detailed evidence must survive beyond the current telemetry frame without flooding live state. | Logging tests cover levels, filters, history, RobotLog routing, and rebuild. |
 | `REQ-PLT-026` | Panels MUST expose configurable values without becoming required for competition operation. | Panels accelerates tuning and visualization, but Driver Station operation must remain complete. | Robot operates with Panels absent; configurables appear when connected. |
 
-## Hardware and pathing
+## Hardware and Pathing
 
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|
@@ -49,8 +49,9 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 | `REQ-PLT-035` | Reusable navigation helpers MUST construct dimension-aware poses using typed distance and angle inputs. | Robot center/front/back/left/right geometry otherwise causes repeated sign and half-width mistakes. | Nav subsystem tests verify all axial/lateral alignments. |
 | `REQ-PLT-036` | Pedro helpers MUST provide tile distances, pose transformations, field drawing, driver control, start-pose reset, and typed path/T progress. | These bridge common gaps between Pedro's API and readable FTC intent. | Pedro helper tests pass. |
 | `REQ-PLT-037` | Next Control MUST be available for robot-level closed-loop controllers while embedded motor velocity control remains available for high-rate motor loops. | The correct controller depends on where feedback is sampled and applied. | Control dependency resolves; TeamCode controller tests pass. |
+| `REQ-PLT-038` | Pedro integration MUST support drivetrain encoders as the neutral localization default and document dedicated localizers as replaceable options. | Teams should not need Pinpoint hardware merely to start from Quickstart. | Constants and documentation tests/builds show the drive-encoder default and explicit Pinpoint/OTOS/odometry alternatives. |
 
-## Reusable utilities
+## Reusable Utilities
 
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|

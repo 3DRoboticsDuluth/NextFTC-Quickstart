@@ -1,14 +1,32 @@
-# Drive and navigation
+# Drive and Navigation
 
 The pathing architecture separates reusable motion vocabulary from the coordinates,
 tuning, and controls of one robot.
 
-## Pedro stack
+## Pedro Stack
 
 `PedroComponent` owns a follower built by TeamCode `Constants.createFollower()`.
 The reusable `DriveSubsystem` turns common follower operations into NextFTC commands.
-The reusable `NavSubsystem` constructs robot-dimension-aware poses. Decode's `Drive`
-and `Nav` add Osiris controls, assists, path shapes, and field locations.
+The reusable `NavSubsystem` constructs robot-dimension-aware poses. Quickstart's
+concrete `Drive` and `Nav` provide the basic season customization points.
+
+## Localization
+
+Pedro requires one localization source, but it does not require a dedicated
+localizer device. Quickstart defaults to Pedro's drivetrain-encoder localizer so a
+team can begin without GoBilda Pinpoint hardware. The drivetrain conversion
+factors, dimensions, directions, and motor names are templates that still require
+measurement and tuning.
+
+Pedro's drivetrain and drive-encoder localizer constants default to motor names
+`leftFront`, `leftRear`, `rightFront`, and `rightRear`. Teams using those exact
+Robot Controller names can omit the motor-name configuration calls. Explicit names
+are necessary only when the hardware configuration differs.
+
+Teams with a dedicated device or odometry arrangement should replace the single
+localizer constants type and `FollowerBuilder` call. Pedro 2.0.6 supports
+Pinpoint, OTOS, two-wheel, three-wheel, and three-wheel-plus-IMU localizers. The
+follower must configure exactly one of these options.
 
 ## Coordinates
 
@@ -27,23 +45,23 @@ Alliance and side are sign-transform functions:
 The raw selected enum remains available as `Config.alliance` and `Config.side`.
 Typed angle and distance arguments prevent radians/inches ambiguity.
 
-## Units and pose alignment
+## Units and Pose Alignment
 
 The reusable helpers add:
 
 - `number.tiles` as a 24-inch `Distance`;
 - `number.pct` for path-completion fraction;
 - `number.pctT` for Pedro curve parameter T;
-- axial/lateral pose transformations;
-- dimension-aware `pose()` with `FRONT/CENTER/BACK` and
+- Axial/lateral pose transformations;
+- Dimension-aware `pose()` with `FRONT/CENTER/BACK` and
   `LEFT/CENTER/RIGHT` alignment;
-- typed angles using NextFTC units.
+- Typed angles using NextFTC units.
 
 `NavSubsystem.pose()` shifts the requested contact/alignment point by half the robot
 length/width in the robot's local frame. This lets a season define “front of robot
 at this field point” instead of repeating trigonometry.
 
-## Paths are late-bound
+## Paths Are Late-Bound
 
 `DriveSubsystem.paths`, `to`, `curve`, and `curves` create deferred commands. The
 start pose comes from `follower.pose` when execution begins. Decode helpers such as
@@ -67,28 +85,33 @@ Drive.until(50.pctT)     // Bezier/path parameter T
 Positive values measure progress from the beginning; negative values measure from
 the end according to each overload. `untilNotBusy()` waits for the follower itself.
 
-## Driver control
+## Driver Control
 
 `PedroDriverControlled` accepts live suppliers for forward, strafe, turn,
-robot-centric mode, and heading offset. Decode maps left Y, left X, and right X with
-the signs verified on Osiris. It holds one reusable command instance whose scalar
-changes for intake/low/medium/high/auto power.
+robot-centric mode, and heading offset. The included Drive maps left Y, left X,
+and right X using the Pedro sign convention. It holds one reusable command instance
+whose scalar changes between the included low/high power settings.
 
-Field-centric heading offset changes with alliance. Robot-centric mode can change
-while the command is running because the suppliers are evaluated each update.
-Drive assist hooks can transform each axis without replacing the standard command.
+The command suppliers read NextFTC's lazy `gamepad1` ranges directly. Those ranges
+resolve the current active OpMode and are sampled by NextBindings, so separate
+`lateinit Range` aliases are unnecessary.
 
-## Starting pose
+Robot-centric mode can change while the command is running because the supplier is
+evaluated each update. A season may add an alliance-aware heading offset or drive
+assist hooks without replacing the standard command.
+
+## Starting Pose
 
 `resetStartingPose(pose)` calls both Pedro's starting-pose API and current-pose API.
 The former defines the localizer reference; the latter prevents the prior pose
-offset from surviving a config change. It is called when Alliance or Side changes
-during init. Auto does not reset pose again at Start because teams may reposition
-the initialized robot and rely on Pedro tracking that movement.
+offset from surviving a configuration change. A season should call it when a
+starting-location setting changes during init. Auto should not reset pose again at
+Start because teams may reposition the initialized robot and rely on Pedro tracking
+that movement.
 
 ## Drawing
 
-`PedroDrawingComponent` draws Pedro's robot pose and heading using Osiris radius.
+`PedroDrawingComponent` draws Pedro's robot pose and heading using the configured robot radius.
 It is diagnostic only; it must never feed localization. Robot length and width live
 with the Pedro constants because they configure both navigation alignment and field
 representation.

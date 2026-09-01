@@ -13,6 +13,9 @@ object Config : ConfigSubsystem() {
 
     data class Config(
         @Setting(live = true)
+        var robotCentric: Boolean = true,
+
+        @Setting(live = true)
         var level: Level = INFO,
 
         @Transient
