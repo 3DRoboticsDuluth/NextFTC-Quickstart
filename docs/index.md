@@ -9,10 +9,12 @@ explain and constrain those steps.
 
 1. [Start a new season](guides/new-season.md) explains how to create the repository
    and identifies every template value that must be replaced.
-2. [Build the first robot](guides/first-robot.md) takes the neutral scaffold through
+2. [Why Kotlin?](guides/why-kotlin.md) explains the language choice, the FTC-specific
+   benefits it provides, and the small set of conventions students should follow.
+3. [Build the first robot](guides/first-robot.md) takes the neutral scaffold through
    measured Pedro constants, Drive/Nav, one mechanism, deployment, and a safe
    physical test.
-3. Complete the [hardware worksheet](guides/hardware-worksheet.md) before declaring
+4. Complete the [hardware worksheet](guides/hardware-worksheet.md) before declaring
    devices, then follow [Add a subsystem](guides/subsystem.md) for each mechanism.
 
 ## Understand and Reproduce It

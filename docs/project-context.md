@@ -13,6 +13,7 @@ season template. Decode/Osiris behavior and Quanomous remain in the separate
 ## Read First
 
 - [Start a new season](guides/new-season.md)
+- [Why Kotlin?](guides/why-kotlin.md)
 - [Build the first robot](guides/first-robot.md)
 - [Architecture overview](architecture/overview.md)
 - [Requirements](requirements/index.md)
