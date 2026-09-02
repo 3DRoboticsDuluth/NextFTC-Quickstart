@@ -41,7 +41,9 @@ For a continuous implementation walkthrough, continue with
 [Build the first robot](first-robot.md). It takes Quickstart `main` through hardware
 inventory, Pedro specialization, a first mechanism, Teleop, deployment, and
 physical validation. Use the [hardware worksheet](hardware-worksheet.md) before
-writing hardware declarations.
+writing hardware declarations. Contributors new to the language should first read
+[Why Kotlin?](why-kotlin.md) for the small Kotlin vocabulary and conventions used by
+the scaffold.
 
 ## Replace the Templates
 
