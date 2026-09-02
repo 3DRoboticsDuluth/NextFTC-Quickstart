@@ -53,6 +53,7 @@ nav:
   - Home: index.md
   - Guides:
       - Start a new season: guides/new-season.md
+      - Why Kotlin?: guides/why-kotlin.md
       - Build the first robot: guides/first-robot.md
       - Hardware worksheet: guides/hardware-worksheet.md
       - Add a subsystem: guides/subsystem.md
