@@ -1,0 +1,89 @@
+# Verification
+
+Verification has three layers: fast focused tests while editing, mandatory full
+repository verification before completion, and physical robot validation for
+hardware behavior.
+
+## Mandatory Command
+
+From the repository root on Windows:
+
+```powershell
+.\gradlew :3drdNextFTC:check :3drdNextFTC:unitTestCoverage :TeamCode:check :TeamCode:unitTestCoverage :TeamCode:assembleDebug
+```
+
+On a POSIX runner use `./gradlew` with the same tasks.
+
+To generate and open only TeamCode's coverage report, use `coverage.cmd` on
+Windows or `./coverage.sh` on Linux. Both accept `run`, `open`, or `refresh`.
+
+Verify portable ADB discovery without changing a robot connection:
+
+```powershell
+.\scripts\adb.cmd version
+```
+
+```bash
+./scripts/adb.sh version
+```
+
+This verifies reusable-library tests, TeamCode tests, 100% line and branch
+thresholds, lint/check tasks, dependency compatibility, and debug APK assembly. Do
+not weaken a threshold to make the command pass.
+
+Verify deployment wiring without contacting a robot:
+
+```powershell
+.\gradlew :TeamCode:deploySloth --dry-run
+.\gradlew :TeamCode:installDebug --dry-run
+```
+
+Both plans must include `:TeamCode:ensureAdbConnection`; the full deployment must
+also include `:TeamCode:removeSlothRemote`.
+
+## Reusable Endpoint
+
+Validate Quickstart `main` independently in a fresh clone so local state cannot
+mask a missing file or dependency:
+
+```powershell
+git clone https://github.com/3DRoboticsDuluth/NextFTC-Quickstart.git ..\NextFTC-Quickstart-audit
+Push-Location ..\NextFTC-Quickstart-audit
+.\gradlew :3drdNextFTC:check :3drdNextFTC:unitTestCoverage :TeamCode:check :TeamCode:unitTestCoverage :TeamCode:assembleDebug
+Pop-Location
+```
+
+Remove the audit clone only after checking its resolved absolute path.
+
+## Documentation
+
+Create an isolated environment and build in strict mode:
+
+```powershell
+python -m venv .venv-docs
+.\.venv-docs\Scripts\python -m pip install -r requirements-docs.txt
+.\.venv-docs\Scripts\mkdocs build --strict
+```
+
+Strict mode fails on navigation omissions and invalid internal documentation links.
+The generated `site/` directory is disposable and must not be committed.
+
+## Focused Test Workflow
+
+During implementation, run the narrowest relevant module/test task first, then the
+mandatory command. Each production subsystem has a dedicated test class. Shared
+test harnesses provide mocked FTC hardware by configured name and reset global
+NextFTC/Panels state between tests.
+
+## Physical Validation
+
+Unit tests can prove signs, values, and calls against mocks. They cannot prove:
+
+- A hardware-map name matches the configured Control Hub;
+- A motor/servo is physically mounted in the assumed direction;
+- PID/constraints are safe and tuned;
+- A sensor sees the real field/environment;
+- Network deployment, Driver Station, Panels, and robot firmware interoperate.
+
+Use the [hardware worksheet](../guides/hardware-worksheet.md) as mandatory evidence
+before competition use.
