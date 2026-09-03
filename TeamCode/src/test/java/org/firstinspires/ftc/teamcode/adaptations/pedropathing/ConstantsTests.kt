@@ -4,7 +4,7 @@ import com.pedropathing.follower.Follower
 import com.pedropathing.follower.FollowerConstants
 import com.pedropathing.ftc.FollowerBuilder
 import com.pedropathing.ftc.drivetrains.MecanumConstants
-import com.pedropathing.ftc.localization.constants.PinpointConstants
+import com.pedropathing.ftc.localization.constants.DriveEncoderConstants
 import com.pedropathing.paths.PathConstraints
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.junit.Assert.assertEquals
@@ -25,7 +25,10 @@ class ConstantsTests {
         assertEquals("leftRear", Constants.driveConstants.leftRearMotorName)
         assertEquals("rightFront", Constants.driveConstants.rightFrontMotorName)
         assertEquals("rightRear", Constants.driveConstants.rightRearMotorName)
-        assertEquals("pinpoint", Constants.localizerConstants.hardwareMapName)
+        assertEquals("leftFront", Constants.localizerConstants.leftFrontMotorName)
+        assertEquals("leftRear", Constants.localizerConstants.leftRearMotorName)
+        assertEquals("rightFront", Constants.localizerConstants.rightFrontMotorName)
+        assertEquals("rightRear", Constants.localizerConstants.rightRearMotorName)
     }
 
     @Test
@@ -37,7 +40,7 @@ class ConstantsTests {
         val followerConstants = mock(FollowerConstants::class.java)
         val paths = mock(PathConstraints::class.java)
         val drivetrain = mock(MecanumConstants::class.java)
-        val localizer = mock(PinpointConstants::class.java)
+        val localizer = mock(DriveEncoderConstants::class.java)
         val hardwareMap = mock(HardwareMap::class.java)
         val follower = mock(Follower::class.java)
         var constructorArguments = emptyList<Any?>()
@@ -54,7 +57,7 @@ class ConstantsTests {
                     constructorArguments = context.arguments()
                     `when`(mock.pathConstraints(paths)).thenReturn(mock)
                     `when`(mock.mecanumDrivetrain(drivetrain)).thenReturn(mock)
-                    `when`(mock.pinpointLocalizer(localizer)).thenReturn(mock)
+                    `when`(mock.driveEncoderLocalizer(localizer)).thenReturn(mock)
                     `when`(mock.build()).thenReturn(follower)
                 }
             ).use { construction ->
@@ -65,7 +68,7 @@ class ConstantsTests {
                 assertSame(hardwareMap, constructorArguments[1])
                 verify(builder).pathConstraints(paths)
                 verify(builder).mecanumDrivetrain(drivetrain)
-                verify(builder).pinpointLocalizer(localizer)
+                verify(builder).driveEncoderLocalizer(localizer)
             }
         } finally {
             Constants.followerConstants = originalFollower
