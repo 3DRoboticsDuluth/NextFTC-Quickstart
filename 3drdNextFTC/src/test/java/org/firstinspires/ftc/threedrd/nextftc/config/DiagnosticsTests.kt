@@ -30,6 +30,7 @@ class DiagnosticsTests {
 
     @Test
     fun missingOrIncorrectFieldsUseSafeDefaults() {
+        assertEquals(null, Diagnostics().config)
         listOf(Diagnostics(), Diagnostics(Any()), Diagnostics(Invalid())).forEach {
             assertEquals(OFF, it.level())
             assertEquals("", it.filter())
