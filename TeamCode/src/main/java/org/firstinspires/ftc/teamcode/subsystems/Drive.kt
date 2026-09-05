@@ -13,10 +13,14 @@ object Drive : DriveSubsystem() {
     var POWER_LOW = 0.35
     var POWER_HIGH = 0.70
 
+    private val driveInput = gamepad1.leftStickY
+    private val strafeInput = gamepad1.leftStickX
+    private val turnInput = gamepad1.rightStickX
+
     val driverControlled = PedroDriverControlled(
-        { -gamepad1.leftStickY.get() },
-        { -gamepad1.leftStickX.get() },
-        { -gamepad1.rightStickX.get() },
+        { -driveInput.get() },
+        { -strafeInput.get() },
+        { -turnInput.get() },
         { config.robotCentric }
     ).apply { requires(this@Drive) }
 

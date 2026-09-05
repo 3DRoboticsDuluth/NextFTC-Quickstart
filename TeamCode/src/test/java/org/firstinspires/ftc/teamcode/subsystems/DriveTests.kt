@@ -4,10 +4,10 @@ import com.bylazar.configurables.annotations.Configurable
 import com.pedropathing.follower.Follower
 import com.pedropathing.geometry.Pose
 import com.qualcomm.robotcore.hardware.Gamepad
+import dev.nextftc.bindings.BindingManager
 import dev.nextftc.core.commands.utility.NullCommand
 import dev.nextftc.extensions.pedro.PedroComponent
 import dev.nextftc.ftc.ActiveOpMode
-import dev.nextftc.ftc.Gamepads.gamepad1
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.full.memberProperties
@@ -64,9 +64,7 @@ class DriveTests : SubsystemTests() {
         ActiveOpMode.it!!.gamepad1.right_stick_x = 0.75f
         Drive.initialize()
         Drive.driverControlled.scalar = 1.0
-        gamepad1.leftStickY.update()
-        gamepad1.leftStickX.update()
-        gamepad1.rightStickX.update()
+        BindingManager.update()
 
         Drive.driverControlled.update()
         Config.config.robotCentric = false
