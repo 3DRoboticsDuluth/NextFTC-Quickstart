@@ -15,11 +15,14 @@ class SubsystemComponent private constructor(
     companion object {
         fun discover(): Set<NextSubsystem> {
             val source = hardwareMap.appContext.applicationInfo.sourceDir
-            return SubsystemDiscovery.discover(SubsystemDiscovery.classNames(source))
+            val classLoader = ActiveOpMode.it!!.javaClass.classLoader
+            return SubsystemDiscovery.discover(
+                SubsystemDiscovery.classNames(source),
+                classLoader
+            )
         }
 
         var discovery: () -> Set<NextSubsystem> = ::discover
-        var discovered: Set<NextSubsystem>? = null
 
         fun all() = SubsystemComponent(emptySet(), true)
     }
@@ -31,8 +34,7 @@ class SubsystemComponent private constructor(
     override fun preInit() {
         if (discoverAll) {
             subsystems = ordered(
-                (discovered ?: discovery().also { discovered = it })
-                    .flatMap { it.subsystems }
+                discovery().flatMap { it.subsystems }
             )
         }
 

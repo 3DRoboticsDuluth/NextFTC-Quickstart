@@ -23,6 +23,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -150,7 +151,6 @@ class SubsystemComponentTests {
         CommandManager.cancelAll()
         CommandManager.run()
         SubsystemComponent.discovery = SubsystemComponent::discover
-        SubsystemComponent.discovered = null
     }
 
     @Test
@@ -343,10 +343,9 @@ class SubsystemComponentTests {
     }
 
     @Test
-    fun discoversSubsystemsOnlyOnce() {
+    fun discoversFreshSubsystemInstancesForEachOpMode() {
         val subsystem = AdaptedSubsystem(TestHardware("ready"))
         var discoveries = 0
-        SubsystemComponent.discovered = null
         SubsystemComponent.discovery = {
             discoveries++
             setOf(subsystem)
@@ -361,8 +360,7 @@ class SubsystemComponentTests {
 
         assertEquals(setOf(subsystem), first.subsystems)
         assertEquals(setOf(subsystem), second.subsystems)
-        assertEquals(setOf(subsystem), SubsystemComponent.discovered)
-        assertEquals(1, discoveries)
+        assertEquals(2, discoveries)
     }
 
     @Suppress("DEPRECATION")
@@ -384,6 +382,10 @@ class SubsystemComponentTests {
                 Collections.enumeration(listOf(DiscoveredSubsystem::class.java.name))
             )
         }.use {
+            assertSame(
+                ActiveOpMode.it!!.javaClass.classLoader,
+                DiscoveredSubsystem::class.java.classLoader
+            )
             assertEquals(setOf(DiscoveredSubsystem), SubsystemComponent.discover())
         }
     }

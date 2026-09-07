@@ -1,6 +1,17 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url = uri('https://repo.dairy.foundation/releases') }
+    }
+    dependencies {
+        classpath 'dev.frozenmilk:Load:0.2.4'
+    }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'jacoco'
+apply plugin: 'dev.frozenmilk.sinister.sloth.load'
 
 jacoco {
     toolVersion = '0.8.14'
@@ -21,6 +32,7 @@ jacoco {
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+apply from: '../gradle/robot-deployment.gradle'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -41,9 +53,22 @@ kotlin {
     }
 }
 
+repositories {
+    maven { url = uri('https://repo.dairy.foundation/releases') }
+}
+
+configurations.configureEach {
+    resolutionStrategy.dependencySubstitution {
+        substitute module('com.bylazar:fullpanels') using module(
+            'com.bylazar.sloth:fullpanels:0.2.4+1.0.12'
+        )
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     implementation project(':3drdNextFTC')
+    implementation 'dev.frozenmilk.sinister:Sloth:0.2.4'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.jetbrains.kotlin:kotlin-reflect:2.4.10'

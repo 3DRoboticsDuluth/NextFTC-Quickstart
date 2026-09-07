@@ -1,0 +1,90 @@
+import java.util.concurrent.TimeUnit
+
+def robotControllerAddress = providers.gradleProperty('robotControllerAddress')
+def adbExecutable = androidComponents.sdkComponents.adb
+
+def runAdb = { File adb, List<String> arguments, int timeoutSeconds ->
+    def process = new ProcessBuilder(([adb.absolutePath] + arguments) as List<String>)
+        .redirectErrorStream(true)
+        .start()
+    def finished = process.waitFor(timeoutSeconds, TimeUnit.SECONDS)
+
+    if (!finished) {
+        process.destroyForcibly()
+        process.waitFor()
+    }
+
+    def output = process.inputStream.getText('UTF-8').trim()
+    [
+        success: finished && process.exitValue() == 0,
+        timedOut: !finished,
+        output: output
+    ]
+}
+
+def probeAdb = { File adb, String address, int timeoutSeconds ->
+    def marker = '3drd-adb-ready'
+    def result = runAdb(adb, ['-s', address, 'shell', 'echo', marker], timeoutSeconds)
+    result.success && result.output.readLines().any { it.trim() == marker }
+}
+
+def reconnectAdb = { File adb, String address ->
+    def disconnect = runAdb(adb, ['disconnect', address], 5)
+    if (disconnect.timedOut) {
+        logger.warn("ADB disconnect timed out for ${address}; attempting to connect anyway.")
+    }
+
+    def connect = runAdb(adb, ['connect', address], 10)
+    if (connect.output) {
+        logger.lifecycle(connect.output)
+    }
+
+    probeAdb(adb, address, 5)
+}
+
+def ensureAdbConnection = tasks.register('ensureAdbConnection') {
+    group = 'install'
+    description = 'Verifies the Robot Controller ADB connection and repairs stale TCP transports.'
+
+    doLast {
+        def adb = adbExecutable.get().asFile
+        def address = robotControllerAddress.get()
+
+        if (probeAdb(adb, address, 2)) {
+            logger.lifecycle("Robot Controller ADB connection is ready at ${address}.")
+            return
+        }
+
+        logger.lifecycle("Refreshing the Robot Controller ADB connection at ${address}...")
+        if (reconnectAdb(adb, address)) {
+            return
+        }
+
+        logger.lifecycle("Restarting the local ADB server after the reconnect failed...")
+        def stopServer = runAdb(adb, ['kill-server'], 5)
+        if (!stopServer.success) {
+            logger.warn("ADB server shutdown did not complete cleanly; attempting to restart it anyway.")
+        }
+
+        def startServer = runAdb(adb, ['start-server'], 10)
+        if (startServer.output) {
+            logger.lifecycle(startServer.output)
+        }
+        if (!startServer.success) {
+            logger.warn("ADB server startup did not complete cleanly; attempting one final reconnect anyway.")
+        }
+
+        if (!reconnectAdb(adb, address)) {
+            throw new GradleException(
+                "Robot Controller is not reachable through ADB at ${address}, even after restarting ADB. " +
+                    "Confirm that it is powered on and this computer is connected to its Wi-Fi network."
+            )
+        }
+    }
+}
+
+tasks.configureEach {
+    if (name in ['deploySloth', 'installDebug', 'removeSlothRemote']) {
+        dependsOn ensureAdbConnection
+    }
+}
