@@ -8,6 +8,7 @@ import com.pedropathing.ftc.localization.Encoder
 import com.pedropathing.ftc.localization.constants.DriveEncoderConstants
 import com.pedropathing.paths.PathConstraints
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD
+import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE
 import com.qualcomm.robotcore.hardware.HardwareMap
 import dev.nextftc.core.units.inches
 import kotlin.math.max
@@ -22,29 +23,29 @@ object Constants {
 
     var driveConstants = MecanumConstants().apply {
         leftFrontMotorName = "leftMotor"
-        leftRearMotorName = "intake"
+        leftRearMotorName = "leftMotor"
         rightFrontMotorName = "rightMotor"
-        rightRearMotorName = "flywheel"
+        rightRearMotorName = "rightMotor"
         leftFrontMotorDirection = FORWARD
         leftRearMotorDirection = FORWARD
-        rightFrontMotorDirection = FORWARD
-        rightRearMotorDirection = FORWARD
+        rightFrontMotorDirection = REVERSE
+        rightRearMotorDirection = REVERSE
     }
 
     var localizerConstants = DriveEncoderConstants().apply {
         leftFrontMotorName = "leftMotor"
-        leftRearMotorName = "intake"
+        leftRearMotorName = "leftMotor"
         rightFrontMotorName = "rightMotor"
-        rightRearMotorName = "flywheel"
+        rightRearMotorName = "rightMotor"
         leftFrontEncoderDirection = Encoder.FORWARD
-        rightFrontEncoderDirection = Encoder.FORWARD
         leftRearEncoderDirection = Encoder.FORWARD
-        rightRearEncoderDirection = Encoder.FORWARD
-        forwardTicksToInches = 45.0
-        strafeTicksToInches = 45.0
-        turnTicksToInches = 45.0
+        rightFrontEncoderDirection = Encoder.REVERSE
+        rightRearEncoderDirection = Encoder.REVERSE
+        forwardTicksToInches = 0.0
+        strafeTicksToInches = 0.0
+        turnTicksToInches = 0.0
         robot_Width = 16.0
-        robot_Length = 16.0
+        robot_Length = 5.5
     }
 
     fun createFollower(hardwareMap: HardwareMap): Follower =

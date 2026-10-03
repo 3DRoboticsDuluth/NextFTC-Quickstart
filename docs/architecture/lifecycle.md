@@ -23,6 +23,10 @@ NextFTC's subsystem composition. Results are sorted by `Subsystem.order` and kep
 in a linked set. Classes are resolved through the active OpMode's class loader so
 the lifecycle and Panels operate on the same TeamCode objects after a Sloth reload.
 
+`@ManuallyRegistered` excludes a subsystem from that scan. A specialized OpMode
+may still pass it directly to `SubsystemComponent`; this prevents isolated
+diagnostic hardware from also activating in ordinary Teleop and Auto.
+
 Reflection is justified here because discovery occurs once per OpMode initialization,
 removes a frequently forgotten registry, and is thoroughly tested. It is not used
 inside the high-frequency periodic loop.

@@ -37,12 +37,15 @@ fun CRServoEx.tel() {
 
 fun MotorEx.tel() {
     val source = name.humanize()
-    add(source, VERBOSE, "Current (A)", "%.1f".format(motor.getCurrent(AMPS)))
-    add(source, DEBUG, "Power", "%.2f".format(power))
-    add(source, DEBUG, "Velocity", "%.1f".format(velocity))
-    add(source, DEBUG, "Position", motor.currentPosition)
-    add(source, VERBOSE, "Velocity (%)", "%.1f".format(velocity / motor.motorType.achieveableMaxTicksPerSecond * 100))
-    add(source, VERBOSE, "RPM", "%.0f".format(velocity / motor.motorType.ticksPerRev * 60))
+    val tel = Tel(source)
+    tel.verbose("Current (A)") { "%.1f".format(motor.getCurrent(AMPS)) }
+    tel.debug("Power") { "%.2f".format(power) }
+    tel.debug("Velocity") { "%.1f".format(velocity) }
+    tel.debug("Position") { motor.currentPosition }
+    tel.verbose("Mode") { motor.mode }
+    tel.verbose("Direction") { motor.direction }
+    tel.verbose("Velocity (%)") { "%.1f".format(velocity / motor.motorType.achieveableMaxTicksPerSecond * 100) }
+    tel.verbose("RPM") { "%.0f".format(velocity / motor.motorType.ticksPerRev * 60) }
 }
 
 fun DcMotorEx.tel() {
@@ -52,6 +55,8 @@ fun DcMotorEx.tel() {
     tel.debug("Power") { "%.2f".format(power) }
     tel.debug("Velocity") { "%.1f".format(velocity) }
     tel.debug("Position") { currentPosition }
+    tel.verbose("Mode") { mode }
+    tel.verbose("Direction") { direction }
     tel.verbose("Velocity (%)") { "%.1f".format(velocity / motorType.achieveableMaxTicksPerSecond * 100) }
     tel.verbose("RPM") { "%.0f".format(velocity / motorType.ticksPerRev * 60) }
 }

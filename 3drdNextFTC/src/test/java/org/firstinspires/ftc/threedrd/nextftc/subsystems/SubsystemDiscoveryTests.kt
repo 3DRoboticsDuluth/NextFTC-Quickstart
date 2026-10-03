@@ -6,6 +6,7 @@ import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.AbstractSubsys
 import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.ConstructedSubsystem
 import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.DiscoveredSubsystem
 import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.InvalidInstanceSubsystem
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.ManualSubsystem
 import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.NestedSubsystem
 import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.NotASubsystem
 import org.junit.Assert.assertEquals
@@ -24,6 +25,7 @@ class SubsystemDiscoveryTests {
                 NotASubsystem::class.java.name,
                 AbstractSubsystem::class.java.name,
                 NestedSubsystem.Instance::class.java.name,
+                ManualSubsystem::class.java.name,
                 DiscoveredSubsystem::class.java.name
             ),
             javaClass.classLoader

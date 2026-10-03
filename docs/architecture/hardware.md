@@ -45,11 +45,15 @@ for each hardware type. Current policy reports:
 |---|---|---|
 | Servo | Position | Reversed |
 | Continuous servo | Power | Reversed |
-| Motor | Power, velocity, encoder position | current, velocity percentage, RPM |
+| Motor | Power, velocity, encoder position | current, mode, direction, velocity percentage, RPM |
 | IMU | Yaw, pitch, roll | — |
 
 Values are formatted to stable, sensible precision. Teams may change this policy
 without changing the wrappers.
+
+The matching raw `DcMotorEx.tel()` extension covers motors controlled directly by
+Pedro rather than through `MotorEx`. Calling `motors.tel()` deduplicates repeated
+SDK device references before reporting them.
 
 ## Caching
 

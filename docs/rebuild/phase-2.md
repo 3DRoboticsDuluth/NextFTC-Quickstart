@@ -50,7 +50,8 @@ Implement bindings cleanup, delegated/named/logged instant commands, deferred
 command/factories, `alongWith`, repetition, base `Subsystem`, discovery, and
 `SubsystemComponent`. Enforce command requirements. Initialize reflected hardware,
 isolate disabled subsystems, run explicit start/controls/stop phases, schedule
-defaults, and stop healthy subsystems in reverse order.
+defaults, and stop healthy subsystems in reverse order. Add `@ManuallyRegistered`
+for isolated subsystems that an explicit OpMode component owns instead.
 
 Why: this is the reusable execution model all student subsystems follow.
 
@@ -94,6 +95,8 @@ Why: sensor chatter is cross-season behavior and does not belong in one intake.
 Create:
 
 - TeamCode hardware telemetry policy;
+- Raw SDK motor telemetry and an isolated Motor Diagnostics OpMode for testing one
+  editable motor name with both encoder run modes and power signs;
 - Template Pedro constants with 18-inch placeholder dimensions, drivetrain-encoder
   localization, and defaults;
 - Shared `OpMode` composition root;

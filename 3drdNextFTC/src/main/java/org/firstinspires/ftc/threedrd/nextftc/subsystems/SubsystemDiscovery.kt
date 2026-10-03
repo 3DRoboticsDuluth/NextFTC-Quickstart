@@ -12,6 +12,7 @@ object SubsystemDiscovery {
         .sorted()
         .mapNotNull { load(it, classLoader) }
         .filter { Subsystem::class.java.isAssignableFrom(it) && !Modifier.isAbstract(it.modifiers) }
+        .filterNot { it.isAnnotationPresent(ManuallyRegistered::class.java) }
         .map {
             (it.fields.firstOrNull { field -> field.name == "INSTANCE" }?.get(null) as? Subsystem)
                 ?: error("${it.name} must be a Kotlin object")

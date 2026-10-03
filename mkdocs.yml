@@ -58,6 +58,7 @@ nav:
       - Deploy robot code: guides/deployment.md
       - Hardware worksheet: guides/hardware-worksheet.md
       - Add a subsystem: guides/subsystem.md
+      - Diagnose one motor: guides/motor-diagnostics.md
   - Architecture:
       - architecture/overview.md
       - Lifecycle: architecture/lifecycle.md

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD as CR_FORWARD
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE as CR_REVERSE
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD
 import com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE
@@ -83,6 +84,8 @@ class TelemetryTests : SubsystemTests() {
         `when`(motor.motor.getCurrent(AMPS)).thenReturn(1.234)
         `when`(motor.motor.velocity).thenReturn(241.23)
         `when`(motor.motor.currentPosition).thenReturn(42)
+        `when`(motor.motor.mode).thenReturn(RUN_USING_ENCODER)
+        `when`(motor.motor.direction).thenReturn(CR_REVERSE)
         `when`(motor.motor.motorType).thenReturn(type)
         `when`(type.achieveableMaxTicksPerSecond).thenReturn(480.0)
         `when`(type.ticksPerRev).thenReturn(120.0)
@@ -95,6 +98,8 @@ class TelemetryTests : SubsystemTests() {
         verify(telemetry).addData("D | Test Motor | Power", "0.46" as Any)
         verify(telemetry).addData("D | Test Motor | Velocity", "241.2" as Any)
         verify(telemetry).addData("D | Test Motor | Position", 42 as Any)
+        verify(telemetry).addData("V | Test Motor | Mode", RUN_USING_ENCODER as Any)
+        verify(telemetry).addData("V | Test Motor | Direction", CR_REVERSE as Any)
         verify(telemetry).addData("V | Test Motor | Velocity (%)", "50.3" as Any)
         verify(telemetry).addData("V | Test Motor | RPM", "121" as Any)
     }
@@ -108,6 +113,8 @@ class TelemetryTests : SubsystemTests() {
         `when`(motor.power).thenReturn(0.456)
         `when`(motor.velocity).thenReturn(241.23)
         `when`(motor.currentPosition).thenReturn(42)
+        `when`(motor.mode).thenReturn(RUN_USING_ENCODER)
+        `when`(motor.direction).thenReturn(CR_REVERSE)
         `when`(motor.motorType).thenReturn(type)
         `when`(type.achieveableMaxTicksPerSecond).thenReturn(480.0)
         `when`(type.ticksPerRev).thenReturn(120.0)
@@ -120,6 +127,8 @@ class TelemetryTests : SubsystemTests() {
         verify(telemetry).addData("D | Pedro Motor | Power", "0.46" as Any)
         verify(telemetry).addData("D | Pedro Motor | Velocity", "241.2" as Any)
         verify(telemetry).addData("D | Pedro Motor | Position", 42 as Any)
+        verify(telemetry).addData("V | Pedro Motor | Mode", RUN_USING_ENCODER as Any)
+        verify(telemetry).addData("V | Pedro Motor | Direction", CR_REVERSE as Any)
         verify(telemetry).addData("V | Pedro Motor | Velocity (%)", "50.3" as Any)
         verify(telemetry).addData("V | Pedro Motor | RPM", "121" as Any)
     }
