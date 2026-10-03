@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.bylazar.configurables.annotations.Configurable
+import com.pedropathing.ftc.drivetrains.Mecanum
 import dev.nextftc.extensions.pedro.PedroComponent.Companion.follower
 import dev.nextftc.ftc.Gamepads.gamepad1
 import org.firstinspires.ftc.threedrd.nextftc.subsystems.DriveSubsystem
 import org.firstinspires.ftc.threedrd.pedropathing.PedroDriverControlled
+import org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware.tel
 import org.firstinspires.ftc.teamcode.subsystems.Config.state
 
 @Configurable
@@ -14,7 +16,7 @@ object Drive : DriveSubsystem() {
 
     val driverControlled = PedroDriverControlled(
         gamepad1.leftStickY.negate(),
-        gamepad1.leftStickX.negate(),
+        { 0.0 },
         gamepad1.rightStickX.negate(),
         { Config.robotCentric }
     ).apply { requires(this@Drive) }
@@ -36,6 +38,7 @@ object Drive : DriveSubsystem() {
     }
 
     override fun periodic() {
+        (follower.drivetrain as? Mecanum)?.motors?.tel()
         tel.info("Power", "%.2f".format(driverControlled.scalar))
         tel.debug("X", "%.1f".format(follower.pose.x))
         tel.debug("Y", "%.1f".format(follower.pose.y))

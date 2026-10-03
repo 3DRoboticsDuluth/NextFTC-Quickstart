@@ -28,6 +28,26 @@ localizer constants type and `FollowerBuilder` call. Pedro 2.0.6 supports
 Pinpoint, OTOS, two-wheel, three-wheel, and three-wheel-plus-IMU localizers. The
 follower must configure exactly one of these options.
 
+### Two-Motor Arcade Specialization
+
+Pedro 2.0.6 exposes a four-slot mecanum drivetrain and drive-encoder localizer,
+but not a native two-motor differential drivetrain. The arcade branch maps both
+left slots to `leftMotor` and both right slots to `rightMotor`. With strafe fixed
+at zero, each same-side calculation produces the same power and Pedro writes it
+to the same configured motor.
+
+The drive-encoder localizer uses the same paired mapping. Its forward and turning
+conversion factors must be tuned for the duplicated encoder contribution and the
+physical track geometry. Lateral displacement is unavailable and must remain
+zero; the adapter does not turn a differential chassis into a holonomic one.
+
+Pedro owns these raw SDK motors rather than the project's `MotorEx` wrappers.
+`Drive.periodic()` therefore reads the concrete Mecanum drivetrain's motor list
+and invokes `motors.tel()`, which deduplicates the paired entries before invoking
+the raw `DcMotorEx.tel()` extension.
+This retains the standard power, position, velocity, current, percentage, and RPM
+diagnostics even though motor writes do not pass through `MotorEx.update`.
+
 ## Coordinates
 
 Pedro uses its right-handed Cartesian field convention: +X is right on the standard
@@ -88,9 +108,10 @@ the end according to each overload. `untilNotBusy()` waits for the follower itse
 ## Driver Control
 
 `PedroDriverControlled` accepts live suppliers for forward, strafe, turn,
-robot-centric mode, and heading offset. The included Drive maps left Y, left X,
-and right X using the Pedro sign convention. It holds one reusable command instance
-whose scalar changes between the included low/high power settings.
+robot-centric mode, and heading offset. The arcade specialization maps left Y to
+forward, supplies a constant zero for strafe, and maps right X to turn using the
+Pedro sign convention. It holds one reusable command instance whose scalar changes
+between the included low/high power settings.
 
 The command retains NextFTC's `gamepad1` ranges directly. Constructing those ranges
 before the first binding update registers them in time for NextBindings to sample

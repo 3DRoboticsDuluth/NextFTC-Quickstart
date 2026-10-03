@@ -8,10 +8,8 @@ Copy the table into the season's documentation and replace every placeholder.
 
 | Subsystem | Configuration name | SDK/wrapper type | Hub and port | Physical direction | Init state | Stop state | Verified |
 |---|---|---|---|---|---|---|---|
-| Drive | `<front-left>` | Pedro mecanum motor | `<hub:port>` | `<forward/reverse>` | zero | zero | no |
-| Drive | `<front-right>` | Pedro mecanum motor | `<hub:port>` | `<forward/reverse>` | zero | zero | no |
-| Drive | `<back-left>` | Pedro mecanum motor | `<hub:port>` | `<forward/reverse>` | zero | zero | no |
-| Drive | `<back-right>` | Pedro mecanum motor | `<hub:port>` | `<forward/reverse>` | zero | zero | no |
+| Drive | `leftMotor` | Left differential motor | `<hub:port>` | reverse unless physical test proves otherwise | zero | zero | no |
+| Drive | `rightMotor` | Right differential motor | `<hub:port>` | forward unless physical test proves otherwise | zero | zero | no |
 | Localization (optional) | `<pinpoint>` | GoBilda Pinpoint or another dedicated localizer | `<hub:i2c>` | `<pod directions>` | current pose | n/a | no |
 | Example | `<arm>` | `MotorEx` | `<hub:port>` | `<forward/reverse>` | zero | zero | no |
 

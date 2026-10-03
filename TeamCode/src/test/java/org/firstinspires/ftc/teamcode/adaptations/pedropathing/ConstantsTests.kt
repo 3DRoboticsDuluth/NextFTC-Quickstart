@@ -17,18 +17,18 @@ import org.mockito.Mockito.`when`
 
 class ConstantsTests {
     @Test
-    fun usesNeutralTemplateDimensionsAndPedroDefaults() {
+    fun configuresTheTwoMotorArcadeDrivetrainAndDriveEncoders() {
         assertEquals(18.0, Constants.robotLength.inIn, 0.0001)
         assertEquals(18.0, Constants.robotWidth.inIn, 0.0001)
         assertEquals(9.0, Constants.robotRadius, 0.0001)
-        assertEquals("leftFront", Constants.driveConstants.leftFrontMotorName)
-        assertEquals("leftRear", Constants.driveConstants.leftRearMotorName)
-        assertEquals("rightFront", Constants.driveConstants.rightFrontMotorName)
-        assertEquals("rightRear", Constants.driveConstants.rightRearMotorName)
-        assertEquals("leftFront", Constants.localizerConstants.leftFrontMotorName)
-        assertEquals("leftRear", Constants.localizerConstants.leftRearMotorName)
-        assertEquals("rightFront", Constants.localizerConstants.rightFrontMotorName)
-        assertEquals("rightRear", Constants.localizerConstants.rightRearMotorName)
+        assertEquals("leftMotor", Constants.driveConstants.leftFrontMotorName)
+        assertEquals("leftMotor", Constants.driveConstants.leftRearMotorName)
+        assertEquals("rightMotor", Constants.driveConstants.rightFrontMotorName)
+        assertEquals("rightMotor", Constants.driveConstants.rightRearMotorName)
+        assertEquals("leftMotor", Constants.localizerConstants.leftFrontMotorName)
+        assertEquals("leftMotor", Constants.localizerConstants.leftRearMotorName)
+        assertEquals("rightMotor", Constants.localizerConstants.rightFrontMotorName)
+        assertEquals("rightMotor", Constants.localizerConstants.rightRearMotorName)
     }
 
     @Test

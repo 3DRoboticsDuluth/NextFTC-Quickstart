@@ -71,6 +71,7 @@ nav:
       - FTC foundation: requirements/foundation.md
       - Reusable platform: requirements/platform.md
       - Seasonal scaffold: requirements/seasonal-base.md
+      - Arcade drivetrain: requirements/arcade-drivetrain.md
   - Rebuild:
       - rebuild/index.md
       - Phase 1 — FTC foundation: rebuild/phase-1.md

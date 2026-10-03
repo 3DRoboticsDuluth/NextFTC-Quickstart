@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.bylazar.configurables.annotations.Configurable
+import com.pedropathing.Drivetrain
 import com.pedropathing.follower.Follower
+import com.pedropathing.ftc.drivetrains.Mecanum
 import com.pedropathing.geometry.Pose
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Gamepad
 import dev.nextftc.bindings.BindingManager
 import dev.nextftc.core.commands.utility.NullCommand
@@ -58,7 +61,7 @@ class DriveTests : SubsystemTests() {
     }
 
     @Test
-    fun driverInputsUsePedroSignConventionAndLiveCentricMode() {
+    fun driverInputsUseArcadeControlAndLiveCentricMode() {
         ActiveOpMode.it!!.gamepad1.left_stick_y = 0.25f
         ActiveOpMode.it!!.gamepad1.left_stick_x = -0.5f
         ActiveOpMode.it!!.gamepad1.right_stick_x = 0.75f
@@ -70,8 +73,8 @@ class DriveTests : SubsystemTests() {
         Config.robotCentric = false
         Drive.driverControlled.update()
 
-        verify(follower).setTeleOpDrive(-0.25, 0.5, -0.75, true, 0.0)
-        verify(follower).setTeleOpDrive(-0.25, 0.5, -0.75, false, 0.0)
+        verify(follower).setTeleOpDrive(-0.25, 0.0, -0.75, true, 0.0)
+        verify(follower).setTeleOpDrive(-0.25, 0.0, -0.75, false, 0.0)
     }
 
     @Test
@@ -89,6 +92,13 @@ class DriveTests : SubsystemTests() {
     @Test
     fun periodicReportsPowerAndPose() {
         TeamTelemetry.LEVEL = DEBUG
+        val drivetrain = mock(Mecanum::class.java)
+        val leftMotor = mock(DcMotorEx::class.java)
+        val rightMotor = mock(DcMotorEx::class.java)
+        follower.drivetrain = drivetrain
+        `when`(drivetrain.motors).thenReturn(listOf(leftMotor, leftMotor, rightMotor, rightMotor))
+        `when`(ActiveOpMode.hardwareMap.getNamesOf(leftMotor)).thenReturn(setOf("leftMotor"))
+        `when`(ActiveOpMode.hardwareMap.getNamesOf(rightMotor)).thenReturn(setOf("rightMotor"))
         `when`(follower.pose).thenReturn(Pose(12.34, 56.78, Math.toRadians(89.94)))
         clearInvocations(ActiveOpMode.telemetry)
 
@@ -98,5 +108,19 @@ class DriveTests : SubsystemTests() {
         verify(ActiveOpMode.telemetry).addData("D | Drive | X", "12.3" as Any)
         verify(ActiveOpMode.telemetry).addData("D | Drive | Y", "56.8" as Any)
         verify(ActiveOpMode.telemetry).addData("D | Drive | Heading (deg)", "89.9" as Any)
+        verify(ActiveOpMode.telemetry).addData("D | Left Motor | Position", 0 as Any)
+        verify(ActiveOpMode.telemetry).addData("D | Right Motor | Position", 0 as Any)
+    }
+
+    @Test
+    fun periodicToleratesAnotherPedroDrivetrainType() {
+        TeamTelemetry.LEVEL = DEBUG
+        follower.drivetrain = mock(Drivetrain::class.java)
+        `when`(follower.pose).thenReturn(Pose())
+        clearInvocations(ActiveOpMode.telemetry)
+
+        Drive.periodic()
+
+        verify(ActiveOpMode.telemetry).addData("I | Drive | Power", "0.70" as Any)
     }
 }

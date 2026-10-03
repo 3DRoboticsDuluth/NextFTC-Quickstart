@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD as CR_FORWARD
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE as CR_REVERSE
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD
 import com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
@@ -96,6 +97,31 @@ class TelemetryTests : SubsystemTests() {
         verify(telemetry).addData("D | Test Motor | Position", 42 as Any)
         verify(telemetry).addData("V | Test Motor | Velocity (%)", "50.3" as Any)
         verify(telemetry).addData("V | Test Motor | RPM", "121" as Any)
+    }
+
+    @Test
+    fun sdkMotorTelemetrySupportsHardwareOwnedByPedro() {
+        val motor = ActiveOpMode.hardwareMap.get(DcMotorEx::class.java, "pedroMotor")
+        val type = mock(MotorConfigurationType::class.java)
+        `when`(ActiveOpMode.hardwareMap.getNamesOf(motor)).thenReturn(setOf("pedroMotor"))
+        `when`(motor.getCurrent(AMPS)).thenReturn(1.234)
+        `when`(motor.power).thenReturn(0.456)
+        `when`(motor.velocity).thenReturn(241.23)
+        `when`(motor.currentPosition).thenReturn(42)
+        `when`(motor.motorType).thenReturn(type)
+        `when`(type.achieveableMaxTicksPerSecond).thenReturn(480.0)
+        `when`(type.ticksPerRev).thenReturn(120.0)
+        val telemetry = ActiveOpMode.telemetry
+        clearInvocations(telemetry)
+
+        listOf(motor, motor).tel()
+
+        verify(telemetry).addData("V | Pedro Motor | Current (A)", "1.2" as Any)
+        verify(telemetry).addData("D | Pedro Motor | Power", "0.46" as Any)
+        verify(telemetry).addData("D | Pedro Motor | Velocity", "241.2" as Any)
+        verify(telemetry).addData("D | Pedro Motor | Position", 42 as Any)
+        verify(telemetry).addData("V | Pedro Motor | Velocity (%)", "50.3" as Any)
+        verify(telemetry).addData("V | Pedro Motor | RPM", "121" as Any)
     }
 
     @Test

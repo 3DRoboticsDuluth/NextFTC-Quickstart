@@ -17,8 +17,20 @@ object Constants {
 
     var followerConstants = FollowerConstants()
     var pathConstraints = PathConstraints.defaultConstraints
-    var driveConstants = MecanumConstants()
-    var localizerConstants = DriveEncoderConstants()
+
+    var driveConstants = MecanumConstants().apply {
+        leftFrontMotorName = "leftMotor"
+        leftRearMotorName = "leftMotor"
+        rightFrontMotorName = "rightMotor"
+        rightRearMotorName = "rightMotor"
+    }
+
+    var localizerConstants = DriveEncoderConstants().apply {
+        leftFrontMotorName = "leftMotor"
+        leftRearMotorName = "leftMotor"
+        rightFrontMotorName = "rightMotor"
+        rightRearMotorName = "rightMotor"
+    }
 
     fun createFollower(hardwareMap: HardwareMap): Follower =
         FollowerBuilder(followerConstants, hardwareMap)

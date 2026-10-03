@@ -9,6 +9,7 @@ platform.
 | `REQ-FND` | FTC foundation | Build, toolchain, warning, and development-tool changes immediately above upstream FTC |
 | `REQ-PLT` | Reusable platform | Season-neutral libraries, lifecycle, commands, diagnostics, hardware, configuration, pathing, and tests |
 | `REQ-SCF` | Seasonal scaffold | The minimum neutral `TeamCode` application that proves the platform can launch a season |
+| `REQ-ARC` | Arcade drivetrain specialization | The two-motor differential chassis derived from the neutral scaffold |
 | `REQ-QLT` | Quality | Verification, coverage, documentation, and history rules applying across owned code |
 
 ## Language
@@ -34,4 +35,5 @@ way the contract is met, not permission to bypass the contract when refactoring.
 | `REQ-QLT-008` | Documentation MUST support a first robot built from the reusable endpoint. | A reusable platform is useful only if a team can apply it without copying a completed robot. | Follow the first-robot guide from Quickstart `main`. |
 
 Continue with the requirements for the [FTC foundation](foundation.md),
-[reusable platform](platform.md), and [seasonal scaffold](seasonal-base.md).
+[reusable platform](platform.md), [seasonal scaffold](seasonal-base.md), and
+[arcade drivetrain specialization](arcade-drivetrain.md).

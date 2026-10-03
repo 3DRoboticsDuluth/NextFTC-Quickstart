@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE as CR_REVERSE
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE
+import dev.nextftc.ftc.ActiveOpMode
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS
 import org.firstinspires.ftc.threedrd.nextftc.hardware.CRServoEx
@@ -9,6 +11,7 @@ import org.firstinspires.ftc.threedrd.nextftc.hardware.IMUEx
 import org.firstinspires.ftc.threedrd.nextftc.hardware.HardwareTelemetry
 import org.firstinspires.ftc.threedrd.nextftc.hardware.MotorEx
 import org.firstinspires.ftc.threedrd.nextftc.hardware.ServoEx
+import org.firstinspires.ftc.threedrd.nextftc.telemetry.Tel
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry.add
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
@@ -41,6 +44,19 @@ fun MotorEx.tel() {
     add(source, VERBOSE, "Velocity (%)", "%.1f".format(velocity / motor.motorType.achieveableMaxTicksPerSecond * 100))
     add(source, VERBOSE, "RPM", "%.0f".format(velocity / motor.motorType.ticksPerRev * 60))
 }
+
+fun DcMotorEx.tel() {
+    val source = ActiveOpMode.hardwareMap.getNamesOf(this).first().humanize()
+    val tel = Tel(source)
+    tel.verbose("Current (A)") { "%.1f".format(getCurrent(AMPS)) }
+    tel.debug("Power") { "%.2f".format(power) }
+    tel.debug("Velocity") { "%.1f".format(velocity) }
+    tel.debug("Position") { currentPosition }
+    tel.verbose("Velocity (%)") { "%.1f".format(velocity / motorType.achieveableMaxTicksPerSecond * 100) }
+    tel.verbose("RPM") { "%.0f".format(velocity / motorType.ticksPerRev * 60) }
+}
+
+fun Iterable<DcMotorEx>.tel() = distinct().forEach { it.tel() }
 
 fun IMUEx.tel() {
     val source = name.humanize()

@@ -10,6 +10,11 @@ Kotlin/NextFTC platform plus a neutral TeamCode scaffold. Current `main` is the
 season template. Decode/Osiris behavior and Quanomous remain in the separate
 `LeastOne/NextFTC` implementation repository.
 
+The `codex/arcade-drivetrain` branch is a robot specialization of that endpoint.
+It maps Pedro's four expected drivetrain/encoder slots onto a two-motor
+differential chassis named `leftMotor` and `rightMotor`, and removes lateral input
+from driver control. Quickstart `main` remains the neutral seasonal endpoint.
+
 ## Read First
 
 - [Start a new season](guides/new-season.md)

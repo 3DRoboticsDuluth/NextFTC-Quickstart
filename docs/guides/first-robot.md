@@ -12,8 +12,8 @@ The first-robot milestone is complete when:
 - The neutral base still passes before changes.
 - The Control Hub configuration matches the documented hardware worksheet.
 - Pedro constructs from measured and tuned robot values.
-- Left-stick Y/X and right-stick X drive forward/strafe/turn correctly.
-- Robot-centric and field-centric behavior are deliberately verified.
+- Left-stick Y and right-stick X drive forward/reverse and turn correctly.
+- Left-stick X cannot request unsupported lateral movement.
 - One mechanism responds only after Teleop Start and stops safely.
 - The follower pose agrees with Panels field drawing.
 - Every owned line and branch remains covered.
@@ -56,12 +56,14 @@ object Constants {
 
     var pathConstraints = PathConstraints(/* tuned values */)
 
+    // Pedro 2 uses four drivetrain slots. A two-motor differential chassis
+    // maps both slots on each side to the same configured device.
     var driveConstants = MecanumConstants()
         .maxPower(LOW_BRINGUP_POWER)
-        .leftFrontMotorName("<front-left>")
-        .rightFrontMotorName("<front-right>")
-        .leftRearMotorName("<back-left>")
-        .rightRearMotorName("<back-right>")
+        .leftFrontMotorName("leftMotor")
+        .leftRearMotorName("leftMotor")
+        .rightFrontMotorName("rightMotor")
+        .rightRearMotorName("rightMotor")
 
     var localizerConstants = DriveEncoderConstants()
         .forwardTicksToInches(TUNED_FORWARD_TICKS_TO_INCHES)
@@ -69,10 +71,10 @@ object Constants {
         .turnTicksToInches(TUNED_TURN_TICKS_TO_INCHES)
         .robotLength(robotLength.inIn)
         .robotWidth(robotWidth.inIn)
-        .leftFrontMotorName("<front-left>")
-        .rightFrontMotorName("<front-right>")
-        .leftRearMotorName("<back-left>")
-        .rightRearMotorName("<back-right>")
+        .leftFrontMotorName("leftMotor")
+        .leftRearMotorName("leftMotor")
+        .rightFrontMotorName("rightMotor")
+        .rightRearMotorName("rightMotor")
 
     fun createFollower(hardwareMap: HardwareMap): Follower =
         FollowerBuilder(followerConstants, hardwareMap)
@@ -86,10 +88,10 @@ object Constants {
 The Quickstart uses Pedro's drivetrain-encoder localizer because it requires no
 separate localization device. Its conversion factors, dimensions, motor names,
 and encoder directions are still template values and must be configured or tuned.
-Pedro defaults both the drivetrain and drive-encoder localizer motor names to
-`leftFront`, `leftRear`, `rightFront`, and `rightRear`. If the Robot Controller
-configuration uses those exact names, omit the corresponding motor-name calls
-from both constants objects. Use explicit calls when the configured names differ.
+Pedro defaults both the drivetrain and drive-encoder localizer to four distinct
+mecanum motor names. This arcade branch deliberately repeats `leftMotor` in both
+left slots and `rightMotor` in both right slots. Retain the explicit mapping while
+using Pedro 2.0.6; removing it would make Pedro look for four nonexistent devices.
 
 A dedicated localizer is optional. If the robot has a GoBilda Pinpoint, replace
 the localizer type and builder call while keeping Pedro's documented structure:
@@ -152,7 +154,7 @@ object Drive : DriveSubsystem() {
 
     val driverControlled = PedroDriverControlled(
         gamepad1.leftStickY.negate(),
-        gamepad1.leftStickX.negate(),
+        { 0.0 },
         gamepad1.rightStickX.negate(),
         { Config.robotCentric }
     ).apply { requires(this@Drive) }
@@ -183,9 +185,10 @@ object Drive : DriveSubsystem() {
 ```
 
 The signs shown follow the Pedro input convention, not a universal chassis promise.
-Verify them on the new robot. The default command is Teleop-only so Auto cannot accept
-manual drive input. `SubsystemComponent` discovers the singleton; do not add a
-manual subsystem list.
+Verify them on the new robot. Strafe is intentionally constant because the
+differential chassis cannot move laterally. The default command is Teleop-only so
+Auto cannot accept manual drive input. `SubsystemComponent` discovers the singleton;
+do not add a manual subsystem list.
 
 `Gamepads.gamepad1` exposes NextFTC ranges that must be registered before
 `BindingManager.update()` samples the loop's inputs. Constructing and retaining the
