@@ -29,9 +29,9 @@ These are the versions required to reproduce the documented tree:
 | Next Control | 1.0.0 |
 | NextFTC Pedro extension | 1.0.0 |
 | Pedro Pathing FTC | 2.0.6 |
-| FullPanels API | 1.0.12 |
-| Sloth-compatible FullPanels runtime | 0.2.4+1.0.12 |
-| Dairy Sloth runtime / Load plugin | 0.2.4 |
+| FullPanels API | 1.0.13 |
+| Sloth-compatible FullPanels runtime | 0.3.2+1.0.13 |
+| Dairy Sloth runtime / Load plugin | 0.3.2 |
 | AndroidX AppCompat | 1.2.0 |
 | JUnit | 4.13.2 |
 | Mockito | 5.23.0 |

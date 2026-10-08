@@ -1,10 +1,11 @@
 buildscript {
     repositories {
         mavenCentral()
+        google()
         maven { url = uri('https://repo.dairy.foundation/releases') }
     }
     dependencies {
-        classpath 'dev.frozenmilk:Load:0.2.4'
+        classpath 'dev.frozenmilk:Load:0.3.2'
     }
 }
 
@@ -60,7 +61,7 @@ repositories {
 configurations.configureEach {
     resolutionStrategy.dependencySubstitution {
         substitute module('com.bylazar:fullpanels') using module(
-            'com.bylazar.sloth:fullpanels:0.2.4+1.0.12'
+            'com.bylazar.sloth:fullpanels:0.3.2+1.0.13'
         )
     }
 }
@@ -68,7 +69,7 @@ configurations.configureEach {
 dependencies {
     implementation project(':FtcRobotController')
     implementation project(':3drdNextFTC')
-    implementation 'dev.frozenmilk.sinister:Sloth:0.2.4'
+    implementation 'dev.frozenmilk.sinister:Sloth:0.3.2'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.jetbrains.kotlin:kotlin-reflect:2.4.10'

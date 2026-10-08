@@ -40,7 +40,7 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect:2.4.10'
-    api 'com.bylazar:fullpanels:1.0.12'
+    api 'com.bylazar:fullpanels:1.0.13'
     api 'dev.nextftc:control:1.0.0'
     api 'dev.nextftc:ftc:1.1.0'
     api 'dev.nextftc:hardware:1.1.0'
