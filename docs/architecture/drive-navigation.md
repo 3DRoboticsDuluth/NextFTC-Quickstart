@@ -24,7 +24,7 @@ Robot Controller names can omit the motor-name configuration calls. Explicit nam
 are necessary only when the hardware configuration differs.
 
 Teams with a dedicated device or odometry arrangement should replace the single
-localizer constants type and `FollowerBuilder` call. Pedro 2.0.6 supports
+localizer constants type and `FollowerBuilder` call. Pedro 2.1.2 supports
 Pinpoint, OTOS, two-wheel, three-wheel, and three-wheel-plus-IMU localizers. The
 follower must configure exactly one of these options.
 

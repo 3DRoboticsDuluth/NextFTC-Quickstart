@@ -20,7 +20,7 @@ where APIs differ from the current site.
 ## Version Caution
 
 The current Pedro website may describe a version newer than the repository's pinned
-2.0.6, while NextFTC's Pedro extension is pinned at 1.0.0. Follow this repository's
+2.1.2, while NextFTC's Pedro extension is pinned at 1.0.0. Follow this repository's
 source/tests for the integration API and use upstream docs for underlying concepts.
 Upgrade all related artifacts together only after checking compatibility.
 
