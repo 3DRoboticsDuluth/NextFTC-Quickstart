@@ -126,3 +126,11 @@ Control for drive/robot-level corrections.
 
 **Why:** Embedded motor loops run close to the encoder and at high frequency; robot
 assists combine pose, vision, and multiple axes and belong in the OpMode loop.
+
+## Separate Seasonal Upgrades from Framework Migrations
+
+Upgrade FTC SDK 12, Panels, Sloth/Load, Pedro 2.1.2, Kotlin, Mockito, and drive
+motor diagnostics in one review branch while retaining NextFTC v1 and upstream
+drive-encoder localization. Gradle 9.1.0 follows the SDK baseline and supplies
+the API required by Load 0.3.2. Keep Pedro 3 and NextFTC v2 in a later track.
+Preserve shared history; eventual upgrade commits append to it.

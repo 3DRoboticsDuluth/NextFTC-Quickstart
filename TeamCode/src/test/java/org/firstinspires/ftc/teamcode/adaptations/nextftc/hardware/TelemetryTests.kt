@@ -88,14 +88,15 @@ class TelemetryTests : SubsystemTests() {
         val telemetry = ActiveOpMode.telemetry
         clearInvocations(telemetry)
 
+        `when`(motor.motor.power).thenReturn(0.456)
         motor.update { power = 0.456 }
 
-        verify(telemetry).addData("V | Test Motor | Current (A)", "1.2" as Any)
-        verify(telemetry).addData("D | Test Motor | Power", "0.46" as Any)
-        verify(telemetry).addData("D | Test Motor | Velocity", "241.2" as Any)
+        verify(telemetry).addData("V | Test Motor | Current (A)", 1.234 as Any)
+        verify(telemetry).addData("D | Test Motor | Power", 0.456 as Any)
+        verify(telemetry).addData("D | Test Motor | Velocity", 241.23 as Any)
         verify(telemetry).addData("D | Test Motor | Position", 42 as Any)
-        verify(telemetry).addData("V | Test Motor | Velocity (%)", "50.3" as Any)
-        verify(telemetry).addData("V | Test Motor | RPM", "121" as Any)
+        verify(telemetry).addData("V | Test Motor | Velocity (%)", (241.23 / 480.0 * 100) as Any)
+        verify(telemetry).addData("V | Test Motor | RPM", (241.23 / 120.0 * 60) as Any)
     }
 
     @Test
@@ -130,4 +131,33 @@ class TelemetryTests : SubsystemTests() {
 
         verify(telemetry, never()).addData(anyString(), any())
     }
+    @Test
+    fun emptyMotorCollectionReportsNothing() {
+        val telemetry = ActiveOpMode.telemetry
+        clearInvocations(telemetry, ActiveOpMode.hardwareMap)
+        emptyList<com.qualcomm.robotcore.hardware.DcMotorEx>().tel()
+        verify(telemetry, never()).addData(anyString(), any())
+        verify(ActiveOpMode.hardwareMap, never()).getNamesOf(any())
+    }
+
+    @Test
+    fun unsupportedDrivetrainsOmitMotorTelemetry() {
+        val telemetry = ActiveOpMode.telemetry
+        clearInvocations(telemetry, ActiveOpMode.hardwareMap)
+        mock(com.pedropathing.drivetrain.Drivetrain::class.java).tel()
+        mock(com.pedropathing.ftc.drivetrains.Swerve::class.java).tel()
+        mock(com.pedropathing.ftc.drivetrains.MecanumEx::class.java).tel()
+        verify(telemetry, never()).addData(anyString(), any())
+        verify(ActiveOpMode.hardwareMap, never()).getNamesOf(any())
+    }
+
+    @Test
+    fun missingMecanumMotorCollectionReportsNothing() {
+        val telemetry = ActiveOpMode.telemetry
+        clearInvocations(telemetry, ActiveOpMode.hardwareMap)
+        mock(com.pedropathing.ftc.drivetrains.Mecanum::class.java).tel()
+        verify(telemetry, never()).addData(anyString(), any())
+        verify(ActiveOpMode.hardwareMap, never()).getNamesOf(any())
+    }
+
 }

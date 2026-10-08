@@ -120,3 +120,17 @@ that movement.
 It is diagnostic only; it must never feed localization. Robot length and width live
 with the Pedro constants because they configure both navigation alignment and field
 representation.
+
+## Drive Motor Diagnostics
+
+Drive reads Pedro’s existing drivetrain motor collection with
+`follower.drivetrain.tel()`. The collection extension resolves
+configured names through the hardware map without acquiring motors again. Pedro retains control of motor power and
+configuration. During each periodic snapshot, the four devices use the same
+TeamCode `tel` policy as other motors: DEBUG power, velocity, and position; VERBOSE
+current, velocity percentage, and RPM. Motor values remain numeric for Panels
+graphs. This is current telemetry, not a periodic historical RobotLog event.
+
+Motor telemetry uses `(this as? Mecanum)?.motors?.tel()` and supports Pedro 2.1.2
+`Mecanum`. Other drivetrains, including deprecated `MecanumEx`, Swerve, and custom
+implementations, omit motor telemetry without interrupting driving.

@@ -160,3 +160,24 @@ Run the exact command in [Verification](verification.md) at this commit. Also ve
 - Neutral TeamCode contains no real hardware-map names or tuned robot constants;
 - Both OpModes are discoverable and the debug APK assembles;
 - Quickstart `main` points to the verified commit.
+
+## BIOBUZZ Upgrade Extension
+
+After the historical reconstruction, apply the upstream SDK 12 manifest and
+AprilTag sample changes and SDK 12.0.0 dependencies. Use Gradle 9.1.0, Kotlin
+2.4.20, Mockito 5.24.0, Pedro FTC 2.1.2, Panels 1.0.13, and Sloth/Load 0.3.2.
+Retain NextFTC v1 and the Pedro extension 1.0.0. Add read-only Drive motor
+diagnostics from Pedro’s existing drivetrain motor collection using the common
+TeamCode motor telemetry policy, without separate hardware declarations.
+
+Traceability: REQ-FND-006 maps to SDK resolution, sample compilation, and APK
+assembly. REQ-PLT-043 maps to DriveTests and hardware TelemetryTests;
+REQ-PLT-006 maps to offline deployment dry runs and physical full-install checks.
+Run the required verification command and strict documentation build. Full
+installation, Driver Station compatibility, Panels, localization, autonomous,
+and hot reload still require robot validation. No Pedro 3 or NextFTC v2 code is
+part of this upgrade track.
+
+Motor telemetry uses `(this as? Mecanum)?.motors?.tel()` and supports Pedro 2.1.2
+`Mecanum`. Other drivetrains, including deprecated `MecanumEx`, Swerve, and custom
+implementations, omit motor telemetry without interrupting driving.

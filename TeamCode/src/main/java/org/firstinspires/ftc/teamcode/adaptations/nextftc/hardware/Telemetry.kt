@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware
 
+import com.pedropathing.drivetrain.Drivetrain
+import com.pedropathing.ftc.drivetrains.Mecanum
+import dev.nextftc.ftc.ActiveOpMode.hardwareMap
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE as CR_REVERSE
 import com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES
@@ -32,14 +36,20 @@ fun CRServoEx.tel() {
     add(source, VERBOSE, "Reversed", servo.direction == CR_REVERSE)
 }
 
-fun MotorEx.tel() {
+fun Drivetrain.tel() { (this as? Mecanum)?.motors?.tel() }
+
+fun Iterable<DcMotorEx>.tel() = forEach { it.tel(hardwareMap.getNamesOf(it).first()) }
+
+fun MotorEx.tel() = motor.tel(name)
+
+fun DcMotorEx.tel(name: String) {
     val source = name.humanize()
-    add(source, VERBOSE, "Current (A)", "%.1f".format(motor.getCurrent(AMPS)))
-    add(source, DEBUG, "Power", "%.2f".format(power))
-    add(source, DEBUG, "Velocity", "%.1f".format(velocity))
-    add(source, DEBUG, "Position", motor.currentPosition)
-    add(source, VERBOSE, "Velocity (%)", "%.1f".format(velocity / motor.motorType.achieveableMaxTicksPerSecond * 100))
-    add(source, VERBOSE, "RPM", "%.0f".format(velocity / motor.motorType.ticksPerRev * 60))
+    add(source, VERBOSE, "Current (A)", getCurrent(AMPS))
+    add(source, DEBUG, "Power", power)
+    add(source, DEBUG, "Velocity", velocity)
+    add(source, DEBUG, "Position", currentPosition)
+    add(source, VERBOSE, "Velocity (%)", velocity / motorType.achieveableMaxTicksPerSecond * 100)
+    add(source, VERBOSE, "RPM", velocity / motorType.ticksPerRev * 60)
 }
 
 fun IMUEx.tel() {
