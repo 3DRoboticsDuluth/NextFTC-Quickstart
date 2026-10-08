@@ -1,7 +1,8 @@
 # 3DRD NextFTC Quickstart
 
 This repository is 3D Robotics Duluth's requirements-driven FTC robot platform.
-It starts from the official FIRST Tech Challenge Robot Controller v11.2 repository
+It preserves the official FIRST Tech Challenge Robot Controller v11.2 history and
+updates the platform to SDK 12 for BIOBUZZ
 and adds a reusable Kotlin and NextFTC platform for starting a robot season.
 
 ## Documentation

@@ -14,7 +14,8 @@ These are the versions required to reproduce the documented tree:
 
 | Component | Version |
 |---|---:|
-| FTC SDK artifacts | 11.2.1 |
+| FTC SDK artifacts | 12.0.0 |
+| Gradle wrapper | 9.1.0 |
 | Android Gradle Plugin | 8.13.2 |
 | Kotlin Android / reflect | 2.4.10 |
 | Gradle daemon toolchain | Java 17 (vendor-neutral) |
@@ -35,7 +36,7 @@ These are the versions required to reproduce the documented tree:
 | JUnit | 4.13.2 |
 | Mockito | 5.23.0 |
 
-The FTC dependency set also includes version 11.2.1 of Inspection, Blocks,
+The FTC dependency set also includes version 12.0.0 of Inspection, Blocks,
 RobotCore, RobotServer, OnBotJava, Hardware, FtcCommon, and Vision.
 
 ## Artifact Repositories

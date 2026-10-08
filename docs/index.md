@@ -47,7 +47,7 @@ reasoning that does not fit cleanly in a requirement table.
 ## Baseline and Scope
 
 - Upstream: `FIRST-Tech-Challenge/FtcRobotController`
-- FTC release: v11.2
+- FTC release: v12.0 (v11.2 history preserved)
 - Local foundation: `26cd1fdd`
 - Seasonal source: Quickstart `main`
 - Android/Kotlin modules: `FtcRobotController`, `3drdNextFTC`, and `TeamCode`
