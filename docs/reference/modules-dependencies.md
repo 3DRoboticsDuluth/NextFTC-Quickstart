@@ -17,7 +17,7 @@ These are the versions required to reproduce the documented tree:
 | FTC SDK artifacts | 12.0.0 |
 | Gradle wrapper | 9.1.0 |
 | Android Gradle Plugin | 8.13.2 |
-| Kotlin Android / reflect | 2.4.10 |
+| Kotlin Android / reflect | 2.4.20 |
 | Gradle daemon toolchain | Java 17 (vendor-neutral) |
 | Android compile SDK (owned modules) | 34 |
 | Android minimum SDK | 24 |
@@ -34,7 +34,7 @@ These are the versions required to reproduce the documented tree:
 | Dairy Sloth runtime / Load plugin | 0.3.2 |
 | AndroidX AppCompat | 1.2.0 |
 | JUnit | 4.13.2 |
-| Mockito | 5.23.0 |
+| Mockito | 5.24.0 |
 
 The FTC dependency set also includes version 12.0.0 of Inspection, Blocks,
 RobotCore, RobotServer, OnBotJava, Hardware, FtcCommon, and Vision.
