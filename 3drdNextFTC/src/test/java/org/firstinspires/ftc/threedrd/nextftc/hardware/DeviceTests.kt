@@ -10,7 +10,7 @@ class DeviceTests : SubsystemTests() {
     @Test
     fun initializationResolvesAndConfiguresAnArbitraryDevice() {
         var configured = false
-        val device = device(DigitalChannel::class.java, "laser") {
+        val device = Device("laser", DigitalChannel::class.java) {
             mode = INPUT
             configured = true
         }
@@ -25,7 +25,7 @@ class DeviceTests : SubsystemTests() {
 
     @Test
     fun delegatesToTheResolvedDevice() {
-        val device = device(DigitalChannel::class.java, "laser")
+        val device = Device("laser", DigitalChannel::class.java)
         device.initialize()
         val owner = object {
             val laser by device

@@ -22,14 +22,41 @@ val motor = MotorEx("intake") {
     zeroPowerBehavior = FLOAT
 }
 
-val laser by device(DigitalChannel::class.java, "laser2") {
+val laser by Device("laser2", DigitalChannel::class.java) {
     mode = INPUT
 }
 ```
 
+Use constructors with the hardware name first. `Device` accepts an optional
+configuration block; `by` exposes its underlying FTC device through `getValue()`.
+Motor and servo properties retain their enhanced wrappers using `=`.
+
 The wrapper constructor does not require an active hardware map. Actual acquisition
 happens during subsystem hardware initialization, which keeps singleton subsystem
 construction safe in unit tests and before an OpMode is active.
+
+## Breaking change: generic device declarations
+
+The lowercase `device(type, name)` factory has been removed. This is a
+source compatibility break: existing calls and imports will no longer compile.
+Use `Device(name, type)` instead, reversing the argument order so the hardware
+name comes first. Keep `by` and the existing configuration block:
+
+```kotlin
+// Before
+val laser by device(DigitalChannel::class.java, "laser2") { mode = INPUT }
+
+// After
+val laser by Device("laser2", DigitalChannel::class.java) { mode = INPUT }
+```
+
+Replace an explicit import of
+`org.firstinspires.ftc.threedrd.nextftc.hardware.device` with
+`org.firstinspires.ftc.threedrd.nextftc.hardware.Device`. An existing wildcard
+import of that package needs no change. Calls without a configuration block
+also use `Device(name, type)`; its configuration block defaults to empty.
+Hardware names, initialization timing, configuration, and delegated access to
+the underlying device remain unchanged.
 
 ## Update Hook
 

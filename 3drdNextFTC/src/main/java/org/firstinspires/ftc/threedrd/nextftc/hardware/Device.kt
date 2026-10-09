@@ -7,7 +7,7 @@ import kotlin.reflect.*
 class Device<T : HardwareDevice>(
     override val name: String,
     val type: Class<T>,
-    configure: T.() -> Unit,
+    configure: T.() -> Unit = {},
 ) : Hardware {
     private val configure = configure
 
@@ -19,9 +19,3 @@ class Device<T : HardwareDevice>(
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>) = device
 }
-
-fun <T : HardwareDevice> device(
-    type: Class<T>,
-    name: String,
-    configure: T.() -> Unit = {},
-) = Device(name, type, configure)
