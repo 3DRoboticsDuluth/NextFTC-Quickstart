@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.threedrd.nextftc.opmodes
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import dev.nextftc.ftc.ActiveOpMode
+import com.qualcomm.robotcore.eventloop.opmode.*
+import dev.nextftc.ftc.*
 
 val ActiveOpMode.isAutonomous: Boolean
     get() = it!!.javaClass.isAnnotationPresent(Autonomous::class.java)

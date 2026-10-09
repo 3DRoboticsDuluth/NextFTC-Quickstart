@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems
 
-import dalvik.system.DexFile
-import java.lang.reflect.Modifier
+import dalvik.system.*
+import java.lang.reflect.*
 
 object SubsystemDiscovery {
     fun discover(

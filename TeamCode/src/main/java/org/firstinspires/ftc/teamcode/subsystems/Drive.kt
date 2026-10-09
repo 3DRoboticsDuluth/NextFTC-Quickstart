@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
-import com.bylazar.configurables.annotations.Configurable
-import org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware.tel
+import com.bylazar.configurables.annotations.*
+import org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware.*
 import dev.nextftc.extensions.pedro.PedroComponent.Companion.follower
 import dev.nextftc.ftc.Gamepads.gamepad1
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.DriveSubsystem
-import org.firstinspires.ftc.threedrd.pedropathing.PedroDriverControlled
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
+import org.firstinspires.ftc.threedrd.pedropathing.*
 import org.firstinspires.ftc.teamcode.subsystems.Config.state
 
 @Configurable

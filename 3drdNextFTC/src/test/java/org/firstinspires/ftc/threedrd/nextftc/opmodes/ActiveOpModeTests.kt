@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.threedrd.nextftc.opmodes
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import dev.nextftc.ftc.ActiveOpMode
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import com.qualcomm.robotcore.eventloop.opmode.*
+import dev.nextftc.ftc.*
+import org.junit.Assert.*
+import org.junit.*
 
 class ActiveOpModeTests {
     @Autonomous

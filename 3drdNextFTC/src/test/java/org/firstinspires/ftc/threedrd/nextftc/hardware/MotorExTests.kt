@@ -1,15 +1,10 @@
 package org.firstinspires.ftc.threedrd.nextftc.hardware
 
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
-import org.firstinspires.ftc.threedrd.testing.SubsystemTests
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
-import org.junit.Assert.assertEquals
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.*
+import org.firstinspires.ftc.threedrd.testing.*
+import org.junit.Assert.*
+import org.junit.*
+import org.mockito.Mockito.*
 
 class MotorExTests : SubsystemTests() {
     @Test

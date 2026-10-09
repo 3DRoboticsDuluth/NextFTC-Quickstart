@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.threedrd.nextftc.logging
 
-import com.bylazar.configurables.annotations.Configurable
-import com.bylazar.configurables.annotations.IgnoreConfigurable
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.util.RobotLog
-import dev.nextftc.ftc.ActiveOpMode
-import org.firstinspires.ftc.robotcore.external.Telemetry
+import com.bylazar.configurables.annotations.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import com.qualcomm.robotcore.util.*
+import dev.nextftc.ftc.*
+import org.firstinspires.ftc.robotcore.external.*
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.ASSERT
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.DEBUG
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.ERROR
@@ -13,16 +12,10 @@ import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.INFO
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.OFF
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.VERBOSE
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.WARN
-import org.firstinspires.ftc.threedrd.nextftc.config.Diagnostics
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.mockStatic
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
+import org.firstinspires.ftc.threedrd.nextftc.config.*
+import org.junit.Assert.*
+import org.junit.*
+import org.mockito.Mockito.*
 
 class LoggingTests {
     private lateinit var telemetryLog: Telemetry.Log

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.threedrd.pedropathing
 
 import dev.nextftc.extensions.pedro.PedroComponent.Companion.follower
-import dev.nextftc.hardware.driving.DriverControlledCommand
-import java.util.function.Supplier
+import dev.nextftc.hardware.driving.*
+import java.util.function.*
 
 class PedroDriverControlled(
     drivePower: Supplier<Double>,

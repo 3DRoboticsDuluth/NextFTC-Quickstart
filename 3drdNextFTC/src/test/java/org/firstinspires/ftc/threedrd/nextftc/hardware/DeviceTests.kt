@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.threedrd.nextftc.hardware
 
-import com.qualcomm.robotcore.hardware.DigitalChannel
+import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.hardware.DigitalChannel.Mode.INPUT
-import org.firstinspires.ftc.threedrd.testing.SubsystemTests
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.firstinspires.ftc.threedrd.testing.*
+import org.junit.Assert.*
+import org.junit.*
 
 class DeviceTests : SubsystemTests() {
     @Test

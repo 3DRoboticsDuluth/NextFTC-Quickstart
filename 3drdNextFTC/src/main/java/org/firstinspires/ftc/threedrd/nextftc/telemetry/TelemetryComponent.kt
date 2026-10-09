@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.threedrd.nextftc.telemetry
 
-import dev.nextftc.core.components.Component
+import dev.nextftc.core.components.*
 
 object TelemetryComponent : Component {
     override fun preInit() = Telemetry.initialize()

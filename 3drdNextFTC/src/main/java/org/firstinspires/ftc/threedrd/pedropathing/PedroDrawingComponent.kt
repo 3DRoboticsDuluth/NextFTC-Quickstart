@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.threedrd.pedropathing
 
-import com.bylazar.field.FieldManager
-import com.bylazar.field.PanelsField
-import com.bylazar.field.Style
-import com.pedropathing.follower.Follower
-import com.pedropathing.geometry.Pose
-import com.pedropathing.paths.Path
-import com.pedropathing.util.PoseHistory
-import dev.nextftc.core.components.Component
+import com.bylazar.field.*
+import com.pedropathing.follower.*
+import com.pedropathing.geometry.*
+import com.pedropathing.paths.*
+import com.pedropathing.util.*
+import dev.nextftc.core.components.*
 import dev.nextftc.extensions.pedro.PedroComponent.Companion.follower
 
 class PedroDrawingComponent(

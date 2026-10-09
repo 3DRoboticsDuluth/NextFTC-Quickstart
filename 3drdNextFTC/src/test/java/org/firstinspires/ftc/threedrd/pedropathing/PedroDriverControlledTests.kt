@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.threedrd.pedropathing
 
-import com.pedropathing.follower.Follower
-import dev.nextftc.extensions.pedro.PedroComponent
-import java.util.function.Supplier
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Test
-import org.firstinspires.ftc.threedrd.testing.SubsystemTests
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
-import org.mockito.Mockito.verify
+import com.pedropathing.follower.*
+import dev.nextftc.extensions.pedro.*
+import java.util.function.*
+import org.junit.*
+import org.junit.Assert.*
+import org.firstinspires.ftc.threedrd.testing.*
+import org.mockito.Mockito.*
 
 class PedroDriverControlledTests : SubsystemTests() {
     val follower = mock(Follower::class.java)

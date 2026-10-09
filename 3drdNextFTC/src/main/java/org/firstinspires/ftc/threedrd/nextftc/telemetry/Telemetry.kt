@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.threedrd.nextftc.telemetry
 
-import com.bylazar.configurables.annotations.Configurable
-import com.bylazar.configurables.annotations.IgnoreConfigurable
-import com.bylazar.telemetry.JoinedTelemetry
-import com.bylazar.telemetry.PanelsTelemetry
-import dev.nextftc.ftc.ActiveOpMode
+import com.bylazar.configurables.annotations.*
+import com.bylazar.telemetry.*
+import dev.nextftc.ftc.*
 import org.firstinspires.ftc.robotcore.external.Telemetry as FtcTelemetry
 import org.firstinspires.ftc.robotcore.external.Telemetry.DisplayFormat.HTML
-import org.firstinspires.ftc.threedrd.nextftc.config.Diagnostics
-import org.firstinspires.ftc.threedrd.nextftc.config.toTelLevel
-import org.firstinspires.ftc.threedrd.nextftc.logging.Logging
+import org.firstinspires.ftc.threedrd.nextftc.config.*
+import org.firstinspires.ftc.threedrd.nextftc.logging.*
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.OFF
 
 @Configurable

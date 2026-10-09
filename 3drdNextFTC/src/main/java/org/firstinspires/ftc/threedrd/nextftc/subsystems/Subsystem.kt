@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems
 
-import java.lang.Runnable
-import dev.nextftc.core.commands.Command
-import org.firstinspires.ftc.threedrd.nextftc.commands.DeferredCommand
-import org.firstinspires.ftc.threedrd.nextftc.commands.DeferredCommandFactory1
-import org.firstinspires.ftc.threedrd.nextftc.commands.DeferredCommandFactory3
-import org.firstinspires.ftc.threedrd.nextftc.commands.DefaultedDeferredCommandFactory3
-import org.firstinspires.ftc.threedrd.nextftc.commands.InstantCommand
-import org.firstinspires.ftc.threedrd.nextftc.hardware.Hardware
-import org.firstinspires.ftc.threedrd.nextftc.logging.Logger
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.Tel
+import java.lang.*
+import dev.nextftc.core.commands.*
+import org.firstinspires.ftc.threedrd.nextftc.commands.*
+import org.firstinspires.ftc.threedrd.nextftc.hardware.*
+import org.firstinspires.ftc.threedrd.nextftc.logging.*
+import org.firstinspires.ftc.threedrd.nextftc.telemetry.*
 
 abstract class Subsystem : dev.nextftc.core.subsystems.Subsystem {
     open val order = 0

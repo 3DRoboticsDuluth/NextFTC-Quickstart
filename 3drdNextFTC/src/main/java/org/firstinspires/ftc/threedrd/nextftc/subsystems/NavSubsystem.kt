@@ -1,15 +1,10 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems
 
-import com.pedropathing.geometry.BezierLine
-import com.pedropathing.geometry.Pose
-import com.pedropathing.paths.Path
-import dev.nextftc.core.units.Angle
-import dev.nextftc.core.units.Distance
-import dev.nextftc.core.units.inches
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
-import org.firstinspires.ftc.threedrd.pedropathing.normalizeHeading
+import com.pedropathing.geometry.*
+import com.pedropathing.paths.*
+import dev.nextftc.core.units.*
+import kotlin.math.*
+import org.firstinspires.ftc.threedrd.pedropathing.*
 
 abstract class NavSubsystem(
     val robotLength: Distance,

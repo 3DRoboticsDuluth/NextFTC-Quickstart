@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.threedrd.ftc
 
-import java.io.File
+import java.io.*
 
 open class Storage(val file: File) {
     constructor(fileName: String) : this(File("/sdcard/FIRST/settings", fileName))

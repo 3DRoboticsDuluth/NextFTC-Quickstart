@@ -1,23 +1,17 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems
 
-import org.firstinspires.ftc.threedrd.nextftc.hardware.Hardware
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.util.RobotLog
-import dev.nextftc.ftc.ActiveOpMode
+import org.firstinspires.ftc.threedrd.nextftc.hardware.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import com.qualcomm.robotcore.util.*
+import dev.nextftc.ftc.*
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.OFF
-import org.firstinspires.ftc.threedrd.nextftc.logging.Logging
+import org.firstinspires.ftc.threedrd.nextftc.logging.*
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.INFO
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
-import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.mockStatic
-import org.mockito.Mockito.never
-import org.mockito.Mockito.verify
+import org.firstinspires.ftc.robotcore.external.*
+import org.junit.Assert.*
+import org.junit.*
+import org.mockito.Mockito.*
 
 class SubsystemAdapterTests {
     private object TestSubsystem : Subsystem()

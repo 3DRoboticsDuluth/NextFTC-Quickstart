@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.threedrd.nextftc.commands
 
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.Subsystem
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
+import org.junit.Assert.*
+import org.junit.*
 
 class InstantCommandTests {
     private object TestSubsystem : Subsystem()

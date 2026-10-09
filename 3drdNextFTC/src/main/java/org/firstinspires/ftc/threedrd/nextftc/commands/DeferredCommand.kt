@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.threedrd.nextftc.commands
 
-import dev.nextftc.core.commands.Command
-import kotlin.reflect.KProperty
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.Subsystem
+import dev.nextftc.core.commands.*
+import kotlin.reflect.*
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
 
 class DeferredCommand(
     vararg requirements: Any,

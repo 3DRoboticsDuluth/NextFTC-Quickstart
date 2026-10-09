@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.threedrd.nextftc.config
 
-import java.lang.reflect.Field
-import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
+import java.lang.reflect.*
+import kotlin.reflect.*
+import kotlin.reflect.full.*
 
 fun Any.settings() = settings(javaClass.declaredFields.asIterable())
 

@@ -2,9 +2,8 @@ package org.firstinspires.ftc.threedrd.nextftc.config
 
 import org.firstinspires.ftc.threedrd.nextftc.config.Diagnostics.Level.INFO
 import org.firstinspires.ftc.threedrd.nextftc.config.Diagnostics.Level.OFF
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Test
+import org.junit.Assert.*
+import org.junit.*
 
 class DiagnosticsTests {
     open class Base(var filter: String = "Gate")

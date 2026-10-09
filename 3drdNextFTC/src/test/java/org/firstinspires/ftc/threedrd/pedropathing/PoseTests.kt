@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.threedrd.pedropathing
 
-import com.pedropathing.geometry.Pose
-import dev.nextftc.core.units.inches
-import kotlin.math.PI
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import com.pedropathing.geometry.*
+import dev.nextftc.core.units.*
+import kotlin.math.*
+import org.junit.Assert.*
+import org.junit.*
 
 class PoseTests {
     @Test

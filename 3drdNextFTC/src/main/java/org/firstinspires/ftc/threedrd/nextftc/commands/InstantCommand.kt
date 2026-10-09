@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.threedrd.nextftc.commands
 
 import dev.nextftc.core.commands.utility.InstantCommand as NextInstantCommand
-import java.lang.Runnable
-import kotlin.reflect.KProperty
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.Subsystem
+import java.lang.*
+import kotlin.reflect.*
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.DEBUG
-import org.firstinspires.ftc.threedrd.nextftc.logging.Logging
+import org.firstinspires.ftc.threedrd.nextftc.logging.*
 
 class InstantCommand(
     val owner: Subsystem,

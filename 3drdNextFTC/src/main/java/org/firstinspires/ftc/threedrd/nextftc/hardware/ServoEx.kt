@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.threedrd.nextftc.hardware
 
-import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.hardware.*
 import dev.nextftc.ftc.ActiveOpMode.hardwareMap
 import dev.nextftc.hardware.impl.ServoEx as NextServoEx
 

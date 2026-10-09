@@ -4,32 +4,20 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD as CR_FOR
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE as CR_REVERSE
 import com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD
 import com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType
-import dev.nextftc.ftc.ActiveOpMode
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.*
+import dev.nextftc.ftc.*
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles
-import org.firstinspires.ftc.teamcode.subsystems.SubsystemTests
-import org.firstinspires.ftc.threedrd.nextftc.hardware.CRServoEx
-import org.firstinspires.ftc.threedrd.nextftc.hardware.IMUEx
-import org.firstinspires.ftc.threedrd.nextftc.hardware.MotorEx
-import org.firstinspires.ftc.threedrd.nextftc.hardware.ServoEx
-import org.firstinspires.ftc.threedrd.nextftc.hardware.update
+import org.firstinspires.ftc.robotcore.external.navigation.*
+import org.firstinspires.ftc.teamcode.subsystems.*
+import org.firstinspires.ftc.threedrd.nextftc.hardware.*
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.INFO
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.Mockito.clearInvocations
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
+import org.junit.Assert.*
+import org.junit.*
+import org.mockito.ArgumentMatchers.*
+import org.mockito.Mockito.*
 
 class TelemetryTests : SubsystemTests() {
     @Before

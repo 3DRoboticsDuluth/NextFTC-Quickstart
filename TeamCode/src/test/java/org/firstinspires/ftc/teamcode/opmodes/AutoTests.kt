@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes
 
-import dev.nextftc.core.commands.CommandManager
+import dev.nextftc.core.commands.*
 import org.firstinspires.ftc.teamcode.subsystems.Auto.execute
-import org.junit.After
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.*
+import org.junit.Assert.*
 
 class AutoTests {
     @After

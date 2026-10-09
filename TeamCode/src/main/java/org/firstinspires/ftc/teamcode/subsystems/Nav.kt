@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
-import dev.nextftc.core.units.deg
-import dev.nextftc.core.units.inches
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.NavSubsystem
+import dev.nextftc.core.units.*
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants.robotLength
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants.robotWidth
 

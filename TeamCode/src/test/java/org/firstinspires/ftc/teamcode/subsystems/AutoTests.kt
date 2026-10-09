@@ -1,20 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
-import com.pedropathing.follower.Follower
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import dev.nextftc.extensions.pedro.PedroComponent
-import dev.nextftc.ftc.ActiveOpMode
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mockito.clearInvocations
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.verifyNoInteractions
+import com.pedropathing.follower.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import dev.nextftc.extensions.pedro.*
+import dev.nextftc.ftc.*
+import org.junit.*
+import org.junit.Assert.*
+import org.mockito.Mockito.*
 
 class AutoTests : SubsystemTests() {
     lateinit var follower: Follower

@@ -1,24 +1,18 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import dev.nextftc.ftc.ActiveOpMode
-import org.firstinspires.ftc.threedrd.nextftc.config.Setting
-import org.firstinspires.ftc.threedrd.nextftc.config.SettingItem
-import org.firstinspires.ftc.threedrd.nextftc.config.ConfigComponent
+import com.qualcomm.robotcore.eventloop.opmode.*
+import dev.nextftc.ftc.*
+import org.firstinspires.ftc.threedrd.nextftc.config.*
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.OFF as LOG_OFF
-import org.firstinspires.ftc.threedrd.nextftc.logging.Logging
+import org.firstinspires.ftc.threedrd.nextftc.logging.*
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.OFF as TEL_OFF
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry
+import org.firstinspires.ftc.threedrd.nextftc.telemetry.*
 import org.firstinspires.ftc.threedrd.nextftc.subsystems.ConfigSubsystem.Change.NEXT
 import org.firstinspires.ftc.threedrd.nextftc.subsystems.ConfigSubsystem.Change.PREV
-import org.firstinspires.ftc.threedrd.testing.SubsystemTests
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mockito.clearInvocations
-import org.mockito.Mockito.verify
+import org.firstinspires.ftc.threedrd.testing.*
+import org.junit.Assert.*
+import org.junit.*
+import org.mockito.Mockito.*
 
 class ConfigSubsystemTests : SubsystemTests() {
     private object FlatConfig : ConfigSubsystem() {

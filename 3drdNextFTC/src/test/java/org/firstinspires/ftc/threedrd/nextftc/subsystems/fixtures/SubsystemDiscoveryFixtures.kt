@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures
 
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.Subsystem
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
 
 object DiscoveredSubsystem : Subsystem()
 abstract class AbstractSubsystem : Subsystem()

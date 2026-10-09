@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.threedrd.nextftc.config
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
-import org.junit.Test
+import org.junit.Assert.*
+import org.junit.*
 
 class PanelsConfigTests {
     class CurrentApi {

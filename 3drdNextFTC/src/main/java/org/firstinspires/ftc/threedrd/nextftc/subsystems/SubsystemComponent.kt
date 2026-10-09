@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems
 
-import dev.nextftc.core.commands.CommandManager
-import dev.nextftc.core.commands.utility.NullCommand
-import dev.nextftc.core.components.Component
-import dev.nextftc.ftc.ActiveOpMode
+import dev.nextftc.core.commands.*
+import dev.nextftc.core.commands.utility.*
+import dev.nextftc.core.components.*
+import dev.nextftc.ftc.*
 import dev.nextftc.ftc.ActiveOpMode.hardwareMap
 import dev.nextftc.core.subsystems.Subsystem as NextSubsystem
-import org.firstinspires.ftc.threedrd.nextftc.opmodes.isTeleop
+import org.firstinspires.ftc.threedrd.nextftc.opmodes.*
 
 class SubsystemComponent private constructor(
     subsystems: Set<NextSubsystem>,

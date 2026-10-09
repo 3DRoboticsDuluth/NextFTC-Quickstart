@@ -1,15 +1,9 @@
 package org.firstinspires.ftc.threedrd.nextftc.logging
 
-import com.bylazar.configurables.annotations.Configurable
-import com.bylazar.configurables.annotations.IgnoreConfigurable
-import dev.nextftc.core.commands.CommandManager
-import dev.nextftc.ftc.ActiveOpMode
-import com.qualcomm.robotcore.util.RobotLog.aa
-import com.qualcomm.robotcore.util.RobotLog.dd
-import com.qualcomm.robotcore.util.RobotLog.ee
-import com.qualcomm.robotcore.util.RobotLog.ii
-import com.qualcomm.robotcore.util.RobotLog.vv
-import com.qualcomm.robotcore.util.RobotLog.ww
+import com.bylazar.configurables.annotations.*
+import dev.nextftc.core.commands.*
+import dev.nextftc.ftc.*
+import com.qualcomm.robotcore.util.RobotLog.*
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.ASSERT
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.DEBUG
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.ERROR
@@ -17,8 +11,7 @@ import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.INFO
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.OFF
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.VERBOSE
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.WARN
-import org.firstinspires.ftc.threedrd.nextftc.config.Diagnostics
-import org.firstinspires.ftc.threedrd.nextftc.config.toLogLevel
+import org.firstinspires.ftc.threedrd.nextftc.config.*
 
 @Configurable
 object Logging {

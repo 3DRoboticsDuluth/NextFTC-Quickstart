@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.threedrd.nextftc.telemetry
 
-import com.bylazar.configurables.annotations.Configurable
-import com.bylazar.configurables.annotations.IgnoreConfigurable
-import dev.nextftc.ftc.ActiveOpMode
+import com.bylazar.configurables.annotations.*
+import dev.nextftc.ftc.*
 import org.firstinspires.ftc.robotcore.external.Telemetry as FtcTelemetry
-import org.firstinspires.ftc.threedrd.nextftc.logging.Logging
-import org.firstinspires.ftc.threedrd.nextftc.config.Diagnostics
+import org.firstinspires.ftc.threedrd.nextftc.logging.*
+import org.firstinspires.ftc.threedrd.nextftc.config.*
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.ASSERT
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.ERROR
@@ -13,16 +12,9 @@ import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.INFO
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.OFF
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.WARN
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mockito.clearInvocations
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
+import org.junit.Assert.*
+import org.junit.*
+import org.mockito.Mockito.*
 
 class TelemetryTests {
     private lateinit var output: FtcTelemetry

@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.threedrd.nextftc.config
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertThrows
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.Assert.*
+import org.junit.*
 
 class SettingsTests {
     object Options {

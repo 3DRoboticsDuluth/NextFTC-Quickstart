@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.threedrd.nextftc.config
 
-import com.bylazar.configurables.PanelsConfigurables
-import dev.nextftc.core.components.Component
-import org.firstinspires.ftc.threedrd.ftc.Persistence
+import com.bylazar.configurables.*
+import dev.nextftc.core.components.*
+import org.firstinspires.ftc.threedrd.ftc.*
 
 class ConfigComponent<T : Any>(
     val config: T,

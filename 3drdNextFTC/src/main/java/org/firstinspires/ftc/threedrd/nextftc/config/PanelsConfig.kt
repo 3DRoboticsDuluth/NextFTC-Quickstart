@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.threedrd.nextftc.config
 
-import java.lang.reflect.Modifier
+import java.lang.reflect.*
 
 internal object PanelsConfig {
     fun refresher(api: Class<*>): (Any) -> Unit {

@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.threedrd.nextftc.hardware
 
-import org.firstinspires.ftc.threedrd.testing.SubsystemTests
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.firstinspires.ftc.threedrd.testing.*
+import org.junit.Assert.*
+import org.junit.*
 
 class CRServoExTests : SubsystemTests() {
     @Test

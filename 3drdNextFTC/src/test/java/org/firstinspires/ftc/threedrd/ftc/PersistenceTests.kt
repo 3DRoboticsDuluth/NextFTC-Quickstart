@@ -1,18 +1,9 @@
 package org.firstinspires.ftc.threedrd.ftc
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Test
-import org.mockito.ArgumentMatchers.anyString
-import org.mockito.Mockito.doNothing
-import org.mockito.Mockito.doThrow
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
+import org.junit.Assert.*
+import org.junit.*
+import org.mockito.ArgumentMatchers.*
+import org.mockito.Mockito.*
 
 class PersistenceTests {
     class Settings {

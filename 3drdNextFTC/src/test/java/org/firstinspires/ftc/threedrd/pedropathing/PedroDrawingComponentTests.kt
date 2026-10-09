@@ -1,23 +1,15 @@
 package org.firstinspires.ftc.threedrd.pedropathing
 
-import com.bylazar.field.Circle
-import com.bylazar.field.FieldManager
-import com.bylazar.field.Line
-import com.bylazar.field.PanelsField
-import com.bylazar.field.Style
-import com.pedropathing.follower.Follower
-import com.pedropathing.geometry.Pose
-import com.pedropathing.paths.Path
-import com.pedropathing.util.PoseHistory
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
-import dev.nextftc.extensions.pedro.PedroComponent
-import org.firstinspires.ftc.threedrd.testing.SubsystemTests
+import com.bylazar.field.*
+import com.pedropathing.follower.*
+import com.pedropathing.geometry.*
+import com.pedropathing.paths.*
+import com.pedropathing.util.*
+import org.junit.Assert.*
+import org.junit.*
+import org.mockito.Mockito.*
+import dev.nextftc.extensions.pedro.*
+import org.firstinspires.ftc.threedrd.testing.*
 
 class PedroDrawingComponentTests : SubsystemTests() {
     lateinit var field: FieldManager

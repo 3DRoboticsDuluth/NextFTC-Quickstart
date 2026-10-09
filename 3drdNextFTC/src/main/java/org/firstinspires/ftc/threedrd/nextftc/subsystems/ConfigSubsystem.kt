@@ -1,18 +1,14 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems
 
-import dev.nextftc.ftc.ActiveOpMode
+import dev.nextftc.ftc.*
 import dev.nextftc.ftc.Gamepads.gamepad1
 import dev.nextftc.ftc.Gamepads.gamepad2
-import org.firstinspires.ftc.threedrd.nextftc.config.ConfigComponent
-import org.firstinspires.ftc.threedrd.nextftc.config.Diagnostics
-import org.firstinspires.ftc.threedrd.nextftc.config.SettingItem
-import org.firstinspires.ftc.threedrd.nextftc.config.settings
-import org.firstinspires.ftc.threedrd.nextftc.logging.Logging
-import org.firstinspires.ftc.threedrd.nextftc.opmodes.isAutonomous
-import org.firstinspires.ftc.threedrd.nextftc.opmodes.isTeleop
+import org.firstinspires.ftc.threedrd.nextftc.config.*
+import org.firstinspires.ftc.threedrd.nextftc.logging.*
+import org.firstinspires.ftc.threedrd.nextftc.opmodes.*
 import org.firstinspires.ftc.threedrd.nextftc.subsystems.ConfigSubsystem.Change.NEXT
 import org.firstinspires.ftc.threedrd.nextftc.subsystems.ConfigSubsystem.Change.PREV
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry
+import org.firstinspires.ftc.threedrd.nextftc.telemetry.*
 
 abstract class ConfigSubsystem : Subsystem() {
     open val config: Any get() = this

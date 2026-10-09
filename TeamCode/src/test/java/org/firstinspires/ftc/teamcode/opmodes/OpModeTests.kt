@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes
 
-import dev.nextftc.extensions.pedro.PedroComponent
-import org.firstinspires.ftc.threedrd.nextftc.bindings.BindingsComponent
-import org.firstinspires.ftc.threedrd.nextftc.config.ConfigComponent
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryComponent
-import org.firstinspires.ftc.threedrd.pedropathing.PedroDrawingComponent
-import org.firstinspires.ftc.teamcode.subsystems.Config
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import dev.nextftc.extensions.pedro.*
+import org.firstinspires.ftc.threedrd.nextftc.bindings.*
+import org.firstinspires.ftc.threedrd.nextftc.config.*
+import org.firstinspires.ftc.threedrd.nextftc.telemetry.*
+import org.firstinspires.ftc.threedrd.pedropathing.*
+import org.firstinspires.ftc.teamcode.subsystems.*
+import org.junit.Assert.*
+import org.junit.*
 
 class OpModeTests {
     @Test

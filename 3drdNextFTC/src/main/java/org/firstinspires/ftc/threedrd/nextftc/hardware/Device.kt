@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.threedrd.nextftc.hardware
 
-import com.qualcomm.robotcore.hardware.HardwareDevice
+import com.qualcomm.robotcore.hardware.*
 import dev.nextftc.ftc.ActiveOpMode.hardwareMap
-import kotlin.reflect.KProperty
+import kotlin.reflect.*
 
 class Device<T : HardwareDevice>(
     override val name: String,

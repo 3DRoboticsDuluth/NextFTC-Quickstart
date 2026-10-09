@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.threedrd.nextftc.config
 
-import kotlin.reflect.KClass
+import kotlin.reflect.*
 
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)

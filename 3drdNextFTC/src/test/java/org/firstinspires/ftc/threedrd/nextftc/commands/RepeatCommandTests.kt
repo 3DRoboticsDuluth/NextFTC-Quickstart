@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.threedrd.nextftc.commands
 
-import dev.nextftc.core.commands.Command
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertThrows
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import dev.nextftc.core.commands.*
+import org.junit.Assert.*
+import org.junit.*
 
 class RepeatCommandTests {
     class CountingCommand : Command() {

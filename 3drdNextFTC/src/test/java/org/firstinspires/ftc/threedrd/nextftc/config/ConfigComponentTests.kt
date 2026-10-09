@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.threedrd.nextftc.config
 
-import org.firstinspires.ftc.threedrd.ftc.Persistence
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
-import org.junit.After
-import org.junit.Test
+import org.firstinspires.ftc.threedrd.ftc.*
+import org.junit.Assert.*
+import org.junit.*
 
 class ConfigComponentTests {
     class TestConfig {

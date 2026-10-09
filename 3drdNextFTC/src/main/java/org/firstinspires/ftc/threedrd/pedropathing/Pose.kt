@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.threedrd.pedropathing
 
-import com.pedropathing.geometry.Pose
-import dev.nextftc.core.units.Distance
-import kotlin.math.PI
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
+import com.pedropathing.geometry.*
+import dev.nextftc.core.units.*
+import kotlin.math.*
 
 fun Pose.axial(distance: Double) = Pose(
     x + cos(heading) * distance,

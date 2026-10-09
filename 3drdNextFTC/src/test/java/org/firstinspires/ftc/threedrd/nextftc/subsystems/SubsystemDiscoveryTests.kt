@@ -1,19 +1,11 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems
 
-import dalvik.system.DexFile
-import java.util.Collections
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.AbstractSubsystem
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.ConstructedSubsystem
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.DiscoveredSubsystem
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.InvalidInstanceSubsystem
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.NestedSubsystem
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.NotASubsystem
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
-import org.junit.Test
-import org.mockito.Mockito.mockConstruction
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
+import dalvik.system.*
+import java.util.*
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.*
+import org.junit.Assert.*
+import org.junit.*
+import org.mockito.Mockito.*
 
 class SubsystemDiscoveryTests {
     @Test

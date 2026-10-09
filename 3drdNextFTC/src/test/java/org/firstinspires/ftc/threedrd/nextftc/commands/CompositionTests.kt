@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.threedrd.nextftc.commands
 
-import dev.nextftc.core.commands.utility.NullCommand
-import org.junit.Assert.assertArrayEquals
-import org.junit.Test
+import dev.nextftc.core.commands.utility.*
+import org.junit.Assert.*
+import org.junit.*
 
 class CompositionTests {
     @Test

@@ -1,37 +1,23 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems
 
-import android.content.Context
-import android.content.pm.ApplicationInfo
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.HardwareMap
-import dalvik.system.DexFile
-import dev.nextftc.core.commands.Command
-import dev.nextftc.core.commands.CommandManager
-import dev.nextftc.ftc.ActiveOpMode
+import android.content.*
+import android.content.pm.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import com.qualcomm.robotcore.hardware.*
+import dalvik.system.*
+import dev.nextftc.core.commands.*
+import dev.nextftc.ftc.*
 import dev.nextftc.core.subsystems.Subsystem as NextSubsystem
-import java.util.Collections
-import org.firstinspires.ftc.threedrd.nextftc.hardware.Hardware
-import org.firstinspires.ftc.threedrd.nextftc.logging.Logging
+import java.util.*
+import org.firstinspires.ftc.threedrd.nextftc.hardware.*
+import org.firstinspires.ftc.threedrd.nextftc.logging.*
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.ERROR
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.DiscoveredSubsystem
-import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertSame
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.mockConstruction
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.fixtures.*
+import org.firstinspires.ftc.robotcore.external.*
+import org.junit.*
+import org.junit.Assert.*
+import org.mockito.Mockito.*
 
 class SubsystemComponentTests {
     @TeleOp

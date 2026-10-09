@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.threedrd.nextftc.config
 
-import java.lang.reflect.Field
+import java.lang.reflect.*
 import org.firstinspires.ftc.threedrd.nextftc.config.Diagnostics.Level.OFF
-import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel
+import org.firstinspires.ftc.threedrd.nextftc.logging.*
+import org.firstinspires.ftc.threedrd.nextftc.telemetry.*
 
 class Diagnostics(val config: Any? = null) {
     enum class Level {

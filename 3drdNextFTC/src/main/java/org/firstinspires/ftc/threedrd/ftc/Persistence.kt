@@ -1,13 +1,8 @@
 package org.firstinspires.ftc.threedrd.ftc
 
-import com.google.gson.GsonBuilder
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
-import com.google.gson.InstanceCreator
-import com.qualcomm.robotcore.util.RobotLog.ii
-import com.qualcomm.robotcore.util.RobotLog.ww
-import java.lang.reflect.Modifier.FINAL
-import java.lang.reflect.Modifier.TRANSIENT
+import com.google.gson.*
+import com.qualcomm.robotcore.util.RobotLog.*
+import java.lang.reflect.Modifier.*
 
 open class Persistence<T : Any>(
     val fileName: String,

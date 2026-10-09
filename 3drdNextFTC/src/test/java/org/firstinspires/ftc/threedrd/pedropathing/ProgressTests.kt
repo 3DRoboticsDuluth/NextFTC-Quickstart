@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.threedrd.pedropathing
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.Assert.*
+import org.junit.*
 
 class ProgressTests {
     @Test

@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.threedrd.ftc
 
-import java.io.File
-import java.nio.file.Files
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Test
+import java.io.*
+import java.nio.file.*
+import org.junit.Assert.*
+import org.junit.*
 
 class StorageTests {
     @Test

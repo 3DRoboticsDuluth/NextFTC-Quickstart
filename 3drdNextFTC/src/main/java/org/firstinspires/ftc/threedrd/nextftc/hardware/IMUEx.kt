@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.threedrd.nextftc.hardware
 
-import com.qualcomm.robotcore.hardware.IMU
-import dev.nextftc.core.units.Angle
+import com.qualcomm.robotcore.hardware.*
+import dev.nextftc.core.units.*
 import dev.nextftc.ftc.ActiveOpMode.hardwareMap
 import dev.nextftc.hardware.impl.IMUEx as NextIMUEx
-import java.util.function.Supplier
+import java.util.function.*
 
 class IMUEx private constructor(
     override val name: String,

@@ -1,15 +1,10 @@
 package org.firstinspires.ftc.threedrd.nextftc.commands
 
-import dev.nextftc.core.commands.CommandManager
-import dev.nextftc.core.commands.utility.LambdaCommand
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.Subsystem
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotSame
-import org.junit.Assert.assertThrows
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import dev.nextftc.core.commands.*
+import dev.nextftc.core.commands.utility.*
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
+import org.junit.*
+import org.junit.Assert.*
 
 class DeferredCommandTests {
     private object TestSubsystem : Subsystem() {

@@ -1,28 +1,20 @@
 package org.firstinspires.ftc.threedrd.nextftc.telemetry
 
-import com.bylazar.telemetry.PanelsTelemetry
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.util.RobotLog
-import dev.nextftc.core.commands.CommandManager
-import dev.nextftc.core.commands.utility.LambdaCommand
-import dev.nextftc.ftc.ActiveOpMode
-import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.firstinspires.ftc.threedrd.nextftc.logging.Logging
+import com.bylazar.telemetry.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import com.qualcomm.robotcore.util.*
+import dev.nextftc.core.commands.*
+import dev.nextftc.core.commands.utility.*
+import dev.nextftc.ftc.*
+import org.firstinspires.ftc.robotcore.external.*
+import org.firstinspires.ftc.threedrd.nextftc.logging.*
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.DEBUG
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.INFO
 import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.VERBOSE
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.mockito.MockedStatic
-import org.mockito.Mockito.clearInvocations
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.mockStatic
-import org.mockito.Mockito.never
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
+import org.junit.*
+import org.mockito.*
+import org.mockito.Mockito.*
 
 class TelemetryComponentTests {
     private lateinit var telemetry: Telemetry

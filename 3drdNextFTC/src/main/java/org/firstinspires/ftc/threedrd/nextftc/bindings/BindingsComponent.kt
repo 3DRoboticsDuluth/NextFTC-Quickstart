@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.threedrd.nextftc.bindings
 
-import dev.nextftc.bindings.BindingManager
-import dev.nextftc.core.components.Component
+import dev.nextftc.bindings.*
+import dev.nextftc.core.components.*
 
 object BindingsComponent : Component {
     override fun preInit() = BindingManager.reset()

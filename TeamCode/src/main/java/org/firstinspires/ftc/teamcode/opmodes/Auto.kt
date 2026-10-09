@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.*
 import org.firstinspires.ftc.teamcode.subsystems.Auto.execute
 
 @Autonomous

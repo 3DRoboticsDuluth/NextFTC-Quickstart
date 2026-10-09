@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.threedrd.pedropathing
 
-import com.pedropathing.follower.Follower
-import com.pedropathing.geometry.Pose
-import org.junit.Test
-import org.mockito.Mockito.inOrder
-import org.mockito.Mockito.mock
+import com.pedropathing.follower.*
+import com.pedropathing.geometry.*
+import org.junit.*
+import org.mockito.Mockito.*
 
 class FollowerTests {
     @Test

@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.threedrd.nextftc.bindings
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import dev.nextftc.bindings.Button
-import dev.nextftc.bindings.BindingManager
-import dev.nextftc.ftc.ActiveOpMode
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
+import com.qualcomm.robotcore.eventloop.opmode.*
+import dev.nextftc.bindings.*
+import dev.nextftc.ftc.*
+import org.junit.Assert.*
+import org.junit.*
 
 class BindingsComponentTests {
     var pressed = false

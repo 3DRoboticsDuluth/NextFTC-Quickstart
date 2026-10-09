@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.threedrd.nextftc.hardware
 
-import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.*
 import dev.nextftc.ftc.ActiveOpMode.hardwareMap
-import dev.nextftc.hardware.controllable.Controllable
+import dev.nextftc.hardware.controllable.*
 import dev.nextftc.hardware.impl.MotorEx as NextMotorEx
 
 class MotorEx private constructor(

@@ -1,19 +1,14 @@
 package org.firstinspires.ftc.teamcode.adaptations.pedropathing
 
-import com.pedropathing.follower.Follower
-import com.pedropathing.follower.FollowerConstants
-import com.pedropathing.ftc.FollowerBuilder
-import com.pedropathing.ftc.drivetrains.MecanumConstants
-import com.pedropathing.ftc.localization.constants.DriveEncoderConstants
-import com.pedropathing.paths.PathConstraints
-import com.qualcomm.robotcore.hardware.HardwareMap
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
-import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.mockConstruction
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
+import com.pedropathing.follower.*
+import com.pedropathing.ftc.*
+import com.pedropathing.ftc.drivetrains.*
+import com.pedropathing.ftc.localization.constants.*
+import com.pedropathing.paths.*
+import com.qualcomm.robotcore.hardware.*
+import org.junit.Assert.*
+import org.junit.*
+import org.mockito.Mockito.*
 
 class ConstantsTests {
     @Test
