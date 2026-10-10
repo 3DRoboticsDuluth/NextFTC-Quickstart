@@ -15,11 +15,13 @@ use [Get started](../index.md) and [Our robot](../robot/index.md).
 ## Baseline
 
 The project preserves FTC Robot Controller v11.2 history and adopts SDK 12,
-Pedro 2.1.2, and NextFTC v1 in the first upgrade track. Its Android modules are
+Pedro 2.1.2, and NextFTC v1 in the first upgrade track. This branch then upgrades
+Pedro to REV Hub/core 3.0.1 while retaining NextFTC v1 and drive-encoder localization. Its Android modules are
 `FtcRobotController`, `3drdNextFTC`, and `TeamCode`. The neutral scaffold defaults
 to mecanum with drive-encoder localization and untuned template dimensions.
-It is a starting point, not calibrated robot code. Pedro 3 and NextFTC v2 remain
-separate future evaluations. See the [upgrade review](season-upgrades-review.md).
+It is a starting point, not calibrated robot code. NextFTC v2 remains
+a separate evaluation. See the [seasonal upgrade review](season-upgrades-review.md)
+and [Pedro 3 migration](pedro3-review.md).
 
 The team repository retains Quickstart as a remote and preserves its history.
 Follow the [new-season guide](../guides/new-season.md) when incorporating fixes.

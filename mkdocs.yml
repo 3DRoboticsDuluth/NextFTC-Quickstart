@@ -91,6 +91,7 @@ nav:
       - Reference:
           - Modules and dependencies: reference/modules-dependencies.md
           - BIOBUZZ upgrade review: reference/season-upgrades-review.md
+          - Pedro 3 migration: reference/pedro3-review.md
           - Upstream resources: reference/upstream.md
           - Settings: reference/settings.md
           - Decisions: reference/decisions.md

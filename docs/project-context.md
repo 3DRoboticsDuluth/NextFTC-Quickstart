@@ -6,10 +6,11 @@ linked pages are canonical when more detail is needed.
 ## Purpose
 
 The repository begins with FTC Robot Controller v11.2 and adds a reusable 3DRD
-Kotlin/NextFTC platform plus a neutral TeamCode scaffold. The first BIOBUZZ upgrade
-track adopts FTC SDK 12 and Pedro 2.1.2 while retaining NextFTC v1; Pedro 3 and
-NextFTC v2 remain future evaluations. Current `main` is the
-season template. Decode/Osiris behavior and Quanomous remain in the separate
+Kotlin/NextFTC platform plus a neutral TeamCode scaffold. This branch builds on
+Quickstart develop's FTC SDK 12, Panels/Sloth, Kotlin, Mockito, and telemetry
+upgrades, migrating Pedro to REV Hub/core 3.0.1 with reusable NextFTC v1 adapters
+and retained drive-encoder localization. NextFTC v2 remains a separate evaluation.
+Quickstart `main` remains the published season template. Decode/Osiris behavior and Quanomous remain in the separate
 `LeastOne/NextFTC` implementation repository.
 
 ## Read First
@@ -59,7 +60,7 @@ requirement/architecture/rebuild/traceability documentation when behavior change
 Navigation separates Get started, editable Our robot pages, and Platform reference.
 Use `.agents/skills/document-robot/SKILL.md` to assist team documentation. The
 neutral scaffold remains mecanum. The tank/arcade guide reviews the earlier paired
-motor mapping against Pedro 2.1.2, requires robot-centric zero-strafe input, and
+motor mapping against Pedro 3.0.1 and the reusable localizer adapter, requires robot-centric zero-strafe input, and
 records desktop evidence separately from the coach's earlier driving report.
 Current upgraded tank hardware, dedicated odometry, and differential autonomous
 behavior still require physical validation.

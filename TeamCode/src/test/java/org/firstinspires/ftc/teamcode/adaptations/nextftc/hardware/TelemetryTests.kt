@@ -2,17 +2,15 @@ package org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD as CR_FORWARD
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE as CR_REVERSE
-import com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD
-import com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE
+import com.qualcomm.robotcore.hardware.Servo.Direction.*
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.*
 import dev.nextftc.ftc.*
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.*
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.*
 import org.firstinspires.ftc.robotcore.external.navigation.*
 import org.firstinspires.ftc.teamcode.subsystems.*
 import org.firstinspires.ftc.threedrd.nextftc.hardware.*
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.INFO
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
+import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.*
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
 import org.junit.Assert.*
 import org.junit.*
@@ -161,8 +159,6 @@ class TelemetryTests : SubsystemTests() {
         val telemetry = ActiveOpMode.telemetry
         clearInvocations(telemetry, ActiveOpMode.hardwareMap)
         mock(com.pedropathing.drivetrain.Drivetrain::class.java).tel()
-        mock(com.pedropathing.ftc.drivetrains.Swerve::class.java).tel()
-        mock(com.pedropathing.ftc.drivetrains.MecanumEx::class.java).tel()
         verify(telemetry, never()).addData(anyString(), any())
         verify(ActiveOpMode.hardwareMap, never()).getNamesOf(any())
     }
@@ -171,7 +167,7 @@ class TelemetryTests : SubsystemTests() {
     fun missingMecanumMotorCollectionReportsNothing() {
         val telemetry = ActiveOpMode.telemetry
         clearInvocations(telemetry, ActiveOpMode.hardwareMap)
-        mock(com.pedropathing.ftc.drivetrains.Mecanum::class.java).tel()
+        mock(org.firstinspires.ftc.threedrd.pedropathing.MecanumDrive::class.java).tel()
         verify(telemetry, never()).addData(anyString(), any())
         verify(ActiveOpMode.hardwareMap, never()).getNamesOf(any())
     }

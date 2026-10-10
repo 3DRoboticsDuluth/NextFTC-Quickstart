@@ -2,11 +2,13 @@ package org.firstinspires.ftc.threedrd.pedropathing
 
 import com.bylazar.field.*
 import com.pedropathing.follower.*
-import com.pedropathing.geometry.*
+import com.pedropathing.math.*
 import com.pedropathing.paths.*
-import com.pedropathing.util.*
 import dev.nextftc.core.components.*
-import dev.nextftc.extensions.pedro.PedroComponent.Companion.follower
+import java.util.*
+import kotlin.math.cos
+import kotlin.math.sin
+import org.firstinspires.ftc.threedrd.pedropathing.PedroComponent.Companion.follower
 
 class PedroDrawingComponent(
     val field: FieldManager = PanelsField.field,
@@ -15,49 +17,58 @@ class PedroDrawingComponent(
 ) : Component {
     val targetStyle = Style("#666", "#3F51B5", 2.0)
     val robotStyle = Style("#666", "#4CAF50", 2.0)
+    private val history = ArrayDeque<Pose>()
 
-    override fun preInit() = field.setOffsets(PanelsField.presets.DEFAULT_FTC)
+    override fun preInit() {
+        history.clear()
+        field.setOffsets(PanelsField.presets.DEFAULT_FTC)
+    }
+
     override fun postWaitForStart() = draw()
     override fun postUpdate() = draw()
 
     fun draw() {
         val follower = getFollower()
-        follower.currentPath?.let { path ->
+        follower.currentPath()?.let { path ->
             draw(path, targetStyle)
-            val t = path.closestPointTValue
-            val point = follower.getPointFromPath(t)
-            draw(Pose(point.x, point.y, path.getHeadingGoal(t)), targetStyle)
+            draw(follower.closestPose(), targetStyle)
         }
-        draw(follower.poseHistory, robotStyle)
-        draw(follower.pose, robotStyle)
+        history.addLast(follower.pose())
+        if (history.size > 100) history.removeFirst()
+        drawHistory()
+        draw(follower.pose(), robotStyle)
         field.update()
     }
 
     fun draw(path: Path, style: Style) {
-        val points = path.panelsDrawingPoints
         field.setStyle(style)
-        field.moveCursor(points[0][0], points[1][0])
-        for (i in 1 until points[0].size) field.line(points[0][i], points[1][i])
+        val start = path.get(0.0)
+        field.moveCursor(start.x(), start.y())
+        for (index in 1..40) {
+            val point = path.get(index / 40.0)
+            field.line(point.x(), point.y())
+        }
     }
 
-    fun draw(history: PoseHistory, style: Style) {
-        val x = history.xPositionsArray
-        val y = history.yPositionsArray
-        field.setStyle(style)
-        for (i in 1 until x.size) {
-            field.moveCursor(x[i - 1], y[i - 1])
-            field.line(x[i], y[i])
+    private fun drawHistory() {
+        field.setStyle(robotStyle)
+        val poses = history.iterator()
+        var previous = poses.next()
+        while (poses.hasNext()) {
+            val pose = poses.next()
+            field.moveCursor(previous.x(), previous.y())
+            field.line(pose.x(), pose.y())
+            previous = pose
         }
     }
 
     fun draw(pose: Pose, style: Style) {
         field.setStyle(style)
-        field.moveCursor(pose.x, pose.y)
+        field.moveCursor(pose.x(), pose.y())
         field.circle(robotRadius)
-
-        val heading = pose.headingAsUnitVector
-        heading.magnitude *= robotRadius
-        field.moveCursor(pose.x + heading.xComponent / 2, pose.y + heading.yComponent / 2)
-        field.line(pose.x + heading.xComponent, pose.y + heading.yComponent)
+        val x = cos(pose.heading()) * robotRadius
+        val y = sin(pose.heading()) * robotRadius
+        field.moveCursor(pose.x() + x / 2, pose.y() + y / 2)
+        field.line(pose.x() + x, pose.y() + y)
     }
 }

@@ -159,3 +159,12 @@ interactions explicitly. Use a hypothetical worked example to teach the process;
 its values and behavior do not become a team's defaults. Track unresolved behavior
 choices separately from physical calibration and never equate software readiness
 with robot validation or a guaranteed one-shot build.
+
+## Pedro 3 migration
+
+After the seasonal upgrades, replace Pedro FTC 2.1.2 and the NextFTC Pedro extension
+with REV Hub/core 3.0.1 and local NextFTC v1 adapters. Add AutoTune runtime 1.0.1.
+Preserve drive-encoder localization and paired tank arcade through tested reusable
+adaptations. MecanumDrive exposes cached existing motor references at construction,
+leaving motor telemetry policy in TeamCode. Keep NextFTC v2 separate.
+See [Pedro 3 migration](pedro3-review.md) for API breaks, tuning, tests, and physical validation.

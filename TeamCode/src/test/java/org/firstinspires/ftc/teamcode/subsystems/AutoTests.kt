@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems
 
 import com.pedropathing.follower.*
 import com.qualcomm.robotcore.eventloop.opmode.*
-import dev.nextftc.extensions.pedro.*
+import org.firstinspires.ftc.threedrd.pedropathing.*
 import dev.nextftc.ftc.*
 import org.junit.*
 import org.junit.Assert.*
@@ -14,7 +14,11 @@ class AutoTests : SubsystemTests() {
 
     @Before
     fun setUp() {
-        follower = mock(Follower::class.java)
+        follower = mock(Follower::class.java, org.mockito.Mockito.withSettings().useConstructor(
+            mock(com.pedropathing.localization.Localizer::class.java),
+            mock(com.pedropathing.drivetrain.Drivetrain::class.java),
+            mock(com.pedropathing.algorithm.Algorithm::class.java)
+        ))
         component = PedroComponent { follower }.apply { preInit() }
     }
 
@@ -26,7 +30,6 @@ class AutoTests : SubsystemTests() {
         useOpMode(AutonomousTestOpMode())
         Auto.initialize()
 
-        verify(follower).setStartingPose(Nav.start)
         verify(follower).setPose(Nav.start)
 
         clearInvocations(follower)

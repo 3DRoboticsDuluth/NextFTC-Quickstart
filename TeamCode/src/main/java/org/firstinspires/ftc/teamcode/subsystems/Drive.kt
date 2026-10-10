@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.bylazar.configurables.annotations.*
-import org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware.*
-import dev.nextftc.extensions.pedro.PedroComponent.Companion.follower
+import org.firstinspires.ftc.threedrd.pedropathing.PedroComponent.Companion.follower
 import dev.nextftc.ftc.Gamepads.gamepad1
 import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
 import org.firstinspires.ftc.threedrd.pedropathing.*
 import org.firstinspires.ftc.teamcode.subsystems.Config.state
+import org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware.tel
 
 @Configurable
 object Drive : DriveSubsystem() {
@@ -39,8 +39,8 @@ object Drive : DriveSubsystem() {
     override fun periodic() {
         follower.drivetrain.tel()
         tel.info("Power", "%.2f".format(driverControlled.scalar))
-        tel.debug("X", "%.1f".format(follower.pose.x))
-        tel.debug("Y", "%.1f".format(follower.pose.y))
-        tel.debug("Heading (deg)", "%.1f".format(Math.toDegrees(follower.pose.heading)))
+        tel.debug("X", "%.1f".format(follower.pose().x()))
+        tel.debug("Y", "%.1f".format(follower.pose().y()))
+        tel.debug("Heading (deg)", "%.1f".format(Math.toDegrees(follower.pose().heading())))
     }
 }

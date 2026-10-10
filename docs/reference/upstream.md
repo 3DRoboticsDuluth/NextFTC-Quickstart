@@ -10,6 +10,7 @@ where APIs differ from the current site.
 - [FIRST Tech Challenge documentation](https://ftc-docs.firstinspires.org/)
 - [NextFTC documentation](https://nextftc.dev/)
 - [NextFTC extensions and Pedro integration](https://nextftc.dev/extensions/)
+- [Pedro 3.0.1 source](https://github.com/Pedro-Pathing/PedroPathing/tree/v3.0.1)
 - [Pedro Pathing documentation](https://pedropathing.com/docs)
 - [Pedro Pathing coordinates](https://pedropathing.com/docs/pathing/reference/coordinates)
 - [Pedro Pathing installation](https://pedropathing.com/docs/pathing/installation)
@@ -19,8 +20,8 @@ where APIs differ from the current site.
 
 ## Version Caution
 
-The current Pedro website may describe a version newer than the repository's pinned
-2.1.2, while NextFTC's Pedro extension is pinned at 1.0.0. Follow this repository's
+Pedro REV Hub/core is pinned at 3.0.1. This branch uses local NextFTC v1 adapters
+in place of the incompatible NextFTC Pedro extension. Follow this repository's
 source/tests for the integration API and use upstream docs for underlying concepts.
 Upgrade all related artifacts together only after checking compatibility.
 

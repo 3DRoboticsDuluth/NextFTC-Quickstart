@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes
 
-import dev.nextftc.extensions.pedro.*
+import org.firstinspires.ftc.threedrd.pedropathing.*
 import org.firstinspires.ftc.threedrd.nextftc.bindings.*
 import org.firstinspires.ftc.threedrd.nextftc.config.*
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.*
-import org.firstinspires.ftc.threedrd.pedropathing.*
 import org.firstinspires.ftc.teamcode.subsystems.*
 import org.junit.Assert.*
 import org.junit.*

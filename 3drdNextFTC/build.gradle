@@ -45,8 +45,7 @@ dependencies {
     api 'dev.nextftc:ftc:1.1.0'
     api 'dev.nextftc:hardware:1.1.0'
     api 'dev.nextftc:bindings:1.0.1'
-    api 'dev.nextftc.extensions:pedro:1.0.0'
-    api 'com.pedropathing:ftc:2.1.2'
+    api 'com.pedropathing:revhub:3.0.1'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.24.0'

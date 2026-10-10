@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.threedrd.pedropathing
 
 import com.pedropathing.follower.*
-import com.pedropathing.geometry.*
+import com.pedropathing.math.*
 
-/** Establishes a new starting frame and places the robot exactly at its origin. */
-fun Follower.resetStartingPose(pose: Pose) {
-    setStartingPose(pose)
-    setPose(pose)
+/** Pedro 3's localizer establishes its encoder reference when the pose is set. */
+fun Follower.resetStartingPose(pose: Pose) = setPose(pose)
+
+/** Follower.stop() changes mode; actuator cleanup must not wait for another update. */
+fun Follower.stopNow() {
+    try {
+        stop()
+    } finally {
+        drivetrain.stop()
+    }
 }

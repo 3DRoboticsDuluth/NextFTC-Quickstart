@@ -5,28 +5,28 @@ tuning, and controls of one robot.
 
 ## Pedro Stack
 
-`PedroComponent` owns a follower built by TeamCode `Constants.createFollower()`.
+The local NextFTC v1 `PedroComponent` owns a follower built by TeamCode `Constants.createFollower()`.
 The reusable `DriveSubsystem` turns common follower operations into NextFTC commands.
 The reusable `NavSubsystem` constructs robot-dimension-aware poses. Quickstart's
 concrete `Drive` and `Nav` provide the basic season customization points.
 
 ## Localization
 
-Pedro requires one localization source, but it does not require a dedicated
-localizer device. Quickstart defaults to Pedro's drivetrain-encoder localizer so a
-team can begin without GoBilda Pinpoint hardware. The drivetrain conversion
-factors, dimensions, directions, and motor names are templates that still require
-measurement and tuning.
+Quickstart keeps four-drive-encoder localization without requiring an additional
+sensor. Pedro 3.0.1 no longer supplies that localizer, so the reusable module supplies
+`DriveEncoderLocalizer` with robot-supplied `DriveEncoderConfig`. Conversion factors
+multiply the **sum of four encoders**, as in Pedro 2, not their average. The turn
+factor multiplies the signed wheel sum divided by robot width plus length. Physical
+inches-per-tick cannot be substituted without accounting for that convention.
 
-Pedro's drivetrain and drive-encoder localizer constants default to motor names
-`leftFront`, `leftRear`, `rightFront`, and `rightRear`. Teams using those exact
-Robot Controller names can omit the motor-name configuration calls. Explicit names
-are necessary only when the hardware configuration differs.
+`Constants.localizerConfig` supplies names, encoder directions, dimensions, and
+conversion factors. `Constants.driveConfig` uses native `MecanumConfig` with explicit
+motor names/directions. Construct the drivetrain first so encoder sampling observes
+its configured motor directions. Pose resets establish a new encoder reference and
+zero velocity without relying on a subsequent update.
 
-Teams with a dedicated device or odometry arrangement should replace the single
-localizer constants type and `FollowerBuilder` call. Pedro 2.1.2 supports
-Pinpoint, OTOS, two-wheel, three-wheel, and three-wheel-plus-IMU localizers. The
-follower must configure exactly one of these options.
+Teams may substitute Pedro 3's Pinpoint, OTOS, OctoQuad, two-wheel, three-wheel,
+or three-wheel-plus-IMU localizer. Exactly one localizer feeds the follower.
 
 ## Coordinates
 
@@ -107,9 +107,8 @@ assist hooks without replacing the standard command.
 
 ## Starting Pose
 
-`resetStartingPose(pose)` calls both Pedro's starting-pose API and current-pose API.
-The former defines the localizer reference; the latter prevents the prior pose
-offset from surviving a configuration change. A season should call it when a
+`resetStartingPose(pose)` calls Pedro 3's `setPose(pose)`, which establishes the
+localizer reference and exact pose in one operation. A season should call it when a
 starting-location setting changes during init. Auto should not reset pose again at
 Start because teams may reposition the initialized robot and rely on Pedro tracking
 that movement.
@@ -121,25 +120,25 @@ It is diagnostic only; it must never feed localization. Robot length and width l
 with the Pedro constants because they configure both navigation alignment and field
 representation.
 
-## Drive Motor Diagnostics
+## Pedro 3 APIs and Safety
 
-Drive reads Pedro’s existing drivetrain motor collection with
-`follower.drivetrain.tel()`. The collection extension resolves
-configured names through the hardware map without acquiring motors again. Pedro retains control of motor power and
-configuration. During each periodic snapshot, the four devices use the same
-TeamCode `tel` policy as other motors: DEBUG power, velocity, and position; VERBOSE
-current, velocity percentage, and RPM. Motor values remain numeric for Panels
-graphs. This is current telemetry, not a periodic historical RobotLog event.
+`paths { ... }` now returns a native Pedro `Path`; combine segments with
+`Paths.path(...)`. `PathBuilder` and `PathChain` no longer exist. The old
+`follow(..., maxPower)` argument is removed: native speed constraints are not a
+motor-power cap. Pose imports change to `com.pedropathing.math.Pose`; its accessors
+are `x()`, `y()`, and `heading()`, with headings normalized by Pedro.
 
-Motor telemetry uses `(this as? Mecanum)?.motors?.tel()` and supports Pedro 2.1.2
-`Mecanum`. Other drivetrains, including deprecated `MecanumEx`, Swerve, and custom
-implementations, omit motor telemetry without interrupting driving.
+`FollowPath` waits until the follower leaves FOLLOW mode, preserves endpoint
+holding on normal completion, restores the prior `holdEnd` option, and stops motors
+on cancellation. Whole-path distances/completion use segment lengths resolved once
+at execution. T refers to the current segment. Turns use successive short hold
+targets to preserve direction across heading wrap and multiple revolutions, with
+`turnTolerance` defining completion. Heading sampling must occur more frequently
+than one half-revolution.
 
-## Chassis setup routes
+`stopNow()` calls both `Follower.stop()` and `Drivetrain.stop()`: the former only
+changes mode until a later update. OpMode cleanup also releases the follower even
+if actuator cleanup throws. Drawing samples native paths and retains at most 100
+recent poses, resetting its history on initialization.
 
-The [drivetrain guide](../guides/drivetrain.md) separates mecanum from two-motor
-tank/arcade and drive encoders from dedicated localization. The paired-slot tank
-recipe requires robot-centric zero-strafe input; it does not make the chassis
-holonomic. Collection telemetry reports each distinct physical motor once.
-REQ-SCF-011 is verified by TankDriveSetupTests and PedroDriverControlledTests;
-REQ-PLT-043 retains read-only telemetry checks in TelemetryTests.
+See [Pedro 3 review](../reference/pedro3-review.md) for tuning and validation limits.

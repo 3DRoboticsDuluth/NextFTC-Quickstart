@@ -41,87 +41,46 @@ be added to `3drdNextFTC`.
 
 ## 3. Configure Pedro Constants
 
-First follow [Choose drivetrain and localization](drivetrain.md). The walkthrough
-below is the mecanum route. For a tank chassis, use the zero-strafe, robot-centric
-arcade recipe there; do not apply the mecanum strafe or field-centric checks.
+The template keeps 18-inch placeholder dimensions, explicit motor names/directions,
+and a hardware-light drive-encoder localizer. Replace them with measured robot
+values in `adaptations/pedropathing/Constants.kt`.
 
-The base `Constants` intentionally contains 18-inch template dimensions and Pedro
-defaults. Replace them in the upstream-recognizable Pedro shape:
+Pedro 3 constructs the follower from three parts:
 
 ```kotlin
-object Constants {
-    val robotLength = MEASURED_LENGTH.inches
-    val robotWidth = MEASURED_WIDTH.inches
-    val robotRadius = max(robotLength.inIn, robotWidth.inIn) / 2
-
-    var followerConstants = FollowerConstants()
-        .mass(MEASURED_MASS)
-        // Add only values produced by the Pedro tuning process.
-
-    var pathConstraints = PathConstraints(/* tuned values */)
-
-    var driveConstants = MecanumConstants()
-        .maxPower(LOW_BRINGUP_POWER)
-        .leftFrontMotorName("<front-left>")
-        .rightFrontMotorName("<front-right>")
-        .leftRearMotorName("<back-left>")
-        .rightRearMotorName("<back-right>")
-
-    var localizerConstants = DriveEncoderConstants()
-        .forwardTicksToInches(TUNED_FORWARD_TICKS_TO_INCHES)
-        .strafeTicksToInches(TUNED_STRAFE_TICKS_TO_INCHES)
-        .turnTicksToInches(TUNED_TURN_TICKS_TO_INCHES)
-        .robotLength(robotLength.inIn)
-        .robotWidth(robotWidth.inIn)
-        .leftFrontMotorName("<front-left>")
-        .rightFrontMotorName("<front-right>")
-        .leftRearMotorName("<back-left>")
-        .rightRearMotorName("<back-right>")
-
-    fun createFollower(hardwareMap: HardwareMap): Follower =
-        FollowerBuilder(followerConstants, hardwareMap)
-            .pathConstraints(pathConstraints)
-            .mecanumDrivetrain(driveConstants)
-            .driveEncoderLocalizer(localizerConstants)
-            .build()
+fun createFollower(hardwareMap: HardwareMap): Follower {
+    val drivetrain = MecanumDrive(hardwareMap, driveConfig)
+    return Follower(DriveEncoderLocalizer(hardwareMap, localizerConfig), drivetrain, Foresight(foresightConfig))
 }
 ```
 
-The Quickstart uses Pedro's drivetrain-encoder localizer because it requires no
-separate localization device. Its conversion factors, dimensions, motor names,
-and encoder directions are still template values and must be configured or tuned.
-Pedro defaults both the drivetrain and drive-encoder localizer motor names to
-`leftFront`, `leftRear`, `rightFront`, and `rightRear`. If the Robot Controller
-configuration uses those exact names, omit the corresponding motor-name calls
-from both constants objects. Use explicit calls when the configured names differ.
+Use native `MecanumConfig` for names/directions and native `ForesightConfig` for the
+tuning output. The template's zero controller gains and placeholder velocity/brake
+inputs are not autonomous calibration. See [Pedro 3 review](../reference/pedro3-review.md)
+for the AutoTune procedure setup still needed in a team tuning workflow.
 
-A dedicated localizer is optional. If the robot has a GoBilda Pinpoint, replace
-the localizer type and builder call while keeping Pedro's documented structure:
+For drive encoders, fill `DriveEncoderConfig` with the configured motor names,
+encoder signs, conversion factors, and measured width/length. Factors multiply
+four-wheel sums, not averages; confirm forward, strafe, and rotation independently.
+Construct the drivetrain before sampling encoders so motor directions are known.
+
+For dedicated odometry, replace `DriveEncoderLocalizer(...)` with Pedro 3's
+Pinpoint, OTOS, OctoQuad, two-wheel, three-wheel, or three-wheel-plus-IMU localizer
+and its matching native configuration. Keep exactly one localization source.
+
+Keep hardware names and tuning in TeamCode, preserve Pedro's documented shapes,
+and test measured values and mocked follower construction. Do not reuse Osiris
+calibration for a different robot.
+
+For example, dedicated Pinpoint localization uses `PinpointConfig` and
+`PinpointLocalizer` from `com.pedropathing.revhub.localizers`:
 
 ```kotlin
-var localizerConstants = PinpointConstants()
-    .hardwareMapName("<pinpoint>")
-    .forwardPodY(MEASURED_FORWARD_POD_Y)
-    .strafePodX(MEASURED_STRAFE_POD_X)
-
-fun createFollower(hardwareMap: HardwareMap): Follower =
-    FollowerBuilder(followerConstants, hardwareMap)
-        .pathConstraints(pathConstraints)
-        .mecanumDrivetrain(driveConstants)
-        .pinpointLocalizer(localizerConstants)
-        .build()
+return Follower(PinpointLocalizer(hardwareMap, pinpointConfig), drivetrain, Foresight(foresightConfig))
 ```
 
-Pedro also supports OTOS, two-wheel, three-wheel, and three-wheel-plus-IMU
-localizers. Select exactly one localizer builder method and follow the matching
-Pedro tuning instructions.
-
-Do not copy Osiris tuning into a different robot. Keep this integration surface
-close to current Pedro documentation so the tuning output can be transferred
-without translating through another abstraction.
-
-Add constants tests that assert every measured name/value and that a follower can
-be built with mocked hardware.
+Populate the native configuration from measured offsets, encoder resolution,
+directions, and the configured device name using the upstream tuning guide.
 
 ## 4. Customize the Included Nav Subsystem
 

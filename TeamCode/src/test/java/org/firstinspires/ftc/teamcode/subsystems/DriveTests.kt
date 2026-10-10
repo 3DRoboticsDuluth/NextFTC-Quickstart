@@ -1,18 +1,19 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.bylazar.configurables.annotations.*
-import com.pedropathing.ftc.drivetrains.*
-import com.qualcomm.robotcore.hardware.*
 import com.pedropathing.follower.*
-import com.pedropathing.geometry.*
+import com.pedropathing.drivetrain.*
+import org.mockito.*
+import com.pedropathing.math.*
+import com.qualcomm.robotcore.hardware.*
 import dev.nextftc.bindings.*
 import dev.nextftc.core.commands.utility.*
-import dev.nextftc.extensions.pedro.*
+import org.firstinspires.ftc.threedrd.pedropathing.*
 import dev.nextftc.ftc.*
 import kotlin.reflect.*
-import kotlin.reflect.KVisibility.PUBLIC
+import kotlin.reflect.KVisibility.*
 import kotlin.reflect.full.*
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
+import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.*
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
 import org.junit.*
 import org.junit.Assert.*
@@ -21,20 +22,12 @@ import org.mockito.Mockito.*
 class DriveTests : SubsystemTests() {
     lateinit var follower: Follower
     lateinit var component: PedroComponent
-    lateinit var motors: List<DcMotorEx>
+    lateinit var motors: List<com.qualcomm.robotcore.hardware.DcMotorEx>
 
     @Before
     fun setUp() {
-        follower = mock(Follower::class.java)
-        component = PedroComponent { follower }.apply { preInit() }
-        ActiveOpMode.it!!.gamepad1 = Gamepad()
-        Config.robotCentric = true
-        Config.state.teleop = false
-        Drive.POWER_LOW = 0.35
-        Drive.POWER_HIGH = 0.70
-        val drivetrain = mock(Mecanum::class.java)
-        motors = List(4) { mock(DcMotorEx::class.java) }
-        follower.drivetrain = drivetrain
+        val drivetrain = mock(org.firstinspires.ftc.threedrd.pedropathing.MecanumDrive::class.java)
+        motors = List(4) { mock(com.qualcomm.robotcore.hardware.DcMotorEx::class.java) }
         `when`(drivetrain.motors).thenReturn(motors)
         motors.forEachIndexed { index, motor ->
             val type = mock(com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType::class.java)
@@ -43,6 +36,17 @@ class DriveTests : SubsystemTests() {
             `when`(type.ticksPerRev).thenReturn(100.0)
             `when`(ActiveOpMode.hardwareMap.getNamesOf(motor)).thenReturn(setOf("driveMotor$index"))
         }
+        follower = mock(Follower::class.java, org.mockito.Mockito.withSettings().useConstructor(
+            mock(com.pedropathing.localization.Localizer::class.java),
+            drivetrain,
+            mock(com.pedropathing.algorithm.Algorithm::class.java)
+        ))
+        component = PedroComponent { follower }.apply { preInit() }
+        ActiveOpMode.it!!.gamepad1 = Gamepad()
+        Config.robotCentric = true
+        Config.state.teleop = false
+        Drive.POWER_LOW = 0.35
+        Drive.POWER_HIGH = 0.70
         Drive.initialize()
         Drive.controls()
     }
@@ -72,12 +76,20 @@ class DriveTests : SubsystemTests() {
         Drive.driverControlled.scalar = 1.0
         BindingManager.update()
 
+        `when`(follower.pose()).thenReturn(Pose.zero())
         Drive.driverControlled.update()
         Config.robotCentric = false
         Drive.driverControlled.update()
 
-        verify(follower).setTeleOpDrive(-0.25, 0.5, -0.75, true, 0.0)
-        verify(follower).setTeleOpDrive(-0.25, 0.5, -0.75, false, 0.0)
+        `when`(follower.pose()).thenReturn(Pose.zero())
+        Drive.driverControlled.update()
+        val powers = ArgumentCaptor.forClass(DrivePowers::class.java)
+        verify(follower, org.mockito.Mockito.times(3)).manual(powers.capture())
+        for (input in powers.allValues) {
+            assertEquals(-0.25, input.forward(), 0.0)
+            assertEquals(0.5, input.strafe(), 0.0)
+            assertEquals(-0.75, input.turn(), 0.0)
+        }
     }
 
     @Test
@@ -95,7 +107,7 @@ class DriveTests : SubsystemTests() {
     @Test
     fun periodicReportsPowerAndPose() {
         TeamTelemetry.LEVEL = DEBUG
-        `when`(follower.pose).thenReturn(Pose(12.34, 56.78, Math.toRadians(89.94)))
+        `when`(follower.pose()).thenReturn(Pose(12.34, 56.78, Math.toRadians(89.94)))
         clearInvocations(ActiveOpMode.telemetry)
 
         Drive.periodic()
@@ -108,7 +120,7 @@ class DriveTests : SubsystemTests() {
     @Test
     fun periodicReportsAllFourActualMotorsWithoutChangingThem() {
         TeamTelemetry.LEVEL = org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
-        `when`(follower.pose).thenReturn(Pose())
+        `when`(follower.pose()).thenReturn(Pose.zero())
         motors.forEachIndexed { index, motor ->
             val type = mock(com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType::class.java)
             `when`(type.achieveableMaxTicksPerSecond).thenReturn(500.0)
@@ -123,7 +135,7 @@ class DriveTests : SubsystemTests() {
         clearInvocations(ActiveOpMode.telemetry, ActiveOpMode.hardwareMap)
         Drive.periodic()
         verify(ActiveOpMode.hardwareMap, org.mockito.Mockito.never()).get(
-            org.mockito.ArgumentMatchers.eq(DcMotorEx::class.java), org.mockito.ArgumentMatchers.anyString()
+            org.mockito.ArgumentMatchers.eq(com.qualcomm.robotcore.hardware.DcMotorEx::class.java), org.mockito.ArgumentMatchers.anyString()
         )
         motors.forEachIndexed { index, motor ->
             val source = "Drive Motor$index"

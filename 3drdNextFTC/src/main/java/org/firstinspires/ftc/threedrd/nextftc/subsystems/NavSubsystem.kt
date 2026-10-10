@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems
 
-import com.pedropathing.geometry.*
-import com.pedropathing.paths.*
+import com.pedropathing.api.*
+import com.pedropathing.math.*
 import dev.nextftc.core.units.*
 import kotlin.math.*
-import org.firstinspires.ftc.threedrd.pedropathing.*
+import org.firstinspires.ftc.threedrd.pedropathing.normalizeHeading
 
 abstract class NavSubsystem(
     val robotLength: Distance,
@@ -42,9 +42,7 @@ abstract class NavSubsystem(
         lateralOffset: Distance = 0.inches
     ) = pose(x, y, heading.inRad, axial, lateral, axialOffset, lateralOffset)
 
-    fun line(start: Pose, end: Pose) = Path(BezierLine(start, end)).apply {
-        setLinearHeadingInterpolation(start.heading, end.heading)
-    }
+    fun line(start: Pose, end: Pose) = Paths.line(start, end).linear(start, end)
 }
 
 enum class Axial(val sign: Int) {

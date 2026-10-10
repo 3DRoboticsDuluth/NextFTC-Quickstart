@@ -27,8 +27,8 @@ These are the versions required to reproduce the documented tree:
 | NextFTC hardware | 1.1.0 |
 | NextFTC bindings | 1.0.1 |
 | Next Control | 1.0.0 |
-| NextFTC Pedro extension | 1.0.0 |
-| Pedro Pathing FTC | 2.1.2 |
+| Pedro Pathing REV Hub / core | 3.0.1 |
+| Pedro AutoTune runtime | 1.0.1 |
 | FullPanels API | 1.0.13 |
 | Sloth-compatible FullPanels runtime | 0.3.2+1.0.13 |
 | Dairy Sloth runtime / Load plugin | 0.3.2 |

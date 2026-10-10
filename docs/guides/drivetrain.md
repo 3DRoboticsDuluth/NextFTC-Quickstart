@@ -13,42 +13,39 @@ control assigns a stick to each side. This guide uses arcade control.
 
 ## Mecanum
 
-Keep `MecanumConstants` and `.mecanumDrivetrain(driveConstants)` in TeamCode's
-Pedro `Constants`. Configure names, motor/encoder directions, measured dimensions,
-and conversion factors. The [first-robot guide](first-robot.md) supplies the complete
-example. Verify heading and driver perspective before enabling field-centric control.
+Keep `MecanumConfig` in TeamCode's Pedro `Constants`. `MecanumDrive` extends
+Pedro's mecanum implementation to expose its already-created motor references
+for telemetry. Configure names, motor/encoder directions, dimensions, and conversion
+factors. The [first-robot guide](first-robot.md) supplies the complete example.
+Verify heading and driver perspective before enabling field-centric control.
 
 ## Two-motor tank with arcade control
 
-Pedro FTC 2.1.2 has no native tank drivetrain. The earlier arcade branch assigns
+Pedro REV Hub 3.0.1 has no native tank drivetrain. The earlier arcade branch assigns
 each physical motor to both mecanum slots on its side. This provides arcade
 Teleop; general Pedro path following is not established for this chassis.
 
 In TeamCode's `Constants`, use the same paired names in both objects:
 
 ```kotlin
-var driveConstants = MecanumConstants()
-    .leftFrontMotorName("leftMotor")
-    .leftRearMotorName("leftMotor")
-    .rightFrontMotorName("rightMotor")
-    .rightRearMotorName("rightMotor")
+var driveConfig = MecanumConfig {
+    it.frontLeftName.set("leftMotor"); it.backLeftName.set("leftMotor")
+    it.frontRightName.set("rightMotor"); it.backRightName.set("rightMotor")
+}
 
-var localizerConstants = DriveEncoderConstants()
-    .leftFrontMotorName("leftMotor")
-    .leftRearMotorName("leftMotor")
-    .rightFrontMotorName("rightMotor")
-    .rightRearMotorName("rightMotor")
-    .forwardTicksToInches(MEASURED_FORWARD_FACTOR)
-    .strafeTicksToInches(0.0)
-    .turnTicksToInches(MEASURED_TURN_FACTOR)
-    .robotWidth(MEASURED_LOCALIZER_WIDTH)
-    .robotLength(MEASURED_LOCALIZER_LENGTH)
+var localizerConfig = DriveEncoderConfig("leftMotor", "rightMotor", "leftMotor", "rightMotor").apply {
+    forwardTicksToInches = MEASURED_FORWARD_FACTOR
+    strafeTicksToInches = 0.0
+    turnTicksToInches = MEASURED_TURN_FACTOR
+    robotWidth = MEASURED_LOCALIZER_WIDTH
+    robotLength = MEASURED_LOCALIZER_LENGTH
+}
 ```
 
 Capitalized values are measurement placeholders. Set motor and encoder directions
 for the actual mounting, with matching directions for both slots on each side.
-Retain `.mecanumDrivetrain(driveConstants)` and
-`.driveEncoderLocalizer(localizerConstants)` in the follower builder.
+Construct `MecanumDrive(hardwareMap, driveConfig)` and the reusable
+`DriveEncoderLocalizer(hardwareMap, localizerConfig)` in `createFollower`.
 
 Replace the included Drive's driver command with:
 
@@ -67,7 +64,7 @@ different powers and the last write would win. The supplier above deliberately
 ignores Config's centric-mode setting; remove that unused menu setting when
 specializing a tank robot. Keep the Teleop-only default command and Stop lifecycle.
 
-Pedro exposes four motor slots but two physical motors. TeamCode's collection
+The MecanumDrive adapter exposes four motor slots but two physical motors. TeamCode's collection
 telemetry deduplicates the references so each motor is reported once.
 
 ### Calibrate drive encoders
@@ -101,7 +98,7 @@ cannot detect sideways skid and wheel slip.
 The coach reports the earlier setup was drivable after disabling strafe and
 setting conversion factors. `TankDriveSetupTests` checks paired motor lookup,
 same-side powers without lateral demand, forward/heading calculations, and zero
-lateral estimates against Pedro 2.1.2. `PedroDriverControlledTests` checks the
+lateral estimates against Pedro 3.0.1 and the localizer adapter. `PedroDriverControlledTests` checks the
 robot-centric arcade inputs. These are desktop checks, not a new physical test.
 
 Verify directions and Stop at low power with wheels lifted, then measure straight
@@ -113,10 +110,10 @@ are not promised by this adaptation.
 ## Dedicated odometry, with either chassis
 
 A localizer supplies pose; it does not change the chassis's available motions.
-For Pinpoint with two pods, replace `DriveEncoderConstants` with `PinpointConstants`
-and select `.pinpointLocalizer(localizerConstants)` exactly once. Keep the
+For Pinpoint with two pods, use `PinpointConfig` and construct
+`PinpointLocalizer(hardwareMap, localizerConfig)` as the follower's sole localizer. Keep the
 drivetrain and tank zero-strafe controls where applicable. The
-[first-robot guide](first-robot.md) shows the Pinpoint builder recipe.
+[first-robot guide](first-robot.md) shows the Pinpoint constructor recipe.
 
 Measure offsets, select the correct resolution and encoder directions, and verify
 axes and heading by moving the robot by hand. Follow the device's tuning process.
@@ -130,7 +127,7 @@ this upgrade. Record hardware and evidence in [Our robot](../robot/validation.md
 
 - [Earlier arcade specialization](https://github.com/3DRoboticsDuluth/NextFTC-Quickstart/tree/codex/arcade-drivetrain)
 - [Pedro 2.1.2 localizer calculations](https://github.com/Pedro-Pathing/PedroPathing/blob/v2.1.2/ftc/src/main/java/com/pedropathing/ftc/localization/localizers/DriveEncoderLocalizer.java)
-- [Pedro 2.1.2 mecanum implementation](https://github.com/Pedro-Pathing/PedroPathing/blob/v2.1.2/ftc/src/main/java/com/pedropathing/ftc/drivetrains/Mecanum.java)
+- [Pedro 3.0.1 mecanum implementation](https://github.com/Pedro-Pathing/PedroPathing/blob/v3.0.1/revhub/src/main/java/com/pedropathing/revhub/drivetrains/Mecanum.java)
 
 REQ-SCF-011 maps to this guide and the drivetrain tests; REQ-PLT-043 maps to
 deduplicated motor telemetry and `TelemetryTests`. Physical readiness remains a

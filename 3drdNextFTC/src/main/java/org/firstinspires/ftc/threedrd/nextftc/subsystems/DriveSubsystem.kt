@@ -1,91 +1,82 @@
 package org.firstinspires.ftc.threedrd.nextftc.subsystems
 
-import com.pedropathing.geometry.*
+import com.pedropathing.api.*
+import com.pedropathing.math.*
 import com.pedropathing.paths.*
 import dev.nextftc.core.commands.delays.*
 import dev.nextftc.core.units.*
-import dev.nextftc.extensions.pedro.*
-import dev.nextftc.extensions.pedro.PedroComponent.Companion.follower
 import org.firstinspires.ftc.threedrd.nextftc.commands.*
 import org.firstinspires.ftc.threedrd.pedropathing.*
+import org.firstinspires.ftc.threedrd.pedropathing.PedroComponent.Companion.follower
+import org.firstinspires.ftc.threedrd.pedropathing.PedroComponent.Companion.progress
 
 abstract class DriveSubsystem : Subsystem() {
     protected open val headingEnd = 0.33
+    var turnTolerance = 1.deg
 
-    val hold by instant { follower.holdPoint(follower.pose) }
-    val stop by instant { follower.breakFollowing() }
+    val hold by instant { follower.hold(follower.pose()) }
+    val stop by instant { follower.stopNow() }
 
-    override fun stop() {
-        follower.breakFollowing()
-    }
+    override fun stop() = follower.stopNow()
 
-    fun follow(path: Path, holdEnd: Boolean? = null, maxPower: Double? = null) =
-        FollowPath(path, holdEnd, maxPower).requires(this)
+    fun follow(path: Path, holdEnd: Boolean? = null) = FollowPath(path, holdEnd).requires(this)
 
-    fun follow(path: PathChain, holdEnd: Boolean? = null, maxPower: Double? = null) =
-        FollowPath(path, holdEnd, maxPower).requires(this)
-
-    fun paths(holdEnd: Boolean = false, build: PathBuilder.() -> Unit) =
-        DeferredCommand(this) {
-            val builder = follower.pathBuilder().apply(build)
-            follow(builder.build(), holdEnd)
-        }.named("${javaClass.simpleName}.paths")
+    fun paths(holdEnd: Boolean = false, build: () -> Path) =
+        DeferredCommand(this) { follow(build(), holdEnd) }.named("${javaClass.simpleName}.paths")
 
     fun to(pose: Pose, holdEnd: Boolean = true) = paths(holdEnd) {
-        val start = follower.pose
-        addPath(BezierCurve(start, start.midpoint(pose), pose))
-        setLinearHeadingInterpolation(start.heading, pose.heading, headingEnd)
+        val start = follower.pose()
+        Paths.curve(start, start.midpoint(pose), pose).linear(start, pose, headingEnd)
     }.named("${javaClass.simpleName}.to")
 
     fun curve(vararg poses: Pose, holdEnd: Boolean = true) = paths(holdEnd) {
-        val start = follower.pose
-        val points = mutableListOf<FuturePose>(start)
+        require(poses.isNotEmpty()) { "curve requires an endpoint" }
+        val start = follower.pose()
+        val points = mutableListOf(start)
         points.addAll(poses)
         if (points.size < 3) points.add(1, start.midpoint(poses.last()))
-        addPath(BezierCurve(*points.toTypedArray()))
-        setLinearHeadingInterpolation(start.heading, poses.last().heading, headingEnd)
+        Paths.curve(*points.toTypedArray()).linear(start, poses.last(), headingEnd)
     }.named("${javaClass.simpleName}.curve")
 
     fun curves(vararg poses: Pose, holdEnd: Boolean = true) = paths(holdEnd) {
-        var start = follower.pose
-        poses.forEach { end ->
-            addPath(BezierCurve(start, start.midpoint(end), end))
-            setLinearHeadingInterpolation(start.heading, end.heading, headingEnd)
+        var start = follower.pose()
+        Paths.path(*poses.map { end ->
+            val path = Paths.curve(start, start.midpoint(end), end).linear(start, end, headingEnd)
             start = end
-        }
+            path
+        }.toTypedArray())
     }.named("${javaClass.simpleName}.curves")
 
     fun forward(distance: Distance) = DeferredCommand(this) {
-        to(follower.pose.axial(distance.inIn))
+        to(follower.pose().axial(distance))
     }.named("${javaClass.simpleName}.forward")
 
     fun forward(distance: Double) = forward(distance.inches)
 
     fun strafe(distance: Distance) = DeferredCommand(this) {
-        to(follower.pose.lateral(distance.inIn))
+        to(follower.pose().lateral(distance))
     }.named("${javaClass.simpleName}.strafe")
 
     fun strafe(distance: Double) = strafe(distance.inches)
 
-    fun turn(angle: Angle) = TurnBy(angle).requires(this).named("${javaClass.simpleName}.turn")
+    fun turn(angle: Angle) = TurnBy(angle, turnTolerance).requires(this).named("${javaClass.simpleName}.turn")
 
     fun turn(degrees: Double) = turn(degrees.deg)
 
     fun until(distance: Distance) = WaitUntil {
-        if (distance.inIn >= 0) follower.distanceTraveledOnPath >= distance.inIn
-        else follower.distanceRemaining < -distance.inIn
+        if (distance.inIn >= 0) progress.traveled(follower) >= distance.inIn
+        else progress.remaining(follower) < -distance.inIn
     }
 
     fun until(completion: PathCompletion) = WaitUntil {
-        if (completion.value >= 0) follower.pathCompletion >= completion.value
-        else follower.pathCompletion < 1 + completion.value
+        if (completion.value >= 0) progress.completion(follower) >= completion.value
+        else progress.completion(follower) < 1 + completion.value
     }
 
     fun until(t: PathT) = WaitUntil {
-        if (t.value >= 0) follower.currentTValue >= t.value
-        else follower.currentTValue < 1 + t.value
+        if (t.value >= 0) progress.t(follower) >= t.value
+        else progress.t(follower) < 1 + t.value
     }
 
-    fun untilNotBusy() = WaitUntil { !follower.isBusy }
+    fun untilNotBusy() = WaitUntil { !follower.following() }
 }
-

@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware
 
 import com.pedropathing.drivetrain.*
-import com.pedropathing.ftc.drivetrains.*
+import org.firstinspires.ftc.threedrd.pedropathing.*
 import dev.nextftc.ftc.ActiveOpMode.hardwareMap
 import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE as CR_REVERSE
-import com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS
+import com.qualcomm.robotcore.hardware.Servo.Direction.*
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.*
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.*
 import org.firstinspires.ftc.threedrd.nextftc.hardware.*
 import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry.add
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
+import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.*
 
 fun configureHardwareTelemetry() {
     HardwareTelemetry.servo = { tel() }
@@ -32,7 +31,7 @@ fun CRServoEx.tel() {
     add(source, VERBOSE, "Reversed", servo.direction == CR_REVERSE)
 }
 
-fun Drivetrain.tel() { (this as? Mecanum)?.motors?.tel() }
+fun Drivetrain.tel() { (this as? MecanumDrive)?.motors?.tel() }
 
 fun Iterable<DcMotorEx>.tel() = distinct().forEach { it.tel(hardwareMap.getNamesOf(it).first()) }
 
