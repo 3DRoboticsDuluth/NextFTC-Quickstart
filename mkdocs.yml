@@ -50,37 +50,48 @@ markdown_extensions:
   - tables
 
 nav:
-  - Home: index.md
-  - Guides:
+  - Get started:
+      - Welcome: index.md
       - Start a new season: guides/new-season.md
       - Why Kotlin?: guides/why-kotlin.md
       - Build the first robot: guides/first-robot.md
-      - Deploy robot code: guides/deployment.md
       - Hardware worksheet: guides/hardware-worksheet.md
-      - Add a subsystem: guides/subsystem.md
-  - Architecture:
-      - architecture/overview.md
-      - Lifecycle: architecture/lifecycle.md
-      - Commands: architecture/commands.md
-      - Configuration: architecture/configuration.md
-      - Telemetry and logging: architecture/diagnostics.md
-      - Hardware: architecture/hardware.md
-      - Drive and navigation: architecture/drive-navigation.md
-  - Requirements:
-      - requirements/index.md
-      - FTC foundation: requirements/foundation.md
-      - Reusable platform: requirements/platform.md
-      - Seasonal scaffold: requirements/seasonal-base.md
-  - Rebuild:
-      - rebuild/index.md
-      - Phase 1 — FTC foundation: rebuild/phase-1.md
-      - Phase 2 — reusable platform: rebuild/phase-2.md
-      - Verification: rebuild/verification.md
-  - Reference:
-      - Modules and dependencies: reference/modules-dependencies.md
-      - BIOBUZZ upgrade review: reference/season-upgrades-review.md
-      - Upstream resources: reference/upstream.md
-      - Settings: reference/settings.md
-      - Decisions: reference/decisions.md
-      - Glossary: reference/glossary.md
-      - Project context: project-context.md
+      - Add a servo subsystem: guides/subsystem.md
+      - Add a motor and sensor subsystem: guides/motor-subsystem.md
+      - Deploy robot code: guides/deployment.md
+      - Document your robot: guides/document-your-robot.md
+      - Write implementable requirements: guides/implementable-requirements.md
+      - Worked requirements example: guides/requirements-example.md
+  - Our robot:
+      - Overview: robot/index.md
+      - Requirements: robot/requirements.md
+      - Architecture and subsystems: robot/architecture.md
+      - Validation: robot/validation.md
+  - Platform reference:
+      - Overview: reference/platform.md
+      - Architecture:
+          - architecture/overview.md
+          - Lifecycle: architecture/lifecycle.md
+          - Commands: architecture/commands.md
+          - Configuration: architecture/configuration.md
+          - Telemetry and logging: architecture/diagnostics.md
+          - Hardware: architecture/hardware.md
+          - Drive and navigation: architecture/drive-navigation.md
+      - Requirements:
+          - requirements/index.md
+          - FTC foundation: requirements/foundation.md
+          - Reusable platform: requirements/platform.md
+          - Seasonal scaffold: requirements/seasonal-base.md
+      - Rebuild:
+          - rebuild/index.md
+          - Phase 1: rebuild/phase-1.md
+          - Phase 2: rebuild/phase-2.md
+          - Verification: rebuild/verification.md
+      - Reference:
+          - Modules and dependencies: reference/modules-dependencies.md
+          - BIOBUZZ upgrade review: reference/season-upgrades-review.md
+          - Upstream resources: reference/upstream.md
+          - Settings: reference/settings.md
+          - Decisions: reference/decisions.md
+          - Glossary: reference/glossary.md
+          - Project context: project-context.md

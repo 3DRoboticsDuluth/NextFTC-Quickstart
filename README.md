@@ -7,14 +7,19 @@ and adds a reusable Kotlin and NextFTC platform for starting a robot season.
 
 ## Documentation
 
-The canonical documentation lives in [`docs/`](docs/index.md). Begin with the
-[guides](docs/guides/new-season.md), then use the deeper material as needed:
+The canonical documentation lives in [`docs/`](docs/index.md), organized around
+starting a team season and maintaining the robot's design:
 
-- [start a new season and build the first robot](docs/guides/new-season.md);
-- [architecture and design rationale](docs/architecture/overview.md);
-- [requirements and traceability](docs/requirements/index.md);
-- [a complete reconstruction guide](docs/rebuild/index.md);
-- [reference tables for dependencies, settings, hardware, and controls](docs/reference/modules-dependencies.md).
+- [Get started](docs/index.md): repository setup, hardware inventory,
+  drivetrain/localization choices, first subsystems, and deployment.
+- [Our robot](docs/robot/index.md): editable team requirements, subsystem
+  architecture, and validation evidence.
+- [Platform reference](docs/reference/platform.md): inherited architecture,
+  stable requirements, reconstruction steps, and exact dependencies.
+
+Use the [robot documentation workflow](docs/guides/document-your-robot.md) and
+repository-local `$document-robot` skill to keep design and code aligned. Promote
+the robot overview to the site home page as the team's design matures.
 
 The same Markdown is published as a searchable, navigable GitHub Pages site by the
 repository's documentation workflow. GitHub Pages must be configured to use

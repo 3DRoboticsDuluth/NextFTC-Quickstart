@@ -134,3 +134,21 @@ motor diagnostics in one review branch while retaining NextFTC v1 and upstream
 drive-encoder localization. Gradle 9.1.0 follows the SDK baseline and supplies
 the API required by Load 0.3.2. Keep Pedro 3 and NextFTC v2 in a later track.
 Preserve shared history; eventual upgrade commits append to it.
+
+## Team handbook and drivetrain onboarding
+
+Make Get started the neutral entry point, provide editable Our robot pages, and
+retain the complete inherited architecture and reconstruction contract in Platform
+reference. Teams promote their robot overview to the home page as it matures.
+A repository-local documentation skill helps connect team requirements to code,
+tests, and measured evidence without inventing design decisions.
+
+## Implementable robot requirements
+
+Treat requirement readiness as another student being able to implement and test
+behavior without inventing policy. Keep observable behavior separate from chosen
+code structure. Review lifecycle, event priority, failure outcomes, and subsystem
+interactions explicitly. Use a hypothetical worked example to teach the process;
+its values and behavior do not become a team's defaults. Track unresolved behavior
+choices separately from physical calibration and never equate software readiness
+with robot validation or a guaranteed one-shot build.

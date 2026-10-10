@@ -18,3 +18,10 @@ new season before a mechanism, field, or real hardware constant is known.
 Quickstart `main` is the maintained endpoint that satisfies these requirements. Its
 full mandated build and coverage verification must pass before changes are
 published.
+
+## Team onboarding and documentation
+
+| ID | Requirement | Why | Acceptance |
+|---|---|---|---|
+| `REQ-SCF-010` | The documentation MUST separate Get started, Our robot, and Platform reference, provide editable team requirements/architecture/validation pages, and retain the platform reconstruction contract. | Students need an entry path that evolves into their robot handbook. | Navigation, robot templates, documentation workflow, and strict MkDocs build. |
+| `REQ-SCF-012` | Robot documentation guidance MUST teach implementable behavior requirements, acceptance scenarios, whole-robot interactions, and a readiness review that separates unresolved policy from missing physical evidence. The documentation skill MUST identify missing decisions rather than invent them. | Students should be able to implement and test agreed behavior from the specification. | Requirements-writing guide, worked example, robot templates, skill readiness workflow, and strict documentation/skill validation. |

@@ -181,3 +181,18 @@ part of this upgrade track.
 Motor telemetry uses `(this as? Mecanum)?.motors?.tel()` and supports Pedro 2.1.2
 `Mecanum`. Other drivetrains, including deprecated `MecanumEx`, Swerve, and custom
 implementations, omit motor telemetry without interrupting driving.
+
+## Team onboarding extension
+
+After constructing the neutral platform, retain its reconstruction pages under
+Platform reference, organize navigation into Get started / Our robot / Platform
+reference, and add editable robot documentation plus the repository skill.
+Traceability: REQ-SCF-010 maps to robot templates, workflow, navigation,
+and strict MkDocs.
+
+Extend the robot documentation templates with an implementation-readiness guide
+and a worked hypothetical subsystem specification. Teach observable requirements,
+test scenarios, lifecycle and event priority, and cross-subsystem interactions.
+Add the same completeness review to the repository documentation skill.
+Traceability: REQ-SCF-012 maps to these guides, robot requirement/interaction
+templates, skill validation, and a strict MkDocs build.

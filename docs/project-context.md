@@ -14,6 +14,9 @@ season template. Decode/Osiris behavior and Quanomous remain in the separate
 
 ## Read First
 
+- [Get started](index.md)
+- [Our robot templates](robot/index.md)
+- [Document your robot](guides/document-your-robot.md)
 - [Start a new season](guides/new-season.md)
 - [Why Kotlin?](guides/why-kotlin.md)
 - [Build the first robot](guides/first-robot.md)
@@ -49,3 +52,14 @@ qualified subsystem names for common verbs in coordinating code.
 Run the exact command in [Verification](rebuild/verification.md). Keep tests with
 the behavior they test, organize commits by conceptual dependency, and update the
 requirement/architecture/rebuild/traceability documentation when behavior changes.
+
+## Team-facing documentation
+
+Navigation separates Get started, editable Our robot pages, and Platform reference.
+Use `.agents/skills/document-robot/SKILL.md` to assist team documentation. The
+neutral scaffold remains mecanum; setup and tuning still require physical validation.
+
+Robot requirements follow the implementation-readiness guide and worked example:
+expected behavior, test scenarios, and whole-robot interactions must be explicit.
+The documentation skill reports unresolved policy separately from missing hardware
+measurements. Teaching examples are not implemented robot features.

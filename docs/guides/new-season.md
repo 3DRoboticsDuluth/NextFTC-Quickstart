@@ -45,6 +45,13 @@ writing hardware declarations. Contributors new to the language should first rea
 [Why Kotlin?](why-kotlin.md) for the small Kotlin vocabulary and conventions used by
 the scaffold.
 
+## Build your team handbook
+
+Start [Our robot](../robot/index.md) with your team identity, match goals, and
+subsystem inventory. Use [Document your robot](document-your-robot.md) to connect
+requirements, code, tests, and physical evidence. As it matures, make the robot
+overview your home page while retaining the setup guides and platform reference.
+
 ## Replace the Templates
 
 1. **Pedro constants:** Replace 18-inch template dimensions, follower defaults,

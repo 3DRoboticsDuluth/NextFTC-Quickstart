@@ -1,57 +1,42 @@
-# 3DRD NextFTC Quickstart
+# Start your robot season
 
-This is the season-neutral starting point for a 3D Robotics Duluth FTC robot. The
-documentation is organized first to help a team get started, followed by the
-architecture, requirements, reconstruction details, and exact reference data that
-explain and constrain those steps.
+Welcome to your team's robot repository. Begin with a small working robot, then
+make this site your team's handbook as the robot develops.
 
-## Start Here
+## Get started
 
-1. [Start a new season](guides/new-season.md) explains how to create the repository
-   and identifies every template value that must be replaced.
-2. [Why Kotlin?](guides/why-kotlin.md) explains the language choice, the FTC-specific
-   benefits it provides, and the small set of conventions students should follow.
-3. [Build the first robot](guides/first-robot.md) takes the neutral scaffold through
-   measured Pedro constants, Drive/Nav, one mechanism, deployment, and a safe
-   physical test.
-4. Complete the [hardware worksheet](guides/hardware-worksheet.md) before declaring
-   devices, then follow [Add a subsystem](guides/subsystem.md) for each mechanism.
+1. [Create the season repository](guides/new-season.md) and prove the baseline.
+2. [Record the hardware](guides/hardware-worksheet.md): names, ports, directions,
+   and safe outputs before writing mechanism code.
+3. [Configure the first robot](guides/first-robot.md). Start with the
+   included mecanum scaffold and its localization configuration.
+4. [Build and test the first robot](guides/first-robot.md).
+5. Add a [servo subsystem](guides/subsystem.md) or a
+   [motor and sensor subsystem](guides/motor-subsystem.md), one mechanism at a time.
+6. [Deploy](guides/deployment.md) and record what actually worked on hardware.
 
-## Understand and Reproduce It
+New to Kotlin? Start with [Why Kotlin?](guides/why-kotlin.md).
 
-- [Architecture](architecture/overview.md) explains how the reusable library,
-  TeamCode scaffold, lifecycle, commands, hardware, diagnostics, and pathing fit
-  together.
-- [Requirements](requirements/index.md) defines the durable **what** and **why** of
-  the platform with acceptance criteria.
-- [Rebuild](rebuild/index.md) reconstructs the project from the official FTC Robot
-  Controller foundation.
-- [Reference](reference/modules-dependencies.md) records exact versions, settings,
-  decisions, terminology, and upstream resources.
+## Make this your robot's handbook
 
-Clone this repository and retain it as the `quickstart` remote. The new season then
-preserves the full FTC/platform history and can rebase its work onto later
-Quickstart corrections. The [new-season guide](guides/new-season.md) provides the
-exact commands and collaboration cautions.
+[Our robot](robot/index.md) is an editable starting place for your team's design.
+Record the [requirements](robot/requirements.md), [subsystems and architecture](robot/architecture.md),
+and [validation results](robot/validation.md) alongside the implementation.
+Unknown facts should stay visibly unknown until the team decides or measures them.
 
-## Documentation Contract
+When your team has a robot overview, replace this page with that overview and
+keep the Get started links available in navigation. Update the site title in
+`mkdocs.yml` and the repository README to identify your team, season, and robot.
+The [documentation workflow](guides/document-your-robot.md) includes an agent skill
+that helps students develop these pages from design conversations and code.
 
-The Markdown in `docs/` is canonical. The GitHub Pages site is a generated view of
-the same files, not a second source of truth. A GitHub wiki is intentionally not
-used as the canonical store because wiki content has separate history and review.
-If a wiki is enabled, it should contain only a landing page that links here.
+## Platform reference
 
-Every normative requirement has a stable ID. Architecture pages explain the
-reasoning that does not fit cleanly in a requirement table.
+The reusable starter still has a complete [platform reference](reference/platform.md):
+architecture, stable requirements, reconstruction steps, and dependency details.
+Use it when explaining an inherited behavior or rebuilding the platform.
+Your robot's requirements belong under Our robot; platform contracts retain their
+existing IDs and remain separate.
 
-## Baseline and Scope
-
-- Upstream: `FIRST-Tech-Challenge/FtcRobotController`
-- FTC release: v12.0 (v11.2 history preserved)
-- Local foundation: `26cd1fdd`
-- Seasonal source: Quickstart `main`
-- Android/Kotlin modules: `FtcRobotController`, `3drdNextFTC`, and `TeamCode`
-- Required quality gate: 100% line and branch coverage in the two owned modules
-
-This documentation does not replace FIRST, NextFTC, Pedro Pathing, or Panels
-documentation. It records how and why those systems are assembled here.
+Markdown in `docs/` is the source of truth. The generated site presents those same
+files; document changes belong in code review with their associated implementation.
