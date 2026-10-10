@@ -34,7 +34,7 @@ fun CRServoEx.tel() {
 
 fun Drivetrain.tel() { (this as? Mecanum)?.motors?.tel() }
 
-fun Iterable<DcMotorEx>.tel() = forEach { it.tel(hardwareMap.getNamesOf(it).first()) }
+fun Iterable<DcMotorEx>.tel() = distinct().forEach { it.tel(hardwareMap.getNamesOf(it).first()) }
 
 fun MotorEx.tel() = motor.tel(name)
 

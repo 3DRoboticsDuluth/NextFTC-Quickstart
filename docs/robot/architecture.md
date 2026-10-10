@@ -12,7 +12,7 @@ Record initialization and Stop behavior, sensor interpretation, coordinate axes,
 and configuration settings that drivers select. Add a simple diagram when it
 clarifies the movement of game pieces or the interactions between mechanisms.
 
-Document the selected [drivetrain and localizer](../guides/first-robot.md), measured
+Document the selected [drivetrain and localizer](../guides/drivetrain.md), measured
 geometry, tuning source, and limitations. Include the driver controls and
 what the autonomous entry point calls. Keep hardware names and game policy in
 TeamCode; link to [platform architecture](../architecture/overview.md) for inherited

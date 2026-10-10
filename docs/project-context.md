@@ -16,6 +16,7 @@ season template. Decode/Osiris behavior and Quanomous remain in the separate
 
 - [Get started](index.md)
 - [Our robot templates](robot/index.md)
+- [Choose drivetrain and localization](guides/drivetrain.md)
 - [Document your robot](guides/document-your-robot.md)
 - [Start a new season](guides/new-season.md)
 - [Why Kotlin?](guides/why-kotlin.md)
@@ -57,7 +58,11 @@ requirement/architecture/rebuild/traceability documentation when behavior change
 
 Navigation separates Get started, editable Our robot pages, and Platform reference.
 Use `.agents/skills/document-robot/SKILL.md` to assist team documentation. The
-neutral scaffold remains mecanum; setup and tuning still require physical validation.
+neutral scaffold remains mecanum. The tank/arcade guide reviews the earlier paired
+motor mapping against Pedro 2.1.2, requires robot-centric zero-strafe input, and
+records desktop evidence separately from the coach's earlier driving report.
+Current upgraded tank hardware, dedicated odometry, and differential autonomous
+behavior still require physical validation.
 
 Robot requirements follow the implementation-readiness guide and worked example:
 expected behavior, test scenarios, and whole-robot interactions must be explicit.

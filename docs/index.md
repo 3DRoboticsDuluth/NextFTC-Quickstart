@@ -8,8 +8,8 @@ make this site your team's handbook as the robot develops.
 1. [Create the season repository](guides/new-season.md) and prove the baseline.
 2. [Record the hardware](guides/hardware-worksheet.md): names, ports, directions,
    and safe outputs before writing mechanism code.
-3. [Configure the first robot](guides/first-robot.md). Start with the
-   included mecanum scaffold and its localization configuration.
+3. [Choose the drivetrain and localization](guides/drivetrain.md). Follow the
+   mecanum or two-motor tank/arcade route, with drive encoders or dedicated odometry.
 4. [Build and test the first robot](guides/first-robot.md).
 5. Add a [servo subsystem](guides/subsystem.md) or a
    [motor and sensor subsystem](guides/motor-subsystem.md), one mechanism at a time.

@@ -7,7 +7,7 @@ description: Create or update this FTC team's robot requirements, subsystem arch
 
 Read `docs/project-context.md`, `docs/robot/`, and relevant TeamCode files before
 editing. Use `docs/guides/document-your-robot.md` for the team workflow and
-`docs/guides/first-robot.md` when drivetrain or localization choices are involved.
+`docs/guides/drivetrain.md` when drivetrain or localization choices are involved.
 For requirement creation or readiness review, read
 `docs/guides/implementable-requirements.md` and the teaching example in
 `docs/guides/requirements-example.md`. Example policy and numbers are not team decisions.

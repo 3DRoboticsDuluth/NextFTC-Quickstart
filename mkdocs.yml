@@ -54,6 +54,7 @@ nav:
       - Welcome: index.md
       - Start a new season: guides/new-season.md
       - Why Kotlin?: guides/why-kotlin.md
+      - Choose drivetrain and localization: guides/drivetrain.md
       - Build the first robot: guides/first-robot.md
       - Hardware worksheet: guides/hardware-worksheet.md
       - Add a servo subsystem: guides/subsystem.md

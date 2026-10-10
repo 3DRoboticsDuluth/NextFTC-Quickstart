@@ -143,6 +143,13 @@ reference. Teams promote their robot overview to the home page as it matures.
 A repository-local documentation skill helps connect team requirements to code,
 tests, and measured evidence without inventing design decisions.
 
+Keep the neutral mecanum scaffold unchanged. Offer the earlier paired-slot tank
+recipe as an explicit TeamCode specialization reviewed against Pedro 2.1.2.
+Require zero-strafe robot-centric Teleop and calibrated drive-encoder factors;
+deduplicate telemetry for repeated motor references. Desktop tests establish the
+adapter math and same-side outputs, not differential autonomous capability or
+physical readiness. Dedicated odometry remains a separate physical validation.
+
 ## Implementable robot requirements
 
 Treat requirement readiness as another student being able to implement and test

@@ -187,8 +187,12 @@ implementations, omit motor telemetry without interrupting driving.
 After constructing the neutral platform, retain its reconstruction pages under
 Platform reference, organize navigation into Get started / Our robot / Platform
 reference, and add editable robot documentation plus the repository skill.
-Traceability: REQ-SCF-010 maps to robot templates, workflow, navigation,
-and strict MkDocs.
+Keep mecanum as the scaffold default; document the reviewed paired-slot arcade
+specialization and localization choices without importing team tuning.
+Deduplicate repeated physical motors in collection telemetry and retain the
+motor read-only assertions. Traceability: REQ-SCF-010 maps to robot templates,
+workflow, navigation and strict MkDocs; REQ-SCF-011 maps to the drivetrain guide,
+TankDriveSetupTests and PedroDriverControlledTests; REQ-PLT-043 maps to TelemetryTests.
 
 Extend the robot documentation templates with an implementation-readiness guide
 and a worked hypothetical subsystem specification. Teach observable requirements,

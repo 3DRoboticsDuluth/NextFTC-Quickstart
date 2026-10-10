@@ -45,6 +45,19 @@ class PedroDriverControlledTests : SubsystemTests() {
     }
 
     @Test
+    fun arcadeRecipeKeepsStrafeZeroAndInputsRobotCentric() {
+        val command = PedroDriverControlled(
+            Supplier { 0.6 }, Supplier { 0.0 }, Supplier { -0.2 }, { true }
+        ).apply { scalar = 0.5 }
+
+        command.start()
+        command.update()
+
+        verify(follower).startTeleopDrive()
+        verify(follower).setTeleOpDrive(0.3, 0.0, -0.1, true, 0.0)
+    }
+
+    @Test
     fun breaksFollowingOnlyWhenInterrupted() {
         val command = PedroDriverControlled(
             Supplier { 0.0 },

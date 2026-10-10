@@ -134,3 +134,12 @@ graphs. This is current telemetry, not a periodic historical RobotLog event.
 Motor telemetry uses `(this as? Mecanum)?.motors?.tel()` and supports Pedro 2.1.2
 `Mecanum`. Other drivetrains, including deprecated `MecanumEx`, Swerve, and custom
 implementations, omit motor telemetry without interrupting driving.
+
+## Chassis setup routes
+
+The [drivetrain guide](../guides/drivetrain.md) separates mecanum from two-motor
+tank/arcade and drive encoders from dedicated localization. The paired-slot tank
+recipe requires robot-centric zero-strafe input; it does not make the chassis
+holonomic. Collection telemetry reports each distinct physical motor once.
+REQ-SCF-011 is verified by TankDriveSetupTests and PedroDriverControlledTests;
+REQ-PLT-043 retains read-only telemetry checks in TelemetryTests.

@@ -120,6 +120,34 @@ class TelemetryTests : SubsystemTests() {
         verify(telemetry, never()).addData(anyString(), any())
     }
     @Test
+    fun pairedDriveSlotsReportEachPhysicalMotorOnce() {
+        val left = mock(com.qualcomm.robotcore.hardware.DcMotorEx::class.java)
+        val right = mock(com.qualcomm.robotcore.hardware.DcMotorEx::class.java)
+        val type = mock(MotorConfigurationType::class.java)
+        listOf(left, right).forEach { `when`(it.motorType).thenReturn(type) }
+        `when`(type.achieveableMaxTicksPerSecond).thenReturn(500.0)
+        `when`(type.ticksPerRev).thenReturn(100.0)
+        `when`(ActiveOpMode.hardwareMap.getNamesOf(left)).thenReturn(setOf("leftMotor"))
+        `when`(ActiveOpMode.hardwareMap.getNamesOf(right)).thenReturn(setOf("rightMotor"))
+        `when`(left.power).thenReturn(0.2)
+        `when`(right.power).thenReturn(0.4)
+        val telemetry = ActiveOpMode.telemetry
+        clearInvocations(telemetry, ActiveOpMode.hardwareMap, left, right)
+
+        listOf(left, left, right, right).tel()
+
+        verify(telemetry).addData("D | Left Motor | Power", 0.2 as Any)
+        verify(telemetry).addData("D | Right Motor | Power", 0.4 as Any)
+        verify(telemetry, times(12)).addData(anyString(), any<Any>())
+        verify(ActiveOpMode.hardwareMap).getNamesOf(left)
+        verify(ActiveOpMode.hardwareMap).getNamesOf(right)
+        listOf(left, right).forEach {
+            verify(it, never()).setPower(anyDouble())
+            verify(it, never()).setMode(any())
+        }
+    }
+
+    @Test
     fun emptyMotorCollectionReportsNothing() {
         val telemetry = ActiveOpMode.telemetry
         clearInvocations(telemetry, ActiveOpMode.hardwareMap)

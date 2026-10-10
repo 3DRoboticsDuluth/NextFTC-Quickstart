@@ -41,6 +41,10 @@ be added to `3drdNextFTC`.
 
 ## 3. Configure Pedro Constants
 
+First follow [Choose drivetrain and localization](drivetrain.md). The walkthrough
+below is the mecanum route. For a tank chassis, use the zero-strafe, robot-centric
+arcade recipe there; do not apply the mecanum strafe or field-centric checks.
+
 The base `Constants` intentionally contains 18-inch template dimensions and Pedro
 defaults. Replace them in the upstream-recognizable Pedro shape:
 
