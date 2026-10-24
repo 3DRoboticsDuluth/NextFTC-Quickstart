@@ -200,3 +200,11 @@ test scenarios, lifecycle and event priority, and cross-subsystem interactions.
 Add the same completeness review to the repository documentation skill.
 Traceability: REQ-SCF-012 maps to these guides, robot requirement/interaction
 templates, skill validation, and a strict MkDocs build.
+
+## Local documentation preview
+
+Add `docs.cmd`, executable `docs.sh`, and the shared Python
+launcher under `scripts/`. Bootstrap `.venv-docs` from `requirements-docs.txt`
+on first use or requirement changes. Register the `docs` Gradle Exec task
+and the shared Preview Docs run configuration; both platforms use the same
+launcher. See [Preview the documentation](../guides/preview-docs.md) and REQ-SCF-013.

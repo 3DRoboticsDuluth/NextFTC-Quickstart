@@ -159,3 +159,10 @@ interactions explicitly. Use a hypothetical worked example to teach the process;
 its values and behavior do not become a team's defaults. Track unresolved behavior
 choices separately from physical calibration and never equate software readiness
 with robot validation or a guaranteed one-shot build.
+
+## Shared documentation preview
+
+Use thin Windows/Linux launchers with one Python environment setup implementation.
+A Gradle Exec task supplies a cross-platform Android Studio run configuration
+without requiring a Python or shell IDE plugin. Install the pinned documentation
+requirements only on initial setup or when their fingerprint changes.

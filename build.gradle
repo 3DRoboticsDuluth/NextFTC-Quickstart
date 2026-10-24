@@ -34,3 +34,14 @@ allprojects {
 repositories {
     mavenCentral()
 }
+
+tasks.register('docs', Exec) {
+    group = 'documentation'
+    description = 'Prepare the local Python environment and preview the documentation.'
+    workingDir rootDir
+    if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+        commandLine 'cmd', '/c', 'docs.cmd'
+    } else {
+        commandLine 'bash', 'docs.sh'
+    }
+}

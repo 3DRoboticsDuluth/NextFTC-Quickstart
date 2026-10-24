@@ -61,6 +61,7 @@ nav:
       - Add a motor and sensor subsystem: guides/motor-subsystem.md
       - Deploy robot code: guides/deployment.md
       - Document your robot: guides/document-your-robot.md
+      - Preview the documentation: guides/preview-docs.md
       - Write implementable requirements: guides/implementable-requirements.md
       - Worked requirements example: guides/requirements-example.md
   - Our robot:

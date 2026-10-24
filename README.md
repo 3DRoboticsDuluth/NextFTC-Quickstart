@@ -28,10 +28,12 @@ repository's documentation workflow. GitHub Pages must be configured to use
 For local preview:
 
 ```powershell
-python -m venv .venv-docs
-.\.venv-docs\Scripts\python -m pip install -r requirements-docs.txt
-.\.venv-docs\Scripts\mkdocs serve
+.\docs.cmd
 ```
+
+On Linux, run `./docs.sh`. In Android Studio, run **Preview Docs**.
+Python 3 is required; the launchers prepare dependencies automatically. See
+[Preview the documentation](docs/guides/preview-docs.md) for setup and options.
 
 ## Start a Season
 
