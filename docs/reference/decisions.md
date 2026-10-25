@@ -166,3 +166,13 @@ Use thin Windows/Linux launchers with one Python environment setup implementatio
 A Gradle Exec task supplies a cross-platform Android Studio run configuration
 without requiring a Python or shell IDE plugin. Install the pinned documentation
 requirements only on initial setup or when their fingerprint changes.
+
+## Native NextFTC hardware
+
+NextFTC 1.1.0 marks MotorEx and IMUEx final. Use type aliases, lazy configuration
+factories, and Kotlin extensions instead of composition that exposes only a
+selected interface. Lifecycle discovery recognizes native instances, preserving
+automatic initialization and subsystem fault isolation without requiring them
+to implement our Hardware marker. Use the same pattern for servos so fluent
+returns remain discoverable and students have one consistent declaration style.
+Device keeps its existing SDK-device delegate. Avoid a vendor fork or bytecode changes.

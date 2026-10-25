@@ -1,16 +1,16 @@
 # Hardware
 
-Hardware wrappers make lazy FTC device acquisition, subsystem fault isolation,
+Hardware adapters make lazy FTC device acquisition, subsystem fault isolation,
 configuration, telemetry hooks, and tests consistent across device types.
 
-## Wrapper Families
+## Adapter families
 
-| Wrapper | Underlying device | Added behavior |
+| Adapter | Underlying device | Added behavior |
 |---|---|---|
-| `ServoEx` | NextFTC servo wrapper / FTC Servo | Lazy map lookup, configure lambda, `scaleRange`, reverse helper, caching |
-| `CRServoEx` | NextFTC continuous servo | Lazy map lookup, configure lambda, caching |
-| `MotorEx` | NextFTC motor / `DcMotorEx` | Lazy lookup, configure lambda, velocity-percentage access, caching |
-| `IMUEx` | NextFTC IMU wrapper | Lazy lookup and FTC IMU parameters |
+| `ServoEx` | Native NextFTC servo (type alias) | Lazy configure factory, name/initialization extensions; upstream API and caching |
+| `CRServoEx` | Native NextFTC continuous servo (type alias) | Lazy configure factory, name/initialization extensions; upstream API and caching |
+| `MotorEx` | Native NextFTC motor (type alias) | Lazy configure factory, velocity-percentage extension; full upstream API and caching |
+| `IMUEx` | Native NextFTC IMU (type alias) | Lazy configure factory, initialization/name extensions; full upstream API |
 | `Device<T>` | Any FTC `HardwareDevice` | Generic lazy lookup for sensors/vendor hardware |
 
 Declarations remain close to the mechanism:
@@ -29,11 +29,69 @@ val laser by Device("laser2", DigitalChannel::class.java) {
 
 Use constructors with the hardware name first. `Device` accepts an optional
 configuration block; `by` exposes its underlying FTC device through `getValue()`.
-Motor and servo properties retain their enhanced wrappers using `=`.
+Motor and servo properties retain their enhanced objects using `=`.
 
-The wrapper constructor does not require an active hardware map. Actual acquisition
+The adapters do not require an active hardware map at construction. Actual acquisition
 happens during subsystem hardware initialization, which keeps singleton subsystem
 construction safe in unit tests and before an OpMode is active.
+
+## Native NextFTC hardware
+
+`MotorEx`, `IMUEx`, `ServoEx`, and `CRServoEx` are type aliases for the actual
+NextFTC 1.1.0 classes.
+The constructor-shaped configuration factories return those exact types; there is
+no containing `motorEx` / `imuEx` object and no hand-maintained forwarding API.
+All upstream constructors, properties, methods, and fluent return types remain
+available directly. There are no custom servo subclasses either, so fluent
+methods return the same native type recognized by discovery and telemetry.
+
+```kotlin
+val motor = MotorEx("intake") { zeroPowerBehavior = BRAKE }
+val imu = IMUEx("imu") { initialize(imuParameters) }
+
+motor.reverse()             // upstream method, directly available
+motor.velocityPercentage = 0.5 // local extension
+imu.zero()                  // upstream method, directly available
+```
+
+`imuParameters` represents the team's configured SDK parameters, not a template
+orientation. Configuration lambdas receive the underlying FTC SDK device and run
+on first acquisition. Short `MotorEx("name")`, `ServoEx("name")`, and
+`CRServoEx("name")` factories use the same lazy, typed lookup path. Their configured
+factory overloads require a lambda, avoiding conflicts with upstream constructors'
+default arguments. Original constructors accepting SDK objects, suppliers, or
+explicit cache tolerance remain available and return the same native types.
+
+Subsystem initialization recognizes all four native NextFTC types in addition
+to `Hardware` adapters. It deduplicates object references, resolves each device
+before the owning subsystem's `initialize()`, and isolates/retries failures as
+before. Native failure messages identify the subsystem field: obtaining a display
+name must not trigger another failed hardware lookup. Servo and IMU telemetry use registered
+hardware-map names, falling back to the SDK device name for an unregistered instance.
+
+### Migration and imports
+
+This removes the four custom adapter runtime classes and is a binary compatibility
+change: rebuild consuming code and perform a full APK installation before Sloth.
+Existing configured declarations and hardware names remain valid. Replace
+`motor.motorEx.someMember` with `motor.someMember` and `imu.imuEx.someMember` with
+`imu.someMember`. The SDK devices still live at `.motor` and `.imu`, as upstream
+intends. These four types no longer implement our `Hardware` interface; use subsystem
+discovery or the initialization extensions rather than casting them to it.
+
+A package wildcard import includes the aliases, factories, and extensions:
+
+```kotlin
+import org.firstinspires.ftc.threedrd.nextftc.hardware.*
+```
+
+With explicit imports, add the extension imports you use (`initialize`,
+`velocityPercentage`, `update`, or servo/IMU `name`). Importing just the class/type alias
+does not import its extensions. Native members win over same-signature extensions.
+Type aliases are Kotlin-only: Java consumers import the original `dev.nextftc.hardware.impl`
+classes and call extension/factory helpers through their generated static methods
+when needed. REQ-PLT-044 defines this direct-API contract; REQ-PLT-011 and 030–032
+retain the initialization, device coverage, and telemetry contracts.
 
 ## Breaking change: generic device declarations
 

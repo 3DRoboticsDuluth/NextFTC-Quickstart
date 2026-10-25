@@ -10,18 +10,24 @@ class MotorExTests : SubsystemTests() {
     @Test
     fun initializationResolvesAndConfiguresTheMotor() {
         var configured = false
+        clearInvocations(dev.nextftc.ftc.ActiveOpMode.hardwareMap)
         val motor = MotorEx("configured") { configured = true }
+        assertFalse(configured)
+        assertEquals("configured", motor.name)
+        verify(dev.nextftc.ftc.ActiveOpMode.hardwareMap, never()).get(
+            com.qualcomm.robotcore.hardware.DcMotorEx::class.java, "configured"
+        )
 
         motor.initialize()
 
         assertNotNull(motor.motor)
-        assertNotNull(motor.motorEx)
+        assertEquals(dev.nextftc.hardware.impl.MotorEx::class.java, motor.javaClass)
         assertTrue(configured)
     }
 
     @Test
     fun fluentConfigurationReturnsTheAdapter() {
-        val motor = MotorEx("fluent")
+        val motor = MotorEx("fluent", configure = {})
         motor.initialize()
 
         assertSame(
@@ -32,7 +38,7 @@ class MotorExTests : SubsystemTests() {
 
     @Test
     fun getsAndSetsVelocityAsAPercentageOfTheConfiguredMaximum() {
-        val motor = MotorEx("percentage")
+        val motor = MotorEx("percentage", configure = {})
         motor.initialize()
         val type = mock(MotorConfigurationType::class.java)
         `when`(motor.motor.motorType).thenReturn(type)
@@ -47,7 +53,7 @@ class MotorExTests : SubsystemTests() {
 
     @Test
     fun updateAppliesTheActionAndReportsTheMotor() {
-        val motor = MotorEx("test")
+        val motor = MotorEx("test", configure = {})
         var actionApplied = false
         var reported: MotorEx? = null
         HardwareTelemetry.motor(motor)
@@ -58,4 +64,37 @@ class MotorExTests : SubsystemTests() {
         assertTrue(actionApplied)
         assertSame(motor, reported)
     }
+    @Test
+    fun originalConstructorAndPreviouslyNestedApiRemainDirect() {
+        val map = dev.nextftc.ftc.ActiveOpMode.hardwareMap
+        val sdk = mock(com.qualcomm.robotcore.hardware.DcMotorEx::class.java)
+        `when`(map.get("nativeMotor")).thenReturn(sdk)
+        val motor = MotorEx("nativeMotor", cacheTolerance = 0.01)
+        verify(map, never()).get("nativeMotor")
+        motor.initialize()
+        motor.initialize()
+        verify(map).get("nativeMotor")
+        assertSame(sdk, motor.motor)
+        `when`(sdk.currentPosition).thenReturn(123)
+        assertEquals(123.0, motor.rawTicks, 0.0)
+        motor.direction = 1
+        motor.reverse()
+        assertEquals(-1, motor.direction)
+        motor.zero()
+        assertEquals(0.0, motor.currentPosition, 0.0)
+        motor.zeroPowerBehavior = com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE
+        verify(sdk).setZeroPowerBehavior(com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE)
+    }
+
+    @Test
+    fun shortDeclarationUsesLazyTypedLookup() {
+        val map = dev.nextftc.ftc.ActiveOpMode.hardwareMap
+        clearInvocations(map)
+        val motor = MotorEx("shortMotor")
+        verify(map, never()).get(com.qualcomm.robotcore.hardware.DcMotorEx::class.java, "shortMotor")
+        motor.initialize()
+        verify(map).get(com.qualcomm.robotcore.hardware.DcMotorEx::class.java, "shortMotor")
+        assertEquals(dev.nextftc.hardware.impl.MotorEx::class.java, motor.javaClass)
+    }
+
 }

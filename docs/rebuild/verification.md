@@ -87,3 +87,17 @@ Unit tests can prove signs, values, and calls against mocks. They cannot prove:
 
 Use the [hardware worksheet](../guides/hardware-worksheet.md) as mandatory evidence
 before competition use.
+
+## Native hardware adapter validation — October 24, 2026
+
+The native MotorEx/IMUEx/ServoEx/CRServoEx adaptation (REQ-PLT-044) passes the full required Gradle
+check/coverage/APK command with `--max-workers=2 --continue`. Debug and release
+each pass 138 library tests and 28 TeamCode tests. Both modules retain 100% line
+and branch coverage (library: 885 lines / 349 branches; TeamCode: 99 lines / 18
+branches), with unchanged thresholds/exclusions. Strict MkDocs and diff checks pass.
+
+Tests verify exact native runtime types and direct upstream APIs, lazy constructor
+configuration without an active OpMode, original constructors and servo fluent returns, identity-deduplicated
+initialization, failure isolation and retry, and telemetry/update behavior.
+No robot deployment or physical test was performed. Consuming teams must rebuild
+and perform a full install for the changed runtime types before using Sloth.

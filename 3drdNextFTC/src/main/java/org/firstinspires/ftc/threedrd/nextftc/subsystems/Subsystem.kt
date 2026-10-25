@@ -22,12 +22,19 @@ abstract class Subsystem : dev.nextftc.core.subsystems.Subsystem {
         errors.clear()
         javaClass.declaredFields.mapNotNull { field ->
             field.isAccessible = true
-            field.get(this) as? Hardware
-        }.distinct().forEach {
+            when (val device = field.get(this)) {
+                is Hardware -> Triple(device, device.name, device::initialize)
+                is ServoEx -> Triple(device, field.name, device::initialize)
+                is CRServoEx -> Triple(device, field.name, device::initialize)
+                is MotorEx -> Triple(device, field.name, device::initialize)
+                is IMUEx -> Triple(device, field.name, device::initialize)
+                else -> null
+            }
+        }.distinctBy { it.first }.forEach { (_, name, initialize) ->
             try {
-                it.initialize()
+                initialize()
             } catch (exception: Exception) {
-                val message = "${it.name}: $exception"
+                val message = "$name: $exception"
                 errors += message
                 log.error("Hardware | $message")
             }

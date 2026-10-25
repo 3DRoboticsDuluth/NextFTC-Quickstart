@@ -208,3 +208,16 @@ launcher under `scripts/`. Bootstrap `.venv-docs` from `requirements-docs.txt`
 on first use or requirement changes. Register the `docs` Gradle Exec task
 and the shared Preview Docs run configuration; both platforms use the same
 launcher. See [Preview the documentation](../guides/preview-docs.md) and REQ-SCF-013.
+
+## Native NextFTC hardware integration
+
+Replace the MotorEx/IMUEx wrappers and servo subclasses with aliases and lazy configuration
+factories returning the original NextFTC instances. Keep velocity-percentage and
+initialization helpers as extensions. Teach subsystem discovery to initialize
+all four native types alongside Hardware adapters, deduplicate identities, and use
+field names when native acquisition fails. Retain Device delegation and TeamCode
+telemetry policy; use registered servo/IMU hardware names with a device-name fallback.
+Verify lazy construction without an active OpMode, factory configuration, direct
+upstream constructors/members/fluent APIs, fault isolation/retry, and telemetry.
+REQ-PLT-011, 030, 031, 032 and 044 trace to the adapter, subsystem, and telemetry tests.
+See [Hardware](../architecture/hardware.md) for source/binary migration details.

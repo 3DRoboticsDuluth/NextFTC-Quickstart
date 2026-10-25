@@ -35,6 +35,8 @@ abstract class SubsystemTests {
 
                 if (invocation.method.name == "get" && type != null && name != null) {
                     devices.getOrPut(type to name) { mockDevice(type) }
+                } else if (invocation.method.name == "getNamesOf") {
+                    devices.filterValues { it === invocation.arguments[0] }.keys.map { it.second }.toSet()
                 } else {
                     RETURNS_DEFAULTS.answer(invocation)
                 }

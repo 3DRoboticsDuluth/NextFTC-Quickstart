@@ -1,32 +1,13 @@
 package org.firstinspires.ftc.threedrd.nextftc.hardware
 
 import com.qualcomm.robotcore.hardware.*
-import dev.nextftc.core.units.*
 import dev.nextftc.ftc.ActiveOpMode.hardwareMap
-import dev.nextftc.hardware.impl.IMUEx as NextIMUEx
-import java.util.function.*
 
-class IMUEx private constructor(
-    override val name: String,
-    val imuEx: NextIMUEx
-) : Supplier<Angle> by imuEx, Hardware {
-    constructor(
-        name: String = "imu",
-        configure: IMU.() -> Unit = {},
-    ) : this(
-        name,
-        NextIMUEx {
-            hardwareMap
-                .get(IMU::class.java, name)
-                .apply(configure)
-        }
-    )
+typealias IMUEx = dev.nextftc.hardware.impl.IMUEx
 
-    val imu get() = imuEx.imu
+fun IMUEx(name: String = "imu", configure: IMU.() -> Unit = {}) =
+    IMUEx(imuFactory = { hardwareMap.get(IMU::class.java, name).apply(configure) })
 
-    override fun initialize() {
-        imu
-    }
+val IMUEx.name get() = hardwareMap.getNamesOf(imu).firstOrNull() ?: imu.deviceName
 
-    fun zeroed() = apply { imuEx.zeroed() }
-}
+fun IMUEx.initialize() { imu }

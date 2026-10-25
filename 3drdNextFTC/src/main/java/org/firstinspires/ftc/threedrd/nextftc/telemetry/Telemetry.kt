@@ -110,10 +110,7 @@ class Tel(val source: String) {
     fun error(caption: String, value: Any?) = add(TelemetryLevel.ERROR, caption, value)
     fun fatal(caption: String, value: Any?) = add(TelemetryLevel.ASSERT, caption, value)
 
-    fun add(level: TelemetryLevel, caption: String, value: () -> Any?) {
-        if (Telemetry.LEVEL.accepts(level)) add(level, caption, value())
-    }
-
+    fun add(level: TelemetryLevel, caption: String, value: () -> Any?) { if (Telemetry.LEVEL.accepts(level)) add(level, caption, value()) }
     fun verbose(caption: String, value: () -> Any?) = add(TelemetryLevel.VERBOSE, caption, value)
     fun debug(caption: String, value: () -> Any?) = add(TelemetryLevel.DEBUG, caption, value)
     fun info(caption: String, value: () -> Any?) = add(TelemetryLevel.INFO, caption, value)

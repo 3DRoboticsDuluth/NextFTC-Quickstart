@@ -64,7 +64,7 @@ class TelemetryTests : SubsystemTests() {
 
     @Test
     fun motorTelemetryUsesTheEstablishedFields() {
-        val motor = MotorEx("testMotor")
+        val motor = MotorEx("testMotor", configure = {})
         motor.initialize()
         val type = mock(MotorConfigurationType::class.java)
         `when`(motor.motor.getCurrent(AMPS)).thenReturn(1.234)
@@ -91,6 +91,7 @@ class TelemetryTests : SubsystemTests() {
     fun imuTelemetryReportsOrientation() {
         val imu = IMUEx("testImu")
         imu.initialize()
+        `when`(ActiveOpMode.hardwareMap.getNamesOf(imu.imu)).thenReturn(setOf("testImu"))
         val angles = mock(YawPitchRollAngles::class.java)
         `when`(imu.imu.robotYawPitchRollAngles).thenReturn(angles)
         `when`(angles.getYaw(DEGREES)).thenReturn(10.06)

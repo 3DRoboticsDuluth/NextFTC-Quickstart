@@ -68,3 +68,12 @@ Robot requirements follow the implementation-readiness guide and worked example:
 expected behavior, test scenarios, and whole-robot interactions must be explicit.
 The documentation skill reports unresolved policy separately from missing hardware
 measurements. Teaching examples are not implemented robot features.
+
+## Native hardware adapters
+
+MotorEx, IMUEx, ServoEx, and CRServoEx are aliases to native NextFTC types, with lazy configuration
+factories and Kotlin extensions. Subsystem initialization recognizes them directly
+as well as Hardware implementations. Device remains the generic SDK-device delegate. Full
+upstream APIs are directly visible, without nested motorEx/imuEx forwarding or servo subclasses.
+See [Hardware](architecture/hardware.md) for extension imports, constructor
+selection, failure labels, and the full-install migration requirement.

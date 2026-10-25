@@ -18,7 +18,7 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|
 | `REQ-PLT-010` | Subsystems MUST be discovered automatically for each OpMode lifecycle and ordered deterministically. | Adding a subsystem must not create a central registration hotspot, and hot-loaded TeamCode must not reuse singleton instances from an older class loader. | Discovery finds fresh singleton subsystems for each OpMode; tests verify repeated discovery and ordering. |
-| `REQ-PLT-011` | Hardware fields MUST initialize before subsystem `initialize()` and a device failure MUST disable only its owning subsystem. | One missing mechanism should not make the entire robot unavailable for diagnosis. | Hardware failure tests verify isolation and disabled telemetry. |
+| `REQ-PLT-011` | Hardware fields MUST initialize before subsystem `initialize()` and a device failure MUST disable only its owning subsystem. | One missing mechanism should not make the entire robot unavailable for diagnosis. | Hardware failure tests verify native/adapter discovery, identity deduplication, isolation, retry, and disabled telemetry. |
 | `REQ-PLT-012` | `initialize()`, `start()`, `periodic()`, `controls()`, and `stop()` MUST have distinct lifecycle meanings. | Explicit phases prevent bindings during init and guarantee a last direct shutdown action. | Component tests verify callback order in Teleop and Auto. |
 | `REQ-PLT-013` | Driver bindings MUST be cleared per OpMode and activated only after Teleop start. | Reinitializing an OpMode must not duplicate bindings; Auto must not enable manual robot controls. | Binding and repeated-init tests pass. |
 | `REQ-PLT-014` | Subsystems MUST support default commands that are scheduled only when no active command requires the subsystem. | Continuous driving should be declarative and command ownership must prevent conflicts. | Subsystem component tests cover scheduling and `NullCommand`. |
@@ -42,7 +42,7 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|
-| `REQ-PLT-030` | Reusable wrappers MUST cover servo, continuous servo, motor, IMU, and arbitrary FTC hardware devices. | Subsystem hardware should share initialization, fault handling, and test seams. | Wrapper tests pass for each type. |
+| `REQ-PLT-030` | Reusable adapters MUST cover servo, continuous servo, motor, IMU, and arbitrary FTC hardware devices. | Subsystem hardware should share initialization, fault handling, and test seams. | Adapter tests verify each type, native identity/API access, and lazy configuration. |
 | `REQ-PLT-031` | Hardware `update` extensions MUST apply an action and then invoke a configurable telemetry hook. | Mechanism code should not repeat mutation plus telemetry boilerplate. | Hardware tests verify action-before-hook behavior. |
 | `REQ-PLT-032` | Concrete hardware telemetry policy MUST remain in TeamCode. | Teams may choose different fields and diagnostic levels without forking the shared library. | The reusable module exposes hooks; TeamCode configures `tel()` extensions. |
 | `REQ-PLT-033` | The OpMode foundation MUST enable bulk reads, Pedro follower lifecycle, field drawing, configuration, bindings, diagnostics, and subsystem lifecycle. | Every OpMode needs the same correctly ordered base services. | Neutral OpMode tests verify the component list. |
@@ -53,6 +53,7 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 | `REQ-PLT-038` | Pedro integration MUST support drivetrain encoders as the neutral localization default and document dedicated localizers as replaceable options. | Teams should not need Pinpoint hardware merely to start from Quickstart. | Constants and documentation tests/builds show the drive-encoder default and explicit Pinpoint/OTOS/odometry alternatives. |
 
 | `REQ-PLT-043` | Drive MUST report each distinct physical configured drive motor once per snapshot from Pedro’s existing motor collection for supported drivetrains and omit motor telemetry safely for unsupported drivetrains using the common TeamCode motor telemetry policy, without acquiring, commanding, or reconfiguring them. | Rookie teams need the same drive diagnostics as other mechanisms, including raw numeric Panels graph values. | Drive and telemetry tests assert motor readings, read-only reporting, standard Mecanum, safe omission for unsupported drivetrains, and deduplication of paired tank slots. |
+| `REQ-PLT-044` | MotorEx, IMUEx, ServoEx, and CRServoEx adaptations MUST expose the original NextFTC types and complete public API directly, with concise lazy configuration and extension helpers rather than a nested forwarding object. | Students should retain upstream constructors, methods, properties, and fluent chains while inheriting initialization/fault isolation. | Tests verify exact native runtime types, configuration without an active OpMode, direct native constructors/members/fluent returns, identity deduplication, and initialization retry. |
 
 ## Reusable Utilities
 
