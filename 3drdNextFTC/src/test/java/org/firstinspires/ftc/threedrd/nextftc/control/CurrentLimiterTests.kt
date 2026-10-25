@@ -7,36 +7,47 @@ class CurrentLimiterTests {
     @Test
     fun liveTuningPreservesTheCapAndChangesReductionThresholdAndRecovery() {
         var time = 0.0
-        val limiter = CurrentLimiter(5.0) { time }
+        var threshold = 5.0
+        var reduction = 2.0
+        var recovery = 0.5
+        val limiter = CurrentLimiter({ threshold }, { reduction }, { recovery }, { time })
         limiter.limit(1.0, 6.0)
         time = 0.25
         assertEquals(0.5, limiter.limit(1.0, 6.0), 0.0)
-        limiter.maxCurrent = 10.0
-        limiter.reductionRate = 1.0
-        limiter.recoveryRate = 1.0
+        threshold = 10.0
+        reduction = 1.0
+        recovery = 1.0
         assertEquals(0.5, limiter.powerLimit, 0.0)
         time = 0.5
         assertEquals(0.75, limiter.limit(1.0, 6.0), 0.0)
-        limiter.maxCurrent = 5.0
+        threshold = 5.0
         time = 0.75
         assertEquals(0.5, limiter.limit(1.0, 6.0), 0.0)
         listOf(0.0, -1.0, Double.NaN, Double.POSITIVE_INFINITY).forEach {
-            assertThrows(IllegalArgumentException::class.java) { limiter.maxCurrent = it }
-            assertThrows(IllegalArgumentException::class.java) { limiter.reductionRate = it }
-            assertThrows(IllegalArgumentException::class.java) { limiter.recoveryRate = it }
+            threshold = it
+            assertThrows(IllegalArgumentException::class.java) { limiter.limit(1.0, 6.0) }
+            threshold = 5.0
+            reduction = it
+            assertThrows(IllegalArgumentException::class.java) { limiter.limit(1.0, 6.0) }
+            reduction = 1.0
+            recovery = it
+            assertThrows(IllegalArgumentException::class.java) { limiter.limit(1.0, 6.0) }
+            recovery = 1.0
         }
-        assertEquals(5.0, limiter.maxCurrent, 0.0)
-        assertEquals(1.0, limiter.reductionRate, 0.0)
-        assertEquals(1.0, limiter.recoveryRate, 0.0)
+        assertEquals(5.0, limiter.maxCurrent(), 0.0)
+        assertEquals(1.0, limiter.reductionRate(), 0.0)
+        assertEquals(1.0, limiter.recoveryRate(), 0.0)
+        assertEquals(0.5, limiter.powerLimit, 0.0)
+        assertEquals(0.5, CurrentLimiter(maxCurrent = { 5.0 }).limit(0.5, 0.0), 0.0)
     }
 
     @Test
     fun overcurrentReducesPowerInEitherDirectionAndRecoveryIsGradual() {
         var time = 0.0
         val limiter = CurrentLimiter(5.0, 2.0, 0.5) { time }
-        assertEquals(5.0, limiter.maxCurrent, 0.0)
-        assertEquals(2.0, limiter.reductionRate, 0.0)
-        assertEquals(0.5, limiter.recoveryRate, 0.0)
+        assertEquals(5.0, limiter.maxCurrent(), 0.0)
+        assertEquals(2.0, limiter.reductionRate(), 0.0)
+        assertEquals(0.5, limiter.recoveryRate(), 0.0)
         assertEquals(1.0, limiter.limit(2.0, 6.0), 0.0)
         time = 0.25
         assertEquals(0.5, limiter.limit(1.0, 6.0), 0.0)

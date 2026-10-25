@@ -57,10 +57,10 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 
 ## Reusable Utilities
 
-Control utility tuning settings (REQ-PLT-045/046) are mutable, positive finite
-properties. Edits preserve state; profiles settle elapsed time with the old setting
-before switching, and limiter edits apply on the next sample without restoring its
-cap. Invalid edits retain the previous value. Fake-clock tests verify live tuning.
+Control utility tuning settings (REQ-PLT-045/046) accept suppliers of positive finite
+values, with fixed-number convenience constructors. Each update samples each supplier
+once; changed values apply to its elapsed interval without resetting state. Invalid
+samples throw before reference/cap or clock changes. Fake-clock tests verify live tuning.
 
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|

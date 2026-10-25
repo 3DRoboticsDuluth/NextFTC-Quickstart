@@ -12,31 +12,49 @@ class VelocityInterpolatorTests {
     @Test
     fun liveTuningPreservesTrajectoriesAndUsesTheNewSettingsGoingForward() {
         var time = 0.0
-        val ramp = VelocityRamp(1.0) { time }
-        val smoother = VelocitySmoother(1.0) { time }
+        var acceleration = 1.0
+        var tau = 1.0
+        val ramp = VelocityRamp(maxAcceleration = { acceleration }, seconds = { time })
+        val smoother = VelocitySmoother(timeConstant = { tau }, seconds = { time })
         ramp.goal = KineticState(velocity = 1.0)
         smoother.goal = ramp.goal
         time = 0.5
-        ramp.maxAcceleration = 2.0
-        smoother.timeConstant = 0.5
         assertEquals(0.5, ramp.currentReference.velocity, 1e-12)
         assertEquals(1.0 - exp(-0.5), smoother.currentReference.velocity, 1e-12)
+        acceleration = 2.0
+        tau = 0.5
         time = 0.75
         assertEquals(1.0, ramp.currentReference.velocity, 1e-12)
         assertEquals(1.0 - exp(-1.0), smoother.currentReference.velocity, 1e-12)
         listOf(0.0, -1.0, Double.NaN, Double.POSITIVE_INFINITY).forEach {
-            assertThrows(IllegalArgumentException::class.java) { ramp.maxAcceleration = it }
-            assertThrows(IllegalArgumentException::class.java) { smoother.timeConstant = it }
+            acceleration = it
+            tau = it
+            assertThrows(IllegalArgumentException::class.java) { ramp.currentReference }
+            assertThrows(IllegalArgumentException::class.java) { smoother.currentReference }
         }
-        assertEquals(2.0, ramp.maxAcceleration, 0.0)
-        assertEquals(0.5, smoother.timeConstant, 0.0)
+        acceleration = 2.0
+        tau = 0.5
+        assertEquals(1.0, ramp.currentReference.velocity, 1e-12)
+        assertEquals(1.0 - exp(-1.0), smoother.currentReference.velocity, 1e-12)
+        acceleration = Double.NaN
+        tau = Double.NaN
+        ramp.reset()
+        smoother.reset()
+        assertEquals(KineticState(), ramp.goal)
+        assertEquals(KineticState(), smoother.goal)
+        acceleration = 2.0
+        tau = 0.5
+        assertEquals(KineticState(), ramp.currentReference)
+        assertEquals(KineticState(), smoother.currentReference)
+        assertEquals(KineticState(), VelocityRamp(maxAcceleration = { 1.0 }).currentReference)
+        assertEquals(KineticState(), VelocitySmoother(timeConstant = { 1.0 }).currentReference)
     }
 
     @Test
     fun exponentialUsesElapsedTimeRatherThanReadCount() {
         var time = 0.0
         val interpolator = VelocitySmoother(0.2) { time }
-        assertEquals(0.2, interpolator.timeConstant, 0.0)
+        assertEquals(0.2, interpolator.timeConstant(), 0.0)
         interpolator.goal = KineticState(velocity = 1.0)
         time = 0.2
         val reference = interpolator.currentReference
@@ -57,7 +75,7 @@ class VelocityInterpolatorTests {
     fun accelerationLimitHandlesAccelerationBrakingAndReversalWithoutOvershoot() {
         var time = 0.0
         val interpolator = VelocityRamp(2.0) { time }
-        assertEquals(2.0, interpolator.maxAcceleration, 0.0)
+        assertEquals(2.0, interpolator.maxAcceleration(), 0.0)
         interpolator.goal = KineticState(velocity = 1.0)
         time = 0.1
         assertEquals(KineticState(velocity = 0.2, acceleration = 2.0), interpolator.currentReference)

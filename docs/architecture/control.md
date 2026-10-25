@@ -37,11 +37,30 @@ controller.goal = KineticState(velocity = targetVelocity)
 Use the same velocity units for target and measurement. With normalized motor
 speed, `1.6` means 1.6 full-scale speed units per second: zero to `0.4` takes
 0.25 seconds. With encoder ticks/second, acceleration is ticks/second squared.
-Settings are mutable properties. Valid positive finite edits take effect without
-resetting history. Profiles first advance to the edit time with the old setting,
-then use the new setting for subsequent elapsed time. Current threshold and rates
-apply on the next `limit` call, preserving the existing power cap. Invalid edits
-throw and retain the previous value.
+For live tuning, supply lambdas instead of fixed numbers:
+
+```kotlin
+VelocityRamp(maxAcceleration = { MAX_ACCELERATION })
+VelocitySmoother(timeConstant = { TIME_CONSTANT })
+CurrentLimiter(
+    maxCurrent = { MAX_CURRENT },
+    reductionRate = { CURRENT_REDUCTION },
+    recoveryRate = { CURRENT_RECOVERY },
+)
+```
+
+Each update samples each tuning supplier once and requires positive finite values.
+Changes apply to the elapsed interval processed by the next update, preserving
+trajectory progress and the current power cap. No periodic copying or setter
+callbacks are needed, including when Panels writes the captured fields directly.
+Invalid samples throw before advancing time or changing reference/cap state; correct
+the captured setting before updating again. Fixed-number constructors retain their
+concise forms and validate immediately. Supplier properties are functions, so read
+them as `ramp.maxAcceleration()` or `limiter.maxCurrent()`.
+
+This replaces mutable tuning properties: replace property assignments with edits
+to the variables captured by the suppliers. Supplier construction does not sample
+settings until the first update. Keep suppliers cheap and free of side effects.
 
 The shorter names replace `AccelerationLimitedVelocityInterpolator` with
 `VelocityRamp` and `ExponentialVelocityInterpolator` with `VelocitySmoother`.
@@ -69,7 +88,8 @@ between reads advances the profile normally. The exponential result is independe
 of how many intermediate reads occur for an unchanged goal.
 
 `reset()` clears the goal, reference, and clock history. Set the desired goal again
-after reset. Keep readiness tied to the final target and both measured motor
+after reset. Reset does not sample tuning suppliers, so it remains available even
+when a setting is invalid. Keep readiness tied to the final target and both measured motor
 speeds, rather than declaring readiness at an intermediate reference speed.
 
 ## Add optional current feedback
