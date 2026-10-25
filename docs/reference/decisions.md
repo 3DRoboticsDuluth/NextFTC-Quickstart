@@ -119,6 +119,15 @@ season has one clear replacement point that still resembles Pedro documentation.
 **Why:** It is third-party code the team does not intend to maintain. Source fidelity
 improves upstream comparison and replacement.
 
+## Velocity profiles and current feedback utilities
+
+Use NextControl's existing interpolator extension point for time-based exponential
+and acceleration-limited velocity references. Keep sampled current feedback in a
+separate post-controller power limiter. These season-neutral utilities belong in
+`3drdNextFTC`; targets, gains, current thresholds, motor acquisition, and telemetry
+remain with the owning robot subsystem. Clock injection allows deterministic tests.
+See [Control](../architecture/control.md) for reset and integration contracts.
+
 ## Embedded Versus Robot-Level Control
 
 **Decision:** Use hub embedded velocity PIDF for flywheel motor speed and Next

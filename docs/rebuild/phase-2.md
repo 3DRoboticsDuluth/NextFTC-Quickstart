@@ -221,3 +221,13 @@ Verify lazy construction without an active OpMode, factory configuration, direct
 upstream constructors/members/fluent APIs, fault isolation/retry, and telemetry.
 REQ-PLT-011, 030, 031, 032 and 044 trace to the adapter, subsystem, and telemetry tests.
 See [Hardware](../architecture/hardware.md) for source/binary migration details.
+
+## Optional velocity profiles and software current feedback
+
+Implement `ExponentialVelocityInterpolator` and
+`AccelerationLimitedVelocityInterpolator` using NextControl's `InterpolatorElement`,
+and a separate post-controller `CurrentLimiter`. Share only the elapsed-time helper;
+each instance owns its state. Preserve the units, reset, target-change, timing,
+and input-validation contracts in [Control](../architecture/control.md).
+Reconstruct deterministic fake-clock tests before wiring these optional utilities
+to a robot. REQ-PLT-045 and 046 do not change existing mechanism behavior by themselves.

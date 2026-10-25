@@ -59,4 +59,6 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|
+| `REQ-PLT-045` | Velocity interpolators MUST implement NextControl's interface with time-based exponential smoothing or symmetric acceleration limiting, continuous changing targets, repeat-read-safe timing, reference acceleration, and reset to rest. | Teams can shape velocity targets without robot-specific ramp loops or read-count-dependent smoothing. | Deterministic profile tests cover time, reversal, changing goals, reset, constructor validation, and NextControl integration; see [control architecture](../architecture/control.md). |
+| `REQ-PLT-046` | An optional software current limiter MUST reduce and recover a bounded symmetric motor power cap from sampled amperes and elapsed time, validate inputs, expose its cap, and reset independently per motor. | Sampled feedback can soften sustained excess demand without claiming hardware-enforced protection. | Deterministic limiter tests cover both directions, clipping, recovery, reset, independent state, and invalid samples. |
 | `REQ-PLT-042` | A reusable debounce utility MUST detect stable boolean transitions using elapsed time. | Sensors often chatter; behavior should trigger once on a stable edge. | Debounce tests cover timing and reset. |
