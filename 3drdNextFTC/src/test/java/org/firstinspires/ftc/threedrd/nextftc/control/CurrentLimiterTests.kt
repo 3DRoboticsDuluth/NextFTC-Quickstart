@@ -5,6 +5,32 @@ import org.junit.Test
 
 class CurrentLimiterTests {
     @Test
+    fun liveTuningPreservesTheCapAndChangesReductionThresholdAndRecovery() {
+        var time = 0.0
+        val limiter = CurrentLimiter(5.0) { time }
+        limiter.limit(1.0, 6.0)
+        time = 0.25
+        assertEquals(0.5, limiter.limit(1.0, 6.0), 0.0)
+        limiter.maxCurrent = 10.0
+        limiter.reductionRate = 1.0
+        limiter.recoveryRate = 1.0
+        assertEquals(0.5, limiter.powerLimit, 0.0)
+        time = 0.5
+        assertEquals(0.75, limiter.limit(1.0, 6.0), 0.0)
+        limiter.maxCurrent = 5.0
+        time = 0.75
+        assertEquals(0.5, limiter.limit(1.0, 6.0), 0.0)
+        listOf(0.0, -1.0, Double.NaN, Double.POSITIVE_INFINITY).forEach {
+            assertThrows(IllegalArgumentException::class.java) { limiter.maxCurrent = it }
+            assertThrows(IllegalArgumentException::class.java) { limiter.reductionRate = it }
+            assertThrows(IllegalArgumentException::class.java) { limiter.recoveryRate = it }
+        }
+        assertEquals(5.0, limiter.maxCurrent, 0.0)
+        assertEquals(1.0, limiter.reductionRate, 0.0)
+        assertEquals(1.0, limiter.recoveryRate, 0.0)
+    }
+
+    @Test
     fun overcurrentReducesPowerInEitherDirectionAndRecoveryIsGradual() {
         var time = 0.0
         val limiter = CurrentLimiter(5.0, 2.0, 0.5) { time }

@@ -2,9 +2,9 @@ package org.firstinspires.ftc.threedrd.nextftc.control
 
 /** Experimental power-cap feedback, not a hardware-enforced current limit. */
 class CurrentLimiter(
-    val maxCurrent: Double,
-    val reductionRate: Double = 2.0,
-    val recoveryRate: Double = 0.5,
+    maxCurrent: Double,
+    reductionRate: Double = 2.0,
+    recoveryRate: Double = 0.5,
     seconds: () -> Double = { System.nanoTime() / 1e9 },
 ) {
     init {
@@ -14,6 +14,13 @@ class CurrentLimiter(
     }
 
     private val clock = ControlClock(seconds)
+    var maxCurrent = maxCurrent
+        set(value) { require(value.isFinite() && value > 0.0); field = value }
+    var reductionRate = reductionRate
+        set(value) { require(value.isFinite() && value > 0.0); field = value }
+    var recoveryRate = recoveryRate
+        set(value) { require(value.isFinite() && value > 0.0); field = value }
+
     var powerLimit = 1.0
         private set
 

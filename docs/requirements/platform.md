@@ -57,6 +57,11 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 
 ## Reusable Utilities
 
+Control utility tuning settings (REQ-PLT-045/046) are mutable, positive finite
+properties. Edits preserve state; profiles settle elapsed time with the old setting
+before switching, and limiter edits apply on the next sample without restoring its
+cap. Invalid edits retain the previous value. Fake-clock tests verify live tuning.
+
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|
 | `REQ-PLT-045` | Velocity interpolators MUST implement NextControl's interface with time-based exponential smoothing or symmetric acceleration limiting, continuous changing targets, repeat-read-safe timing, reference acceleration, and reset to rest. | Teams can shape velocity targets without robot-specific ramp loops or read-count-dependent smoothing. | Deterministic profile tests cover time, reversal, changing goals, reset, constructor validation, and NextControl integration; see [control architecture](../architecture/control.md). |

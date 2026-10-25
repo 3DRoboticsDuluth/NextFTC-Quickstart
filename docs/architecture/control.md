@@ -13,20 +13,20 @@ import org.firstinspires.ftc.threedrd.nextftc.control.interpolators.*
 val controller = controlSystem {
     velPid(PID)
     basicFF(FF)
-    interpolator(AccelerationLimitedVelocityInterpolator(maxAcceleration = 1.6))
+    interpolator(VelocityRamp(maxAcceleration = 1.6))
 }
 ```
 
 Alternatively, replace the `interpolator` argument with:
 
 ```kotlin
-ExponentialVelocityInterpolator(timeConstant = 0.1)
+VelocitySmoother(timeConstant = 0.1)
 ```
 
 | Interpolator | Setting | Behavior |
 |---|---|---|
-| `AccelerationLimitedVelocityInterpolator` | Positive finite `maxAcceleration`, velocity units per second | Limits both increasing and decreasing velocity, including reversing; reaches the target without overshoot |
-| `ExponentialVelocityInterpolator` | Positive finite `timeConstant`, seconds | Covers about 63% of the remaining change in one time constant; approaches the target asymptotically |
+| `VelocityRamp` | Positive finite `maxAcceleration`, velocity units per second | Limits both increasing and decreasing velocity, including reversing; reaches the target without overshoot |
+| `VelocitySmoother` | Positive finite `timeConstant`, seconds | Covers about 63% of the remaining change in one time constant; approaches the target asymptotically |
 
 Keep assigning the **final** desired velocity, not an already-ramped value:
 
@@ -37,7 +37,15 @@ controller.goal = KineticState(velocity = targetVelocity)
 Use the same velocity units for target and measurement. With normalized motor
 speed, `1.6` means 1.6 full-scale speed units per second: zero to `0.4` takes
 0.25 seconds. With encoder ticks/second, acceleration is ticks/second squared.
-Settings are constructor values; recreate the utility to change them.
+Settings are mutable properties. Valid positive finite edits take effect without
+resetting history. Profiles first advance to the edit time with the old setting,
+then use the new setting for subsequent elapsed time. Current threshold and rates
+apply on the next `limit` call, preserving the existing power cap. Invalid edits
+throw and retain the previous value.
+
+The shorter names replace `AccelerationLimitedVelocityInterpolator` with
+`VelocityRamp` and `ExponentialVelocityInterpolator` with `VelocitySmoother`.
+This is a source-level rename: update imports and constructor calls.
 
 Create a separate interpolator for each controller. Each starts from zero velocity.
 Setting a new goal first advances the old trajectory to the current time, then

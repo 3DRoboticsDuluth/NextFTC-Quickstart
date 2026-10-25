@@ -224,10 +224,12 @@ See [Hardware](../architecture/hardware.md) for source/binary migration details.
 
 ## Optional velocity profiles and software current feedback
 
-Implement `ExponentialVelocityInterpolator` and
-`AccelerationLimitedVelocityInterpolator` using NextControl's `InterpolatorElement`,
+Implement `VelocitySmoother` and
+`VelocityRamp` using NextControl's `InterpolatorElement`,
 and a separate post-controller `CurrentLimiter`. Share only the elapsed-time helper;
 each instance owns its state. Preserve the units, reset, target-change, timing,
 and input-validation contracts in [Control](../architecture/control.md).
 Reconstruct deterministic fake-clock tests before wiring these optional utilities
 to a robot. REQ-PLT-045 and 046 do not change existing mechanism behavior by themselves.
+Keep their tuning settings mutable and validated, preserving trajectory and power
+cap during live edits; the tests also verify invalid edits leave state unchanged.
