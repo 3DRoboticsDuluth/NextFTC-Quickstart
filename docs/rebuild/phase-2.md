@@ -236,6 +236,8 @@ each instance owns its state. Preserve the units, reset, target-change, timing,
 and input-validation contracts in [Control](../architecture/control.md).
 Reconstruct deterministic fake-clock tests before wiring these optional utilities
 to a robot. REQ-PLT-045 and 046 do not change existing mechanism behavior by themselves.
-Accept tuning suppliers as well as fixed-number constructors, preserving trajectory
-and power cap during live edits. Sample and validate each setting once per update;
-the tests also verify invalid samples leave control state unchanged.
+Accept shared mutable parameter objects as well as fixed-number constructors,
+preserving trajectory and power cap during live edits. Read and validate each setting
+once per update. Use internal timing and internal clock injection for deterministic
+library tests; ordinary constructors expose no clock. Verify shared settings do not
+share controller state, and invalid values leave control state unchanged.

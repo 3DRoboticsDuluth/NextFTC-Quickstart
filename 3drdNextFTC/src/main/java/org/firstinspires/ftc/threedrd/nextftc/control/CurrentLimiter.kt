@@ -1,22 +1,13 @@
 package org.firstinspires.ftc.threedrd.nextftc.control
 
 /** Experimental power-cap feedback, not a hardware-enforced current limit. */
-class CurrentLimiter(
-    val maxCurrent: () -> Double,
-    val reductionRate: () -> Double = { 2.0 },
-    val recoveryRate: () -> Double = { 0.5 },
-    seconds: () -> Double = { System.nanoTime() / 1e9 },
+class CurrentLimiter internal constructor(
+    val parameters: CurrentLimitParameters,
+    seconds: () -> Double,
 ) {
-    constructor(
-        maxCurrent: Double,
-        reductionRate: Double = 2.0,
-        recoveryRate: Double = 0.5,
-        seconds: () -> Double = { System.nanoTime() / 1e9 },
-    ) : this({ maxCurrent }, { reductionRate }, { recoveryRate }, seconds) {
-        require(maxCurrent.isFinite() && maxCurrent > 0.0)
-        require(reductionRate.isFinite() && reductionRate > 0.0)
-        require(recoveryRate.isFinite() && recoveryRate > 0.0)
-    }
+    constructor(parameters: CurrentLimitParameters) : this(parameters, { System.nanoTime() / 1e9 })
+    constructor(maxCurrent: Double, reductionRate: Double = 2.0, recoveryRate: Double = 0.5) :
+        this(CurrentLimitParameters(maxCurrent, reductionRate, recoveryRate))
 
     private val clock = ControlClock(seconds)
     var powerLimit = 1.0
@@ -26,9 +17,9 @@ class CurrentLimiter(
     fun limit(power: Double, current: Double): Double {
         require(power.isFinite())
         require(current.isFinite() && current >= 0.0)
-        val threshold = maxCurrent()
-        val reduction = reductionRate()
-        val recovery = recoveryRate()
+        val threshold = parameters.maxCurrent
+        val reduction = parameters.reductionRate
+        val recovery = parameters.recoveryRate
         require(threshold.isFinite() && threshold > 0.0)
         require(reduction.isFinite() && reduction > 0.0)
         require(recovery.isFinite() && recovery > 0.0)

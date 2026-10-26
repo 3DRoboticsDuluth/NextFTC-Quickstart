@@ -4,6 +4,8 @@ import dev.nextftc.control.KineticState
 import dev.nextftc.control.builder.controlSystem
 import org.firstinspires.ftc.threedrd.nextftc.control.interpolators.VelocityRamp
 import org.firstinspires.ftc.threedrd.nextftc.control.interpolators.VelocitySmoother
+import org.firstinspires.ftc.threedrd.nextftc.control.interpolators.VelocityRampParameters
+import org.firstinspires.ftc.threedrd.nextftc.control.interpolators.VelocitySmootherParameters
 import org.junit.Assert.*
 import org.junit.Test
 import kotlin.math.exp
@@ -12,49 +14,49 @@ class VelocityInterpolatorTests {
     @Test
     fun liveTuningPreservesTrajectoriesAndUsesTheNewSettingsGoingForward() {
         var time = 0.0
-        var acceleration = 1.0
-        var tau = 1.0
-        val ramp = VelocityRamp(maxAcceleration = { acceleration }, seconds = { time })
-        val smoother = VelocitySmoother(timeConstant = { tau }, seconds = { time })
+        val rampParameters = VelocityRampParameters(1.0)
+        val smootherParameters = VelocitySmootherParameters(1.0)
+        val ramp = VelocityRamp(rampParameters) { time }
+        val smoother = VelocitySmoother(smootherParameters) { time }
         ramp.goal = KineticState(velocity = 1.0)
         smoother.goal = ramp.goal
         time = 0.5
         assertEquals(0.5, ramp.currentReference.velocity, 1e-12)
         assertEquals(1.0 - exp(-0.5), smoother.currentReference.velocity, 1e-12)
-        acceleration = 2.0
-        tau = 0.5
+        rampParameters.maxAcceleration = 2.0
+        smootherParameters.timeConstant = 0.5
         time = 0.75
         assertEquals(1.0, ramp.currentReference.velocity, 1e-12)
         assertEquals(1.0 - exp(-1.0), smoother.currentReference.velocity, 1e-12)
         listOf(0.0, -1.0, Double.NaN, Double.POSITIVE_INFINITY).forEach {
-            acceleration = it
-            tau = it
+            rampParameters.maxAcceleration = it
+            smootherParameters.timeConstant = it
             assertThrows(IllegalArgumentException::class.java) { ramp.currentReference }
             assertThrows(IllegalArgumentException::class.java) { smoother.currentReference }
         }
-        acceleration = 2.0
-        tau = 0.5
+        rampParameters.maxAcceleration = 2.0
+        smootherParameters.timeConstant = 0.5
         assertEquals(1.0, ramp.currentReference.velocity, 1e-12)
         assertEquals(1.0 - exp(-1.0), smoother.currentReference.velocity, 1e-12)
-        acceleration = Double.NaN
-        tau = Double.NaN
+        rampParameters.maxAcceleration = Double.NaN
+        smootherParameters.timeConstant = Double.NaN
         ramp.reset()
         smoother.reset()
         assertEquals(KineticState(), ramp.goal)
         assertEquals(KineticState(), smoother.goal)
-        acceleration = 2.0
-        tau = 0.5
+        rampParameters.maxAcceleration = 2.0
+        smootherParameters.timeConstant = 0.5
         assertEquals(KineticState(), ramp.currentReference)
         assertEquals(KineticState(), smoother.currentReference)
-        assertEquals(KineticState(), VelocityRamp(maxAcceleration = { 1.0 }).currentReference)
-        assertEquals(KineticState(), VelocitySmoother(timeConstant = { 1.0 }).currentReference)
+        assertEquals(KineticState(), VelocityRamp(VelocityRampParameters(1.0)).currentReference)
+        assertEquals(KineticState(), VelocitySmoother(VelocitySmootherParameters(1.0)).currentReference)
     }
 
     @Test
     fun exponentialUsesElapsedTimeRatherThanReadCount() {
         var time = 0.0
-        val interpolator = VelocitySmoother(0.2) { time }
-        assertEquals(0.2, interpolator.timeConstant(), 0.0)
+        val interpolator = VelocitySmoother(VelocitySmootherParameters(0.2)) { time }
+        assertEquals(0.2, interpolator.parameters.timeConstant, 0.0)
         interpolator.goal = KineticState(velocity = 1.0)
         time = 0.2
         val reference = interpolator.currentReference
@@ -65,7 +67,7 @@ class VelocityInterpolatorTests {
         assertEquals(1.0 - exp(-2.0), interpolator.currentReference.velocity, 1e-12)
 
         var otherTime = 0.0
-        val other = VelocitySmoother(0.2) { otherTime }
+        val other = VelocitySmoother(VelocitySmootherParameters(0.2)) { otherTime }
         other.goal = interpolator.goal
         otherTime = 0.4
         assertEquals(interpolator.currentReference, other.currentReference)
@@ -74,8 +76,8 @@ class VelocityInterpolatorTests {
     @Test
     fun accelerationLimitHandlesAccelerationBrakingAndReversalWithoutOvershoot() {
         var time = 0.0
-        val interpolator = VelocityRamp(2.0) { time }
-        assertEquals(2.0, interpolator.maxAcceleration(), 0.0)
+        val interpolator = VelocityRamp(VelocityRampParameters(2.0)) { time }
+        assertEquals(2.0, interpolator.parameters.maxAcceleration, 0.0)
         interpolator.goal = KineticState(velocity = 1.0)
         time = 0.1
         assertEquals(KineticState(velocity = 0.2, acceleration = 2.0), interpolator.currentReference)
@@ -95,8 +97,8 @@ class VelocityInterpolatorTests {
     @Test
     fun changingGoalsDoesNotApplyNewTargetsToPastTime() {
         var time = 0.0
-        val linear = VelocityRamp(1.0) { time }
-        val exponential = VelocitySmoother(1.0) { time }
+        val linear = VelocityRamp(VelocityRampParameters(1.0)) { time }
+        val exponential = VelocitySmoother(VelocitySmootherParameters(1.0)) { time }
         listOf(linear, exponential).forEach { it.goal = KineticState(velocity = 1.0) }
         time = 0.5
         listOf(linear, exponential).forEach { it.goal = KineticState(velocity = -1.0) }
@@ -111,8 +113,8 @@ class VelocityInterpolatorTests {
     fun resetClearsGoalHistoryAndIdleTime() {
         var time = 0.0
         val interpolators = listOf(
-            VelocityRamp(1.0) { time },
-            VelocitySmoother(1.0) { time },
+            VelocityRamp(VelocityRampParameters(1.0)) { time },
+            VelocitySmoother(VelocitySmootherParameters(1.0)) { time },
         )
         interpolators.forEach { it.goal = KineticState(velocity = 1.0) }
         time = 1.0
@@ -136,7 +138,7 @@ class VelocityInterpolatorTests {
         val controller = controlSystem {
             velPid(1.0)
             basicFF(kV = 1.0)
-            interpolator(VelocityRamp(1.0) { time })
+            interpolator(VelocityRamp(VelocityRampParameters(1.0)) { time })
         }
         controller.goal = KineticState(velocity = 1.0)
         time = 0.25

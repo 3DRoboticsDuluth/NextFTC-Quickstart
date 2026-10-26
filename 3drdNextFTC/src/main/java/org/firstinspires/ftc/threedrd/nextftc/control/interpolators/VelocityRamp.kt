@@ -6,14 +6,12 @@ import kotlin.math.sign
 import org.firstinspires.ftc.threedrd.nextftc.control.ControlClock
 
 /** Limits velocity change in velocity units per second; position is not profiled. */
-class VelocityRamp(
-    val maxAcceleration: () -> Double,
-    seconds: () -> Double = { System.nanoTime() / 1e9 },
+class VelocityRamp internal constructor(
+    val parameters: VelocityRampParameters,
+    seconds: () -> Double,
 ) : InterpolatorElement {
-    constructor(maxAcceleration: Double, seconds: () -> Double = { System.nanoTime() / 1e9 }) :
-        this({ maxAcceleration }, seconds) {
-        require(maxAcceleration.isFinite() && maxAcceleration > 0.0)
-    }
+    constructor(parameters: VelocityRampParameters) : this(parameters, { System.nanoTime() / 1e9 })
+    constructor(maxAcceleration: Double) : this(VelocityRampParameters(maxAcceleration))
 
     private val clock = ControlClock(seconds)
     private var reference = KineticState()
@@ -29,7 +27,7 @@ class VelocityRamp(
 
     override val currentReference: KineticState
         get() {
-            val accelerationLimit = maxAcceleration()
+            val accelerationLimit = parameters.maxAcceleration
             require(accelerationLimit.isFinite() && accelerationLimit > 0.0)
             val dt = clock.elapsed()
             if (dt > 0.0) {

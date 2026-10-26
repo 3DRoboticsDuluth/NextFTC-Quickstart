@@ -6,14 +6,12 @@ import kotlin.math.exp
 import org.firstinspires.ftc.threedrd.nextftc.control.ControlClock
 
 /** Velocity smoothing with a time constant in seconds, independent of loop rate. */
-class VelocitySmoother(
-    val timeConstant: () -> Double,
-    seconds: () -> Double = { System.nanoTime() / 1e9 },
+class VelocitySmoother internal constructor(
+    val parameters: VelocitySmootherParameters,
+    seconds: () -> Double,
 ) : InterpolatorElement {
-    constructor(timeConstant: Double, seconds: () -> Double = { System.nanoTime() / 1e9 }) :
-        this({ timeConstant }, seconds) {
-        require(timeConstant.isFinite() && timeConstant > 0.0)
-    }
+    constructor(parameters: VelocitySmootherParameters) : this(parameters, { System.nanoTime() / 1e9 })
+    constructor(timeConstant: Double) : this(VelocitySmootherParameters(timeConstant))
 
     private val clock = ControlClock(seconds)
     private var reference = KineticState()
@@ -29,7 +27,7 @@ class VelocitySmoother(
 
     override val currentReference: KineticState
         get() {
-            val tau = timeConstant()
+            val tau = parameters.timeConstant
             require(tau.isFinite() && tau > 0.0)
             val dt = clock.elapsed()
             if (dt > 0.0) {

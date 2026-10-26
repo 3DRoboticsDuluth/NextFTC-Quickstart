@@ -8,16 +8,12 @@ import kotlin.math.sqrt
 import org.firstinspires.ftc.threedrd.nextftc.control.ControlClock
 
 /** Velocity profile with bounded acceleration and jerk, ending at zero acceleration. */
-class SCurve(
-    val maxAcceleration: () -> Double,
-    val maxJerk: () -> Double,
-    seconds: () -> Double = { System.nanoTime() / 1e9 },
+class SCurve internal constructor(
+    val parameters: SCurveParameters,
+    seconds: () -> Double,
 ) : InterpolatorElement {
-    constructor(maxAcceleration: Double, maxJerk: Double, seconds: () -> Double = { System.nanoTime() / 1e9 }) :
-        this({ maxAcceleration }, { maxJerk }, seconds) {
-        require(maxAcceleration.isFinite() && maxAcceleration > 0.0)
-        require(maxJerk.isFinite() && maxJerk > 0.0)
-    }
+    constructor(parameters: SCurveParameters) : this(parameters, { System.nanoTime() / 1e9 })
+    constructor(maxAcceleration: Double, maxJerk: Double) : this(SCurveParameters(maxAcceleration, maxJerk))
 
     private val clock = ControlClock(seconds)
     private var reference = KineticState()
@@ -33,8 +29,8 @@ class SCurve(
 
     override val currentReference: KineticState
         get() {
-            val acceleration = maxAcceleration()
-            val jerk = maxJerk()
+            val acceleration = parameters.maxAcceleration
+            val jerk = parameters.maxJerk
             require(acceleration.isFinite() && acceleration > 0.0)
             require(jerk.isFinite() && jerk > 0.0)
             val dt = clock.elapsed()

@@ -58,17 +58,18 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 ## Reusable Utilities
 
 `REQ-PLT-047`: `SCurve` MUST implement a velocity-only NextControl interpolator with
-live positive finite acceleration/jerk suppliers and fixed-number constructors.
+shared mutable positive finite acceleration/jerk parameters and fixed-number constructors.
 It MUST preserve velocity/acceleration during retargeting, integrate jerk phases by
 elapsed time, settle at the final target with zero acceleration, and reset to rest
-without sampling settings. Reduced live acceleration limits MUST be approached at
+without reading settings. Reduced live acceleration limits MUST be approached at
 bounded jerk rather than clamped instantaneously. `SCurveTests` is the acceptance
 evidence; see [control architecture](../architecture/control.md#jerk-limited-s-curve).
 
-Control utility tuning settings (REQ-PLT-045/046) accept suppliers of positive finite
-values, with fixed-number convenience constructors. Each update samples each supplier
-once; changed values apply to its elapsed interval without resetting state. Invalid
-samples throw before reference/cap or clock changes. Fake-clock tests verify live tuning.
+Control utility tuning settings (REQ-PLT-045/046/047) use shared mutable parameter
+objects, with fixed-number convenience constructors and internal timing. Each update
+reads each setting once; changed values apply to its elapsed interval without
+resetting state. Invalid values throw before reference/cap or clock changes. Fake-clock
+tests verify live tuning and independent state with shared Panels-editable parameters.
 
 | ID | Requirement | Why | Acceptance |
 |---|---|---|---|
