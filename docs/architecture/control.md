@@ -1,6 +1,6 @@
 # Velocity profiles and software current limiting
 
-`3drdNextFTC` supplies two velocity-only implementations of NextControl's
+`3drdNextFTC` supplies three velocity-only implementations of NextControl's
 `InterpolatorElement`, plus a separate experimental `CurrentLimiter`. They have no
 robot hardware names, scheduling, telemetry policy, or motor ownership. Adding
 these optional utilities does not change existing robot behavior.
@@ -27,6 +27,7 @@ VelocitySmoother(timeConstant = 0.1)
 |---|---|---|
 | `VelocityRamp` | Positive finite `maxAcceleration`, velocity units per second | Limits both increasing and decreasing velocity, including reversing; reaches the target without overshoot |
 | `VelocitySmoother` | Positive finite `timeConstant`, seconds | Covers about 63% of the remaining change in one time constant; approaches the target asymptotically |
+| `SCurve` | Positive finite `maxAcceleration` and `maxJerk` | Smooths acceleration changes, preserves motion state on retargeting, and settles at zero acceleration |
 
 Keep assigning the **final** desired velocity, not an already-ramped value:
 
@@ -92,6 +93,53 @@ after reset. Reset does not sample tuning suppliers, so it remains available eve
 when a setting is invalid. Keep readiness tied to the final target and both measured motor
 speeds, rather than declaring readiness at an intermediate reference speed.
 
+## Jerk-limited S-curve
+
+Use `SCurve` to limit acceleration and how quickly acceleration changes (jerk):
+
+```kotlin
+interpolator(SCurve(
+    maxAcceleration = { MAX_ACCELERATION },
+    maxJerk = { MAX_JERK },
+))
+```
+
+`SCurve(1.6, 16.0)` is the fixed-number equivalent. With normalized motor velocity,
+acceleration is normalized speed units/second and jerk is normalized speed
+units/second squared. Both settings must be positive and finite. Like the other
+profiles, suppliers are sampled once per reference update, including during live
+tuning, and there is an optional monotonic `seconds` clock for deterministic tests.
+Invalid samples are rejected before state/time changes. Reset works without sampling.
+
+The profile starts at zero velocity and acceleration. It ramps acceleration using
+constant positive/negative jerk, optionally holds maximum acceleration, then reduces
+acceleration to zero at the target. Short moves use triangular acceleration without
+a hold. Elapsed time is integrated analytically across phase boundaries; repeated
+reads at the same timestamp and reassignments of the same goal do not restart it.
+Position is always zero; only the goal's finite velocity is used.
+
+For zero to `0.4`, acceleration `1.6` and jerk `16.0` take 350 ms: 100 ms increasing
+acceleration, 150 ms at maximum acceleration, then 100 ms reducing acceleration.
+`VelocityRamp` takes 250 ms at that acceleration but changes acceleration abruptly.
+These are reference trajectories, not measured motor-current predictions.
+
+Changing the goal preserves current velocity and acceleration and replans from that
+state. If a new goal is closer than the velocity change needed to remove existing
+acceleration, temporary overshoot is physically unavoidable under the jerk limit;
+the profile smoothly reverses and returns. Lowering the live acceleration ceiling
+also preserves acceleration: existing acceleration above the new limit decays at
+the jerk limit before the new ceiling can be satisfied. Live jerk changes apply
+on the next update. Smooth retargeting takes priority over clamping motion state.
+
+The algorithm plans a short list of constant-jerk phases on each positive time
+advance. It uses the velocity change required to bring acceleration to zero to
+choose the direction, then solves the area under acceleration for the required
+peak/hold. Each controller needs its own instance. Readiness still compares measured
+speed to the final target; immediate powered-hardware stops bypass the profile.
+`SCurveTests` covers phase values, acceleration and jerk bounds, both directions,
+retargeting, limit changes, read-frequency independence, reset, invalid settings,
+numeric underflow, and real NextControl integration.
+
 ## Add optional current feedback
 
 Current feedback operates **after** PID and feedforward, on requested power:
@@ -147,7 +195,7 @@ when measured current drops. It does not latch a fault or manage stalled mechani
 
 ## Timing and validation
 
-All three constructors accept an optional `seconds: () -> Double` monotonic clock.
+All four utilities accept an optional `seconds: () -> Double` monotonic clock.
 Production defaults to `System.nanoTime() / 1e9`; tests advance a fake clock without
 sleeping. Nonadvancing or backward clock readings produce no negative time step.
 The utilities are stateful and intended for one OpMode control thread.

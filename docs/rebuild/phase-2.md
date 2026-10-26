@@ -224,6 +224,11 @@ See [Hardware](../architecture/hardware.md) for source/binary migration details.
 
 ## Optional velocity profiles and software current feedback
 
+Add `SCurve` alongside the simpler profiles, implementing the constant-jerk phase
+planning, state-preserving retargeting, and live-limit behavior in the
+[S-curve contract](../architecture/control.md#jerk-limited-s-curve), REQ-PLT-047.
+Verify deterministic phase values and acceleration/jerk bounds before integration.
+
 Implement `VelocitySmoother` and
 `VelocityRamp` using NextControl's `InterpolatorElement`,
 and a separate post-controller `CurrentLimiter`. Share only the elapsed-time helper;
