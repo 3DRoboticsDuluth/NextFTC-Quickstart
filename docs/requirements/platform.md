@@ -57,6 +57,17 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 
 ## Reusable Utilities
 
+`REQ-PLT-048`: `PedroDriverControlled` MUST optionally shape already-scaled manual
+commands before assist callbacks and Pedro mixing. Translation MUST use coordinated
+vector slew/jerk budgets; turning MUST use an independent scalar `SCurve`. Shared
+Panels-editable parameters and internal timing MUST preserve state on input/live
+tuning changes, reexpress both translation states on frame changes, and reset/stop
+immediately on command end. Legacy calls, assist outputs, and autonomous commands
+remain unchanged. Timing caps and release/reversal policies are specified in
+[driver shaping](../architecture/drive-navigation.md#optional-driver-command-shaping).
+Acceptance is `DriverCommandSlewTests` and `PedroDriverControlledTests`; this is
+command shaping, not a physical acceleration guarantee or electrical/current cap.
+
 `REQ-PLT-047`: `SCurve` MUST implement a velocity-only NextControl interpolator with
 shared mutable positive finite acceleration/jerk parameters and fixed-number constructors.
 It MUST preserve velocity/acceleration during retargeting, integrate jerk phases by

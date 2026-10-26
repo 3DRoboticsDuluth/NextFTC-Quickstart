@@ -224,6 +224,13 @@ See [Hardware](../architecture/hardware.md) for source/binary migration details.
 
 ## Optional velocity profiles and software current feedback
 
+REQ-PLT-048 adds optional manual shaping at `PedroDriverControlled`'s scaled-input
+boundary. Implement `DriverSlewParameters`, coordinated `DriverCommandSlew`
+translation, and independent turn `SCurve`; preserve callback ordering and legacy
+behavior. Follow [driver shaping](../architecture/drive-navigation.md#optional-driver-command-shaping)
+for vector bounds, centric transforms, timing caps, and immediate lifecycle stops.
+Use deterministic vector/command tests before robot-specific opt-in.
+
 Add `SCurve` alongside the simpler profiles, implementing the constant-jerk phase
 planning, state-preserving retargeting, and live-limit behavior in the
 [S-curve contract](../architecture/control.md#jerk-limited-s-curve), REQ-PLT-047.

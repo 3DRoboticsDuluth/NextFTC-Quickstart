@@ -10,6 +10,96 @@ The reusable `DriveSubsystem` turns common follower operations into NextFTC comm
 The reusable `NavSubsystem` constructs robot-dimension-aware poses. Quickstart's
 concrete `Drive` and `Nav` provide the basic season customization points.
 
+## Optional driver-command shaping
+
+`PedroDriverControlled` accepts an optional `slew: DriverSlewParameters` argument.
+Omitting it preserves the original transfer and stop behavior. The neutral
+Quickstart Drive remains unshaped; a robot opts in with its own visible tuning:
+
+```kotlin
+val DRIVER_SLEW = DriverSlewParameters(
+    translation = SCurveParameters(maxAcceleration = 4.0, maxJerk = 40.0),
+    turn = SCurveParameters(maxAcceleration = 8.0, maxJerk = 80.0),
+)
+
+val driverControlled = PedroDriverControlled(
+    gamepad1.leftStickY.negate(),
+    gamepad1.leftStickX.negate(),
+    gamepad1.rightStickX.negate(),
+    { Config.robotCentric },
+    slew = DRIVER_SLEW,
+)
+```
+
+Import `DriverSlewParameters` from `org.firstinspires.ftc.threedrd.pedropathing`
+and `SCurveParameters` from the library's `nextftc.control.interpolators` package.
+Keep `DRIVER_SLEW` on the owning `@Configurable` subsystem: Panels discovers both
+mutable nested tuning groups. Parameters may be shared; command state must not be.
+Constructor defaults above are examples, not measured robot tuning.
+
+The pipeline is:
+
+```text
+Joystick → selected scalar → manual command shaping → drive/strafe/turn callbacks
+         → Pedro setTeleOpDrive → Pedro normalization and motor mixing
+```
+
+The callbacks remain the existing assist boundary. Chase/goal-lock corrections
+replace shaped manual inputs exactly where they replaced raw inputs before;
+their outputs are not smoothed or capped by this integration. Do not opt standalone
+autonomous/chase-only commands into shaping unless a separate behavior change is
+intended. Path following and NextControl position/heading assists remain unchanged.
+
+Translation uses one coordinated two-dimensional tracker. Its slew vector has
+bounded Euclidean magnitude, and changes in that vector have a shared jerk budget;
+diagonals do not receive one full budget per axis. A critically damped target tracker
+requests jerk from command error and current slew. Vector projection limits jerk,
+slew magnitude, and the change in slew. It preserves both vector states on retargeting
+and live edits; a lowered slew ceiling is approached gradually at the jerk limit.
+The response converges to held input rather than using a fixed-duration profile.
+Turning uses a separate scalar `SCurve`, sharing only its own tuning group.
+
+`maxAcceleration` means normalized command change/second, and `maxJerk` means
+change in that slew/second. They do not specify chassis acceleration, torque, or
+current. The limits describe the manual reference before assists and Pedro's
+existing saturation/mixing, not final wheel powers. No new input normalization,
+wheel-current controllers, or electrical cap are introduced. Shaping may soften
+load peaks; it cannot guarantee a current ceiling.
+
+Translation integrates in small bounded steps (at most 5 ms, smaller for high
+tracking frequency). Tracking frequency is derived from jerk/slew limits, capped
+at 100/s for numerical stability. Both translation and turn process at most 100 ms
+per call, deliberately discarding older elapsed time after a stalled loop instead
+of catching up with a full-demand jump. Production timing is internal. Tests use
+fake clocks outside ordinary subsystem declarations.
+
+Lifecycle and operator behavior:
+
+- Start/restart clears command and slew history; the first update starts at rest.
+- Stick release and scalar reductions smoothly approach the new target. A selected
+  scalar is a target multiplier, not an immediate ceiling during ramp-down.
+- Reversal preserves command and slew state. Temporary continuation in the previous
+  direction is possible while removing slew; there is no instantaneous sign flip.
+- Positive finite live parameter edits preserve state. Invalid inputs/settings are
+  rejected before elapsed time advances. Reset does not read settings.
+- Changing robot-/field-centric mode or heading offset rotates stored translation
+  **and slew** into the new frame. Pedro's convention is field vector = input
+  rotated by `(robotCentric ? currentHeading : 0) + headingOffset`. The conversion
+  preserves the existing manual vector's field direction; subsequent inputs are
+  followed in the newly selected frame. Turn state is unchanged. Normal robot
+  rotation does not trigger this conversion while the selected frame is unchanged.
+- Ending an opted-in command, whether interrupted or completed, immediately resets
+  shaping and calls `breakFollowing()`. Lifecycle/emergency stops continue to stop
+  the follower directly; they never wait for stick-release deceleration. A subsequent
+  command start resets state again, so no demand is replayed after idle time.
+
+`DriverCommandSlewTests` verifies rotational symmetry, vector slew/jerk bounds,
+reversal/release, independent turn, live tuning, frame-state rotation, reset, timing
+caps, and validation. `PedroDriverControlledTests` verifies scaling before shaping,
+unshaped assist outputs, legacy compatibility, centric transitions, and immediate
+stop/restart against the actual command integration. These are deterministic
+desktop contracts; they do not measure battery sag or establish hardware handling.
+
 ## Localization
 
 Pedro requires one localization source, but it does not require a dedicated

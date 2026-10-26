@@ -119,6 +119,16 @@ season has one clear replacement point that still resembles Pedro documentation.
 **Why:** It is third-party code the team does not intend to maintain. Source fidelity
 improves upstream comparison and replacement.
 
+## Optional manual driver-command shaping
+
+Place manual shaping after NextFTC's scalar and before PedroDriverControlled's
+assist callbacks. A single vector tracker shares translation slew/jerk budgets;
+turn uses a scalar S-curve. Preserve state on input/live tuning changes and rotate
+both translation states on centric-frame changes. Keep timing internal, stops
+immediate, and the default legacy integration unchanged. Robot-specific opt-in and
+Panels settings belong to TeamCode. This does not add per-wheel current control or
+a shared electrical cap. See REQ-PLT-048 and the driver-shaping architecture.
+
 ## Velocity profiles and current feedback utilities
 
 Use NextControl's existing interpolator extension point for time-based exponential
