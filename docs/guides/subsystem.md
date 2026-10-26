@@ -31,9 +31,16 @@ object Example : Subsystem() {
 
 Discovery means no central registration edit is necessary.
 
+`ServoEx("example") { ... }` is a project factory returning the native NextFTC
+`ServoEx` type. Its block configures the SDK `Servo`; `scaleRange` runs when the
+hardware is acquired during initialization, not when the object is declared.
+The uppercase factory name reads like construction but does not add a constructor
+to the type alias. See [hardware aliases and factories](../architecture/hardware.md#aliases-factories-and-constructors)
+for the distinction from the actual `Device` constructor and native fluent methods.
+
 ## 2. Assign Lifecycle Responsibilities
 
-- Declare wrapper fields near tunables.
+- Declare hardware fields near tunables.
 - Use `initialize()` to reset internal state after hardware is ready.
 - Use `controls()` for robot-motion bindings that should activate only after
   Teleop Start.

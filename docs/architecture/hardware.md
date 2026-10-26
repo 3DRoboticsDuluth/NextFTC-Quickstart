@@ -27,7 +27,8 @@ val laser by Device("laser2", DigitalChannel::class.java) {
 }
 ```
 
-Use constructors with the hardware name first. `Device` accepts an optional
+The project factories and the `Device` constructor put the hardware name first.
+`Device` accepts an optional
 configuration block; `by` exposes its underlying FTC device through `getValue()`.
 Motor and servo properties retain their enhanced objects using `=`.
 
@@ -44,6 +45,68 @@ no containing `motorEx` / `imuEx` object and no hand-maintained forwarding API.
 All upstream constructors, properties, methods, and fluent return types remain
 available directly. There are no custom servo subclasses either, so fluent
 methods return the same native type recognized by discovery and telemetry.
+
+### Aliases, factories, and constructors
+
+These declarations serve different roles:
+
+```kotlin
+typealias MotorEx = dev.nextftc.hardware.impl.MotorEx
+
+val motor: dev.nextftc.hardware.impl.MotorEx = MotorEx("intake") {
+    zeroPowerBehavior = BRAKE
+}
+```
+
+The type alias gives the upstream type a local name. It creates no runtime class,
+wrapper, subclass, or extra constructors. The project's `MotorEx("intake")` and
+`MotorEx("intake") { ... }` calls resolve to **factory functions** named `MotorEx`.
+Those functions construct and return the exact upstream object, supplying lazy
+hardware lookup and configuration. The same pattern applies to `ServoEx`,
+`CRServoEx`, and `IMUEx`.
+
+Their uppercase names deliberately make object creation read like construction;
+the factory names remain part of the supported API. This does not mean the
+configured overloads are upstream constructors. Kotlin resolves a factory or an
+upstream constructor from the available declarations and argument types; IDE
+Go to Declaration shows the selected implementation. Use the project's hardware
+package when its factory overloads and extensions are wanted.
+
+`Device(name, type)`, in contrast, calls the real constructor of the project's
+generic delegated `Device<T>` class. `by` exposes its SDK device after framework
+initialization. Keeping this distinction does not require renaming either API.
+This clarification introduces no source or runtime compatibility change.
+
+### SDK configuration blocks and native fluent methods
+
+The factory configuration block receives the **FTC SDK device**, while the factory
+returns a **NextFTC enhanced object**:
+
+| Declaration | Configuration block receiver | Returned object |
+|---|---|---|
+| `MotorEx(name) { ... }` | SDK `DcMotorEx` | Native NextFTC `MotorEx` |
+| `ServoEx(name) { ... }` | SDK `Servo` | Native NextFTC `ServoEx` |
+| `CRServoEx(name) { ... }` | SDK `CRServo` | Native NextFTC `CRServoEx` |
+| `IMUEx(name) { ... }` | SDK `IMU` | Native NextFTC `IMUEx` |
+| `Device(name, type) { ... }` | SDK/vendor device of type `T` | Project `Device<T>` delegate; `by` exposes `T` |
+
+```kotlin
+val configured = MotorEx("intake") {
+    zeroPowerBehavior = BRAKE // this is the SDK DcMotorEx
+}
+val fluent = MotorEx("launcher").floatMode().reversed()
+```
+
+The second line uses native NextFTC fluent methods on the returned `MotorEx`.
+In particular, NextFTC `reversed()` reverses its logical power/encoder interpretation;
+setting SDK `direction` inside the configuration block changes the SDK device.
+Access through `.motor` reaches the SDK device directly and bypasses NextFTC's
+logical reversal. Use one intentional reversal convention for a device.
+
+The block is stored for first hardware acquisition, not executed when the subsystem
+singleton is constructed. Framework initialization normally triggers acquisition;
+early access to a native object's underlying SDK device can also trigger its lazy
+lookup. `Device<T>` is initialized explicitly by the framework before delegated use.
 
 ```kotlin
 val motor = MotorEx("intake") { zeroPowerBehavior = BRAKE }

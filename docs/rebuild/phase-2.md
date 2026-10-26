@@ -221,6 +221,9 @@ Verify lazy construction without an active OpMode, factory configuration, direct
 upstream constructors/members/fluent APIs, fault isolation/retry, and telemetry.
 REQ-PLT-011, 030, 031, 032 and 044 trace to the adapter, subsystem, and telemetry tests.
 See [Hardware](../architecture/hardware.md) for source/binary migration details.
+Document the type aliases separately from their same-name factory overloads:
+factories return actual upstream instances and configure SDK receivers lazily,
+whereas `Device` is a project class constructor. Retain all existing public names.
 
 ## Optional velocity profiles and software current feedback
 

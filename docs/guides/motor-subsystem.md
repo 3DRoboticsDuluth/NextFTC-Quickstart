@@ -38,8 +38,12 @@ object Roller : Subsystem() {
 ```
 
 Place the object under `org.firstinspires.ftc.teamcode.subsystems` so discovery
-initializes its hardware. `Device` uses name-first construction; `by` exposes
-the digital channel. The motor retains its enhanced wrapper. Controls become
+initializes its hardware. `Device` uses its real name-first constructor; `by` exposes
+the digital channel, and its block configures that SDK channel. `MotorEx("roller")`
+calls the project's constructor-shaped factory, returning the native NextFTC type
+named by the alias. The motor property retains that enhanced object using `=`.
+See [hardware aliases and factories](../architecture/hardware.md#aliases-factories-and-constructors).
+Controls become
 active only after Teleop Start. The sensor reports current occupancy here; it
 does not automatically stop the roller unless that is a documented requirement.
 
