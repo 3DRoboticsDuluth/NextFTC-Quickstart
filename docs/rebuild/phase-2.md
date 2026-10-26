@@ -225,6 +225,13 @@ Document the type aliases separately from their same-name factory overloads:
 factories return actual upstream instances and configure SDK receivers lazily,
 whereas `Device` is a project class constructor. Retain all existing public names.
 
+For REQ-PLT-049, let the ServoEx factory register a private lazy configuration
+queue in a weak-keyed `configurations` registry. Add `ServoEx.scaleRange(min, max)`
+as a same-instance fluent extension: queue before acquisition, apply immediately
+afterward, and reject unregistered native instances without acquisition. Use no
+reflection or subclass. Verify retry and early `.servo` access along with the
+[fluent range contract](../architecture/hardware.md#fluent-servo-range-configuration).
+
 ## Optional velocity profiles and software current feedback
 
 REQ-PLT-048 adds optional manual shaping at `PedroDriverControlled`'s scaled-input

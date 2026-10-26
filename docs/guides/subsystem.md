@@ -12,7 +12,7 @@ object Example : Subsystem() {
     var MAX = 1.0
     var POS = 0.5
 
-    val servo = ServoEx("example") { scaleRange(MIN, MAX) }
+    val servo = ServoEx("example").scaleRange(MIN, MAX)
 
     val activate by instant { POS = 1.0 }
     val reset by instant { POS = 0.0 }
@@ -31,9 +31,10 @@ object Example : Subsystem() {
 
 Discovery means no central registration edit is necessary.
 
-`ServoEx("example") { ... }` is a project factory returning the native NextFTC
-`ServoEx` type. Its block configures the SDK `Servo`; `scaleRange` runs when the
-hardware is acquired during initialization, not when the object is declared.
+`ServoEx("example")` is a project factory returning the native NextFTC
+`ServoEx` type. The `scaleRange` extension queues SDK range configuration until
+hardware acquisition; numeric arguments are captured when the chain is declared.
+An optional factory block also configures the SDK `Servo` at acquisition time.
 The uppercase factory name reads like construction but does not add a constructor
 to the type alias. See [hardware aliases and factories](../architecture/hardware.md#aliases-factories-and-constructors)
 for the distinction from the actual `Device` constructor and native fluent methods.

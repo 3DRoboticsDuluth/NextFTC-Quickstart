@@ -108,6 +108,44 @@ singleton is constructed. Framework initialization normally triggers acquisition
 early access to a native object's underlying SDK device can also trigger its lazy
 lookup. `Device<T>` is initialized explicitly by the framework before delegated use.
 
+### Fluent servo range configuration
+
+```kotlin
+val servo = ServoEx("deflector").scaleRange(MIN, MAX).reversed()
+```
+
+`scaleRange(min, max)` is a project extension returning the **same native ServoEx**;
+`reversed()` is the upstream fluent method. Import `scaleRange` explicitly or use
+the project hardware package wildcard. No wrapper, subclass, or reflection is used.
+
+The factory registers a private configuration queue under a weak key in
+`configurations`. Its SDK initializer applies the original configuration block
+first, then queued range requests in order. The queue is cleared only after success,
+so initialization failure retains pending actions for retry. Framework initialization
+and early `.servo` access both trigger the queue through the native initializer.
+Upstream lazy callbacks such as `reversed()` run after that SDK initializer.
+After successful acquisition, a new `scaleRange` call updates the SDK servo
+immediately, without another hardware lookup. It still returns the original object.
+
+The extension supports **project-factory-created instances**. A servo built directly
+through an upstream constructor has no registered configuration queue. Calling
+this extension on it throws `IllegalArgumentException` with a factory-required
+message, without forcing SDK acquisition. Existing upstream constructors remain
+available; they are simply outside this optional lazy extension's scope.
+
+Numeric `MIN` and `MAX` arguments are evaluated when the chain is declared. They
+are not live Panels bindings. Retain the SDK configuration block when values must
+be evaluated at acquisition time instead:
+
+```kotlin
+val servo = ServoEx("deflector") { scaleRange(MIN, MAX) }.reversed()
+```
+
+REQ-PLT-049 and `ServoExTests` cover native identity, construction without an active
+OpMode, lazy lookup, queued order, early access, immediate later calls, retry, and
+safe rejection of unregistered instances. The extension is additive; existing
+factory blocks and calls do not need migration.
+
 ```kotlin
 val motor = MotorEx("intake") { zeroPowerBehavior = BRAKE }
 val imu = IMUEx("imu") { initialize(imuParameters) }
@@ -149,7 +187,7 @@ import org.firstinspires.ftc.threedrd.nextftc.hardware.*
 ```
 
 With explicit imports, add the extension imports you use (`initialize`,
-`velocityPercentage`, `update`, or servo/IMU `name`). Importing just the class/type alias
+`velocityPercentage`, `scaleRange`, `update`, or servo/IMU `name`). Importing just the class/type alias
 does not import its extensions. Native members win over same-signature extensions.
 Type aliases are Kotlin-only: Java consumers import the original `dev.nextftc.hardware.impl`
 classes and call extension/factory helpers through their generated static methods
