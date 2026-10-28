@@ -258,3 +258,13 @@ preserving trajectory and power cap during live edits. Read and validate each se
 once per update. Use internal timing and internal clock injection for deterministic
 library tests; ordinary constructors expose no clock. Verify shared settings do not
 share controller state, and invalid values leave control state unchanged.
+
+## Typed motor target conversion
+
+Reconstruct REQ-PLT-050 as MotorEx extension functions/properties in hardware:
+weak-keyed per-instance distance/angle calibration, absolute logical-to-SDK target
+conversion using public native position/raw/direction APIs, nearest-tick rounding,
+and explicit calibration/finite/range checks. Preserve native identity, lazy
+construction, and Hub mode/power ownership. Follow the [hardware contract](../architecture/hardware.md#typed-hub-motor-targets)
+and recreate MotorTargetsTests before robot integration. Keep actual mechanism
+geometry, zero selection, Hub configuration, and calibration in TeamCode.

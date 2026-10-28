@@ -88,3 +88,15 @@ tests verify live tuning and independent state with shared Panels-editable param
 | `REQ-PLT-045` | Velocity interpolators MUST implement NextControl's interface with time-based exponential smoothing or symmetric acceleration limiting, continuous changing targets, repeat-read-safe timing, reference acceleration, and reset to rest. | Teams can shape velocity targets without robot-specific ramp loops or read-count-dependent smoothing. | Deterministic profile tests cover time, reversal, changing goals, reset, constructor validation, and NextControl integration; see [control architecture](../architecture/control.md). |
 | `REQ-PLT-046` | An optional software current limiter MUST reduce and recover a bounded symmetric motor power cap from sampled amperes and elapsed time, validate inputs, expose its cap, and reset independently per motor. | Sampled feedback can soften sustained excess demand without claiming hardware-enforced protection. | Deterministic limiter tests cover both directions, clipping, recovery, reset, independent state, and invalid samples. |
 | `REQ-PLT-042` | A reusable debounce utility MUST detect stable boolean transitions using elapsed time. | Sensors often chatter; behavior should trigger once on a stable edge. | Debounce tests cover timing and reset. |
+
+## Typed motor target contract
+
+`REQ-PLT-050`: Native MotorEx MUST support lazy, same-instance positive finite
+Distance/Angle-per-tick calibration and typed absolute Hub targetDistance/targetAngle
+properties without reflection or wrappers. Conversions MUST respect the native
+logical encoder zero/direction, unwrapped angles, nearest-tick rounding, and SDK
+Int bounds. Calibration MUST be independent per motor/dimension; missing or invalid
+calibration and invalid targets MUST fail clearly without target writes. Target
+access MUST NOT change mode/power, run a software controller, or infer robot geometry.
+See [typed motor targets](../architecture/hardware.md#typed-hub-motor-targets) and
+`MotorTargetsTests` for the implementation and observable-behavior traceability.

@@ -258,3 +258,62 @@ framework may not call `periodic()` again.
 Prism. Vendor source is not mechanically converted to Kotlin merely for uniformity.
 Keeping GoBilda's Java implementation intact makes upstream comparison and future
 replacement easier.
+
+## Typed Hub motor targets
+
+REQ-PLT-050 adds opt-in `distancePerTick(Distance)` / `anglePerTick(Angle)`
+calibration and `targetDistance: Distance` / `targetAngle: Angle` properties on
+native MotorEx. Import them explicitly or use the hardware package wildcard.
+For example (illustrative calibration, not a measured mechanism):
+
+```kotlin
+import dev.nextftc.core.units.*
+import org.firstinspires.ftc.threedrd.nextftc.hardware.*
+
+val slide = MotorEx("slide").brakeMode().distancePerTick(0.01.inches)
+val turret = MotorEx("turret").anglePerTick(1.deg)
+
+// After hardware initialization and deliberate Hub mode/power configuration:
+slide.targetDistance = 6.inches
+turret.targetAngle = 90.deg
+```
+
+The fluent calibration functions return the same native instance, acquire no
+hardware, and work with both project factories and upstream constructors.
+Weak-keyed per-instance metadata stores positive finite millimeters/tick or
+radians/tick; no reflection, wrapper, subclass, or robot-specific calibration is
+added. Distance and angle scales are independent. Configure only the dimensions
+you use. Gear ratios and output circumference/lead belong in the team's measured
+calibration, not an assumption about motor encoder counts.
+
+Targets are absolute in native MotorEx's logical encoder frame: logical position
+zero corresponds to zero distance/angle. Native `zero()`, `atPosition()`, writable
+`currentPosition`, and logical reversal are respected. The adapter maps the
+logical target to an SDK encoder target using the current logical/raw position
+and direction. SDK direction remains part of the SDK's encoder coordinate frame.
+Native position and raw encoder reads use the normal per-cycle bulk-read snapshot.
+Use targets relative to that established zero; a positive distance is not an
+incremental move. Angles are unwrapped: two revolutions means two revolutions,
+not zero or a shortest-path turn.
+
+Setters round to the nearest encoder tick (ties toward positive infinity). Missing
+calibration, invalid scale, nonfinite converted targets, and targets outside the
+SDK Int range fail clearly. Missing calibration and nonfinite targets fail before
+hardware lookup; overflow fails without writing a target. A rejected scale leaves
+any previous calibration intact. Getters read the SDK's currently commanded target,
+convert it to the current logical frame, and return the configured physical quantity.
+They report the rounded target, not a separately cached requested value. If the
+logical zero or calibration changes, the getter reflects that coordinate change;
+it does not move the motor or rewrite an existing target.
+
+These properties only read/write SDK targetPosition. They do not select mode,
+change power, wait for arrival, add limits/homing, or replace a controller.
+For Hub position control, deliberately set SDK target, RUN_TO_POSITION, and
+movement power in the owning subsystem, and directly zero SDK power at shutdown.
+Do not use native MotorEx.power in that mode: it selects RUN_WITHOUT_ENCODER.
+For NextControl, use the same calibration to compute a goal separately; these
+properties specifically address the Hub target, not a NextControl controller.
+
+`MotorTargetsTests` verifies native identity and lazy configuration, conversions,
+rounding, signed/multi-turn targets, logical offsets/reversal, factory/native
+constructor compatibility, independent calibrations, and failures without actuation.
