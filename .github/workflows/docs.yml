@@ -46,17 +46,17 @@ jobs:
         run: mkdocs build --strict
 
       - name: Configure GitHub Pages
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && vars.PUBLISH_DOCS == 'true'
         uses: actions/configure-pages@v5
 
       - name: Upload GitHub Pages artifact
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && vars.PUBLISH_DOCS == 'true'
         uses: actions/upload-pages-artifact@v4
         with:
           path: site
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && vars.PUBLISH_DOCS == 'true'
     needs: build
     runs-on: ubuntu-latest
     permissions:

@@ -116,3 +116,21 @@ Build the season in dependency order:
 Keep each feature's tests in the same conceptual commit. Fold later fixups into the
 commit whose behavior they complete while the branch is still unpublished or when
 a coordinated history rewrite is explicitly intended.
+
+## Optional documentation publishing
+
+The inherited Documentation workflow always builds changed documentation with
+`mkdocs build --strict` on main pushes and pull requests. Manual runs also build.
+GitHub Pages publishing is opt-in: an unset `PUBLISH_DOCS` repository variable
+skips Pages configuration, artifact upload, and deployment while retaining the
+strict build. No publishing configuration is required for local `docs` previews.
+
+To publish, first ensure the repository's visibility and GitHub plan support Pages.
+Enable Pages in **Settings → Pages**, with **GitHub Actions** as the source.
+Then add the repository Actions variable `PUBLISH_DOCS` with the exact value
+`true` in **Settings → Secrets and variables → Actions → Variables**. Run the
+Documentation workflow or push a documentation change to main. Quickstart opts in
+through its repository settings; consuming teams opt in separately when ready.
+Leave this variable unset for repositories that do not publish. Pull requests
+only validate documentation even when publishing is enabled. An opted-in
+publishing failure remains a failed workflow so broken deployments are visible.
