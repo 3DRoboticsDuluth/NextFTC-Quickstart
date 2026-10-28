@@ -9,6 +9,16 @@ import org.mockito.Mockito.*
 
 class SubsystemDiscoveryTests {
     @Test
+    fun filtersMetadataBeforeSingletonAccessAndReevaluatesModeEachTime() {
+        val names = listOf(OwnedSubsystem::class.java.name, DisabledDiscovered::class.java.name,
+            AutoDiscovered::class.java.name, TeleopDiscovered::class.java.name, BothDiscovered::class.java.name)
+        dev.nextftc.ftc.ActiveOpMode.it = org.firstinspires.ftc.threedrd.nextftc.opmodes.ActiveOpModeTests.Auto()
+        assertEquals(setOf(AutoDiscovered, BothDiscovered), SubsystemDiscovery.discover(names))
+        dev.nextftc.ftc.ActiveOpMode.it = org.firstinspires.ftc.threedrd.nextftc.opmodes.ActiveOpModeTests.Teleop()
+        assertEquals(setOf(TeleopDiscovered, BothDiscovered), SubsystemDiscovery.discover(names))
+    }
+
+    @Test
     fun discoversTopLevelSingletonSubsystemsRegardlessOfPackage() {
         val discovered = SubsystemDiscovery.discover(
             listOf(

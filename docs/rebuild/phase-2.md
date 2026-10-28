@@ -295,3 +295,11 @@ PIDF. Cache copied values including algorithm, clear caches in MotorEx.initializ
 and verify first writes, unchanged values, each mutable coefficient, algorithm
 changes, per-motor separation and reinitialization in MotorPIDFTests. Follow the
 [Hub tuning guide](../architecture/hardware.md#hub-pidf-tuning) for Panels setup.
+
+For REQ-PLT-055, add runtime Discovery metadata and DiscoveryMode BOTH/AUTO/TELEOP.
+Filter class metadata before reading singleton INSTANCE; skip owned roots but
+include explicitly constructed instances from parent subsystems. Retain original
+roots and rebuild the filtered, ordered, deduplicated registration each preInit.
+Add computed isAuto/isTeleop while retaining receiver-extension compatibility.
+Recreate discovery, mode-switch and owned lifecycle tests from the
+[lifecycle contract](../architecture/lifecycle.md#optional-discovery-metadata).

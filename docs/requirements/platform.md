@@ -138,3 +138,13 @@ MUST invalidate caches for reapplication. Existing Hub gains MUST remain untouch
 until assigned. Panels consumers MUST use mutable configuration fields and keep
 robot-specific gains in TeamCode. MotorPIDFTests and the
 [Hub tuning guide](../architecture/hardware.md#hub-pidf-tuning) provide traceability.
+
+`REQ-PLT-055`: Optional runtime Discovery metadata MUST support BOTH (default), AUTO,
+TELEOP, owned instances and explicit disabled registration. Root discovery MUST
+filter before singleton access, never auto-construct classes, and reject unmarked
+concrete classes. Registration MUST filter roots and expanded children, deduplicate
+instances, and reevaluate mode eligibility at initialization. Owned children MUST
+receive normal hardware and lifecycle handling. Top-level computed isAuto/isTeleop
+MUST reflect the current OpMode while existing ActiveOpMode extensions remain
+compatible. Trace to SubsystemDiscoveryTests, SubsystemComponentTests,
+ActiveOpModeTests and the [discovery guide](../architecture/lifecycle.md#optional-discovery-metadata).

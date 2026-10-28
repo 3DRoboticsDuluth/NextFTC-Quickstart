@@ -64,3 +64,43 @@ command manager has a command using it. If not, a non-null default is scheduled.
 Drive uses this to make driver control the Teleop default without manually
 rescheduling it every loop. Auto receives no manual default because its config state
 is not Teleop.
+
+## Optional discovery metadata
+
+`@Discovery` changes registration only where the default is unsuitable:
+
+```kotlin
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.Discovery
+import org.firstinspires.ftc.threedrd.nextftc.subsystems.DiscoveryMode.AUTO
+
+@Discovery(mode = AUTO)
+object Auto : Subsystem() { /* autonomous initialize/start/periodic/stop */ }
+
+@Discovery(owned = true)
+class Mechanism(...) : Subsystem()
+```
+
+Unannotated singleton subsystems remain enabled in both modes. `mode = TELEOP`
+restricts participation to Teleop; `BOTH` is the default. `disabled = true` excludes
+registration deliberately, independently of runtime hardware-error disabling.
+Singleton discovery checks metadata before accessing INSTANCE. Ordinary concrete
+subsystem classes still fail clearly unless marked owned; none are auto-constructed.
+
+An owner constructs its children lazily with respect to hardware and overrides
+`subsystems` to include itself and the child instances. Registration filters root
+and expanded instance metadata, deduplicates instances and initializes/updates/stops
+each eligible subsystem once. The owned flag prevents root discovery only; it does
+not prevent lifecycle registration through an owner. An excluded root does not
+contribute its children. Metadata is evaluated anew each OpMode, with no reflective
+mode checks in periodic loops. Constructors can still be reached by ordinary code;
+this is lifecycle filtering, not a prohibition on object construction.
+
+Owners must not manually forward child lifecycle methods. Their coordinating
+commands must require the child instances explicitly: reserving an owner alone
+does not reserve its children. Hardware failure remains isolated to each child;
+coordination must check child readiness before assuming both mechanisms are usable.
+
+Directly import `isAuto` and `isTeleop` from `threedrd.nextftc.opmodes` for occasional
+mode-dependent behavior. These computed properties follow the current ActiveOpMode;
+the existing ActiveOpMode extensions remain compatibility aliases. Prefer discovery
+metadata when the entire subsystem belongs to one mode.

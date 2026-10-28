@@ -21,9 +21,13 @@ class ActiveOpModeTests {
         ActiveOpMode.it = Auto()
         assertTrue(ActiveOpMode.isAutonomous)
         assertFalse(ActiveOpMode.isTeleop)
+        assertTrue(isAuto)
+        assertFalse(isTeleop)
 
         ActiveOpMode.it = Teleop()
         assertFalse(ActiveOpMode.isAutonomous)
         assertTrue(ActiveOpMode.isTeleop)
+        assertFalse(isAuto)
+        assertTrue(isTeleop)
     }
 }

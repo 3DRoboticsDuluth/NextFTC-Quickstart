@@ -101,6 +101,54 @@ class SubsystemComponentTests {
         }
     }
 
+    @Discovery(owned = true)
+    private class Child : Subsystem() {
+        val hardware = TestHardware("owned")
+        var initialized = 0
+        var updates = 0
+        var stops = 0
+        override fun initialize() { initialized++ }
+        override fun periodic() { updates++ }
+        override fun stop() { stops++ }
+    }
+
+    @Discovery(mode = DiscoveryMode.AUTO)
+    private class AutoChild : Subsystem()
+
+    @Discovery(disabled = true)
+    private class DisabledChild : Subsystem()
+
+    @Test
+    fun registersOwnedChildrenOnceAndFiltersParentsAndChildrenAcrossModes() {
+        val child = Child()
+        val auto = AutoChild()
+        val disabled = DisabledChild()
+        val parent = object : Subsystem() {
+            override val subsystems = setOf(this, child, auto, disabled)
+        }
+        activate(TestTeleop())
+        val component = SubsystemComponent(parent, child)
+        component.preInit()
+        component.preUpdate()
+        component.preStop()
+        assertEquals(setOf(parent, child), component.subsystems)
+        assertEquals(1, child.initialized)
+        assertEquals(1, child.hardware.initializations)
+        assertEquals(1, child.updates)
+        assertEquals(1, child.stops)
+        activate(TestAuto())
+        component.preInit()
+        assertEquals(setOf(parent, child, auto), component.subsystems)
+        assertEquals(2, child.initialized)
+        val excludedParent = object : NextSubsystem {
+            override val subsystems = setOf(child)
+        }
+        assertEquals(setOf(child), SubsystemComponent(excludedParent).subsystems)
+        assertTrue(SubsystemComponent(disabled).subsystems.isEmpty())
+        activate(TestTeleop())
+        assertTrue(SubsystemComponent(auto).subsystems.isEmpty())
+    }
+
     private class OrderedSubsystem(
         override val order: Int,
         val updates: MutableList<Int>

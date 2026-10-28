@@ -9,7 +9,7 @@ import dev.nextftc.core.subsystems.Subsystem as NextSubsystem
 import org.firstinspires.ftc.threedrd.nextftc.opmodes.*
 
 class SubsystemComponent private constructor(
-    subsystems: Set<NextSubsystem>,
+    private val roots: Set<NextSubsystem>,
     val discoverAll: Boolean
 ) : Component {
     companion object {
@@ -29,14 +29,10 @@ class SubsystemComponent private constructor(
 
     constructor(vararg subsystems: NextSubsystem) : this(subsystems.toSet(), false)
 
-    var subsystems = ordered(subsystems.flatMap { it.subsystems })
+    var subsystems = registered(roots)
 
     override fun preInit() {
-        if (discoverAll) {
-            subsystems = ordered(
-                discovery().flatMap { it.subsystems }
-            )
-        }
+        subsystems = registered(if (discoverAll) discovery() else roots)
 
         subsystems.forEach {
             if (it is Subsystem) it.initializeHardware()
@@ -49,7 +45,7 @@ class SubsystemComponent private constructor(
     override fun preStartButtonPressed() {
         val active = subsystems.filterIsInstance<Subsystem>().filterNot { it.disabled }
         active.forEach { it.start() }
-        if (ActiveOpMode.isTeleop) active.forEach { it.controls() }
+        if (isTeleop) active.forEach { it.controls() }
     }
 
     override fun preUpdate() = updateSubsystems(true)
@@ -86,4 +82,10 @@ class SubsystemComponent private constructor(
     fun ordered(subsystems: Iterable<NextSubsystem>) = subsystems
         .sortedBy { (it as? Subsystem)?.order ?: 0 }
         .toCollection(linkedSetOf())
+
+    private fun registered(roots: Set<NextSubsystem>) = ordered(
+        roots.filter { it.javaClass.participates() }
+            .flatMap { it.subsystems }
+            .filter { it.javaClass.participates() }
+    )
 }
