@@ -250,4 +250,46 @@ class MotorTargetsTests : SubsystemTests() {
         verifyNoInteractions(map)
     }
 
+    private data class UnsupportedQuantity(override val value: Double) : Quantity<UnsupportedQuantity>() {
+        override fun newInstance(value: Double) = copy(value = value)
+    }
+
+    @Test
+    fun targetAcceptsDistancesAndAnglesAndReportsTheLastSuccessfulDimension() {
+        val sdk = mock(DcMotorEx::class.java)
+        val motor = MotorEx(sdk).ticks(100.0).travel(200.mm).travel(360.deg)
+        `when`(sdk.targetPosition).thenReturn(50)
+        assertEquals(180.0, (motor.target as Angle).inDeg, 1e-9)
+        motor.target = 20.mm
+        verify(sdk).targetPosition = 10
+        `when`(sdk.targetPosition).thenReturn(10)
+        assertEquals(20.0, (motor.target as Distance).inMm, 0.0)
+        motor.target = 180.deg
+        verify(sdk).targetPosition = 50
+        `when`(sdk.targetPosition).thenReturn(50)
+        assertEquals(180.0, (motor.target as Angle).inDeg, 1e-9)
+        motor.targetDistance = 10.mm
+        assertTrue(motor.target is Distance)
+        motor.targetAngle = 90.deg
+        assertTrue(motor.target is Angle)
+        motor.distancePerTick(1.mm)
+        assertTrue(motor.target is Distance)
+        motor.anglePerTick(1.rad)
+        assertTrue(motor.target is Angle)
+    }
+
+    @Test
+    fun targetRejectsUnsupportedOrIncompleteQuantitiesBeforeHardwareLookup() {
+        val map = ActiveOpMode.hardwareMap
+        val motor = MotorEx("unconfiguredGenericTarget")
+        clearInvocations(map)
+        assertThrows(IllegalStateException::class.java) { motor.target }
+        assertThrows(IllegalStateException::class.java) { motor.target = 1.mm }
+        assertThrows(IllegalStateException::class.java) { motor.target = 1.deg }
+        assertThrows(IllegalArgumentException::class.java) { motor.target = UnsupportedQuantity(1.0) }
+        motor.travel(1.mm)
+        assertThrows(IllegalStateException::class.java) { motor.target }
+        verifyNoInteractions(map)
+    }
+
 }

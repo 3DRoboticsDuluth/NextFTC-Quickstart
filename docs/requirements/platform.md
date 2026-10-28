@@ -118,3 +118,14 @@ synchronizing native zero power/direct mode, bypassing stale native caches and
 allowing a later manual-control transition. These are explicit runtime operations,
 not a software feedback loop or electrical-power cap. See the [facade contract](../architecture/hardware.md#hub-position-control-facade)
 and MotorPositionControlTests for behavior and traceability.
+
+`REQ-PLT-053`: MotorEx MUST support positionMode(zero=false), a Quantity target
+accepting Distance/Angle, normalized Hub speed, and cache-safe stop(). Mode setup
+MUST begin stopped at the current position, preserve logical zero by default, and
+optionally recapture it without a hardware encoder reset. Target/speed updates
+MUST NOT change modes; speed MUST require Hub position mode and remain distinct
+from measured velocity. Generic target readback MUST use the most recently
+calibrated or successfully assigned dimension, including explicit typed setters.
+Unsupported/incomplete quantities and invalid speed MUST fail clearly without
+actuation. Existing helper signatures MUST remain available. Tests and reconstruction
+trace to [the live surface](../architecture/hardware.md#position-mode-with-live-target-and-speed).

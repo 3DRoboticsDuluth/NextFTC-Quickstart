@@ -281,3 +281,11 @@ RUN_TO_POSITION before SDK power, and preserve target/zero. Stop must write SDK
 zero before native zero to handle the separate upstream write cache. Reconstruct
 MotorPositionControlTests including stale-zero and previous-manual-power cases;
 see [Hub facade](../architecture/hardware.md#hub-position-control-facade).
+
+For REQ-PLT-053, add positionMode(zero=false), generic Quantity target dispatch and
+selected-dimension readback metadata, Hub-only speed, and stop(). Reuse the explicit
+safe-stop operation, preserve initial logical zero unless requested, and capture
+current position as the stopped initial target before selecting Hub mode. Preserve
+all previous helpers. Recreate target dispatch/readback, initial target/zero, speed
+mode checks, and lifecycle tests in the two existing motor test classes. Follow
+[the live motor surface](../architecture/hardware.md#position-mode-with-live-target-and-speed).

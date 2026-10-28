@@ -396,3 +396,61 @@ No wrappers, reflection, alternate controller, or hidden periodic loop are added
 MotorPositionControlTests verifies write order, target/zero preservation, repeated
 speed changes, invalid values without acquisition, lazy lookup, cached-zero stop,
 and a transition from a previous nonzero native power value back to manual control.
+
+## Position mode with live target and speed
+
+REQ-PLT-053 provides the preferred runtime surface, retaining the original helpers
+for compatibility:
+
+```kotlin
+// initialize once per OpMode; zero defaults to false
+motor.positionMode(zero = true)
+
+// periodic desired-state application and standard telemetry
+motor.update {
+    target = TRAVEL.inches
+    speed = SPEED
+}
+
+// immediate lifecycle cleanup
+motor.stop()
+```
+
+`positionMode(zero = false)` explicitly stops output through the cache-safe stop
+operation, optionally calls native zero(), selects the current raw SDK position
+as the initial holding target, then selects Hub RUN_TO_POSITION. Initial speed is
+zero until explicitly set. With the default argument, the existing native logical
+zero is preserved. With zero=true, currentPosition becomes zero without resetting
+the hardware encoder or losing the native type. Setup can be repeated across
+OpModes to recapture the physical datum when requested. It belongs in initialization,
+not the periodic loop, because it resets the initial holding target each time.
+
+`target: Quantity<*>` accepts NextFTC Distance or Angle and routes through the
+existing calibrated typed-target conversion. Other quantity types, missing
+calibration, or invalid values fail before target writes. The generic getter reads
+the actual SDK target in the dimension most recently calibrated or successfully
+assigned. Explicit targetDistance/targetAngle assignments also select that readback
+dimension; their getters do not. This defines generic readback even when a motor
+has both distance and angular calibration. An unconfigured generic getter fails
+before acquisition. Absolute logical-zero, rounding, and unwrapped-angle rules
+remain unchanged.
+
+`speed` gets/sets the SDK's commanded normalized maximum movement speed (0..1),
+not measured velocity or an electrical-power/current ceiling. It requires Hub
+RUN_TO_POSITION and never selects a different mode or changes the target. Invalid
+speed fails before acquisition; valid access in another mode fails without changing
+mode or power. Native velocity remains measured signed encoder ticks/second.
+Setting speed each periodic cycle applies live settings; the SDK caches unchanged
+hardware writes. update() applies the block before its configured hardware telemetry.
+
+`stop()` uses the existing explicit SDK-zero-before-native-zero operation to avoid
+the native cached-zero hazard, and returns to native direct-power mode. It does
+not cancel scheduler commands or redefine logical zero. Normal OpMode shutdown
+ends periodic updates; later speed writes in direct mode fail instead of silently
+re-enabling motion. stopPositionControl() remains a compatibility alias, and
+positionControl(speed) retains its previous explicit setup behavior.
+
+MotorTargetsTests and MotorPositionControlTests cover both target dimensions,
+readback selection, unsupported/incomplete quantities, default-preserve and explicit
+re-zero setup, stopped initial targets, repeated lifecycle setup, measured-velocity
+independence, mode-preserving live speed updates, invalid input, and safe stopping.

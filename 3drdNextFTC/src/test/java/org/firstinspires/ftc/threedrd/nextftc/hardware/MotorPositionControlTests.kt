@@ -103,4 +103,78 @@ class MotorPositionControlTests : SubsystemTests() {
         verify(sdk).power = 0.7
     }
 
+    @Test
+    fun positionModePreservesLogicalZeroByDefaultAndStopsBeforeSelectingCurrentHoldTarget() {
+        val sdk = mock(DcMotorEx::class.java)
+        `when`(sdk.currentPosition).thenReturn(100)
+        val motor = MotorEx(sdk)
+        motor.currentPosition = 25.0
+        clearInvocations(sdk)
+        motor.positionMode()
+        val order = inOrder(sdk)
+        order.verify(sdk).power = 0.0
+        order.verify(sdk).mode = RUN_WITHOUT_ENCODER
+        order.verify(sdk).currentPosition
+        order.verify(sdk).targetPosition = 100
+        order.verify(sdk).mode = RUN_TO_POSITION
+        assertEquals(25.0, motor.currentPosition, 0.0)
+        verify(sdk, never()).mode = com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER
+    }
+
+    @Test
+    fun explicitZeroOnPositionModeRecapturesDatumOnEveryInitialization() {
+        val sdk = mock(DcMotorEx::class.java)
+        `when`(sdk.currentPosition).thenReturn(100)
+        val motor = MotorEx(sdk)
+        motor.positionMode(zero = true)
+        assertEquals(0.0, motor.currentPosition, 0.0)
+        verify(sdk).targetPosition = 100
+        `when`(sdk.currentPosition).thenReturn(250)
+        motor.positionMode(zero = true)
+        assertEquals(0.0, motor.currentPosition, 0.0)
+        verify(sdk).targetPosition = 250
+    }
+
+    @Test
+    fun speedIsAHubCommandAndDoesNotChangeModeTargetOrMeasuredVelocity() {
+        val sdk = mock(DcMotorEx::class.java)
+        `when`(sdk.mode).thenReturn(RUN_TO_POSITION)
+        `when`(sdk.power).thenReturn(0.3)
+        `when`(sdk.velocity).thenReturn(125.0)
+        val motor = MotorEx(sdk)
+        clearInvocations(sdk)
+        assertEquals(0.3, motor.speed, 0.0)
+        motor.speed = 0.2
+        motor.speed = 0.5
+        motor.speed = 0.0
+        motor.speed = 1.0
+        verify(sdk).power = 0.2
+        verify(sdk).power = 0.5
+        verify(sdk).power = 0.0
+        verify(sdk).power = 1.0
+        verify(sdk, never()).setMode(any())
+        verify(sdk, never()).setTargetPosition(anyInt())
+        assertEquals(125.0, motor.velocity, 0.0)
+        motor.stop()
+        verify(sdk, atLeastOnce()).power = 0.0
+        verify(sdk).mode = RUN_WITHOUT_ENCODER
+    }
+
+    @Test
+    fun speedRequiresPositionModeAndInvalidValuesFailBeforeAcquisition() {
+        val map = ActiveOpMode.hardwareMap
+        val motor = MotorEx("invalidSpeedProperty")
+        clearInvocations(map)
+        for (value in listOf(-1.0, 2.0, Double.NaN, Double.POSITIVE_INFINITY)) {
+            assertThrows(IllegalArgumentException::class.java) { motor.speed = value }
+        }
+        verifyNoInteractions(map)
+        val sdk = mock(DcMotorEx::class.java)
+        `when`(sdk.mode).thenReturn(RUN_WITHOUT_ENCODER)
+        val manual = MotorEx(sdk)
+        assertThrows(IllegalStateException::class.java) { manual.speed }
+        assertThrows(IllegalStateException::class.java) { manual.speed = 0.2 }
+        verify(sdk, never()).setPower(anyDouble())
+    }
+
 }
