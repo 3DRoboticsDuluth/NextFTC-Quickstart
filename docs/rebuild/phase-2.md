@@ -289,3 +289,9 @@ current position as the stopped initial target before selecting Hub mode. Preser
 all previous helpers. Recreate target dispatch/readback, initial target/zero, speed
 mode checks, and lifecycle tests in the two existing motor test classes. Follow
 [the live motor surface](../architecture/hardware.md#position-mode-with-live-target-and-speed).
+
+For REQ-PLT-054, add MotorPIDF extension properties for Hub position P and velocity
+PIDF. Cache copied values including algorithm, clear caches in MotorEx.initialize,
+and verify first writes, unchanged values, each mutable coefficient, algorithm
+changes, per-motor separation and reinitialization in MotorPIDFTests. Follow the
+[Hub tuning guide](../architecture/hardware.md#hub-pidf-tuning) for Panels setup.

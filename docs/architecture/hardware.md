@@ -454,3 +454,33 @@ MotorTargetsTests and MotorPositionControlTests cover both target dimensions,
 readback selection, unsupported/incomplete quantities, default-preserve and explicit
 re-zero setup, stopped initial targets, repeated lifecycle setup, measured-velocity
 independence, mode-preserving live speed updates, invalid input, and safe stopping.
+
+## Hub PIDF tuning
+
+REQ-PLT-054 exposes native MotorEx `positionP` and `velocityPIDF` extensions.
+The Hub position P loop produces a velocity demand; the inner velocity PIDF loop
+then drives the motor. These gains use Hub encoder units, not distance/angle units
+or NextControl software-controller gains. Position mode uses only position P.
+
+Keep tuning on the consuming subsystem as ordinary mutable `var` properties under
+`@Configurable`. A `PIDFCoefficients` object exposes its mutable p/i/d/f and
+algorithm fields through Panels. Root `val` and delegated properties are not
+supported by the current Panels field scanner. Read the Hub's settings once when
+hardware is first initialized to seed these properties; preserve subsequent tuning
+across OpModes. Do not substitute guessed gains for the motor's existing defaults.
+
+```kotlin
+motor.update {
+    positionP = POSITION_P
+    velocityPIDF = VELOCITY_PIDF
+    target = TRAVEL.inches
+    speed = SPEED
+}
+```
+
+Setters write only changed values, with a copied snapshot so in-place Panels edits
+are detected. Velocity tuning preserves the SDK algorithm field. Hardware
+initialization clears the applied-value caches, so settings are reapplied each
+OpMode. These helpers do not select modes, change targets, or command output.
+Use these helpers consistently: direct SDK coefficient writes bypass the caches.
+Hub gains reset on power cycling and require physical tuning and validation.

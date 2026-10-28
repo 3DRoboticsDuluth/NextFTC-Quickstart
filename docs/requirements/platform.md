@@ -129,3 +129,12 @@ calibrated or successfully assigned dimension, including explicit typed setters.
 Unsupported/incomplete quantities and invalid speed MUST fail clearly without
 actuation. Existing helper signatures MUST remain available. Tests and reconstruction
 trace to [the live surface](../architecture/hardware.md#position-mode-with-live-target-and-speed).
+
+`REQ-PLT-054`: Native MotorEx MUST expose independent Hub positionP and velocityPIDF
+settings without changing mode, target, or output. Velocity tuning MUST preserve
+p/i/d/f and algorithm, detect in-place edits, and copy applied coefficients.
+Unchanged settings MUST avoid repeat writes; subsystem hardware initialization
+MUST invalidate caches for reapplication. Existing Hub gains MUST remain untouched
+until assigned. Panels consumers MUST use mutable configuration fields and keep
+robot-specific gains in TeamCode. MotorPIDFTests and the
+[Hub tuning guide](../architecture/hardware.md#hub-pidf-tuning) provide traceability.
