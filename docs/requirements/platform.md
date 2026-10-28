@@ -109,3 +109,12 @@ value MUST be positive/finite; existing per-tick calibration MUST remain usable
 without ticks, with explicit independent per-dimension last-setting precedence.
 See [ticks and travel](../architecture/hardware.md#separate-ticks-and-travel) and
 MotorTargetsTests for traceability. No controller, mode, or power behavior changes.
+
+`REQ-PLT-052`: MotorEx MUST expose explicit Hub positionControl(normalized speed)
+and stopPositionControl operations without changing its native type. Setup MUST
+validate 0..1 speed before acquisition and set Hub position mode before speed,
+without changing target or logical zero. Stop MUST force SDK power zero before
+synchronizing native zero power/direct mode, bypassing stale native caches and
+allowing a later manual-control transition. These are explicit runtime operations,
+not a software feedback loop or electrical-power cap. See the [facade contract](../architecture/hardware.md#hub-position-control-facade)
+and MotorPositionControlTests for behavior and traceability.

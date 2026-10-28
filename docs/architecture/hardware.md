@@ -347,3 +347,52 @@ travel call uses the stored ticks value again. These rules preserve the original
 per-tick APIs without silently mixing their meanings. `MotorTargetsTests` covers
 partial construction, both orders/dimensions, invalid and extreme values,
 per-motor isolation, and calibration precedence.
+
+## Hub position-control facade
+
+REQ-PLT-052 adds two explicit runtime operations on native MotorEx. After selecting
+an initial target, call `positionControl(speed)` to select SDK RUN_TO_POSITION
+and set its normalized maximum speed (0 through 1). This is not a voltage,
+current, wattage, or duty-cycle ceiling. It does not set a target, zero the encoder,
+or calculate a software PID output. It acquires hardware only when explicitly
+called, not when declaring/calibrating the motor.
+
+```kotlin
+val motor = MotorEx("slide").ticks(384.5).travel(336.mm).brakeMode()
+
+// initialize: the mechanism is physically at the chosen load datum
+motor.stopPositionControl()
+motor.zero()
+motor.targetDistance = 0.inches
+motor.positionControl(speed = 0.2)
+
+// normal commands select targets only
+motor.targetDistance = 6.inches
+
+// lifecycle stop
+motor.stopPositionControl()
+```
+
+The same helper may be called in periodic updates if a team wants live speed
+changes. Unchanged SDK mode/power writes use the SDK's own caching. Calling it
+once during initialization keeps that speed until explicitly changed. Invalid
+speed fails before hardware lookup or mode/power changes. Motor type selection
+in the Robot Controller configuration determines the normalized speed scaling.
+Native logical reversal is already accounted for by the typed target conversion;
+Hub speed is unsigned and the target determines direction.
+
+Native MotorEx.power has a separate write cache and selects RUN_WITHOUT_ENCODER.
+After Hub writes, its cached value is not the Hub's speed setting. In particular,
+assigning native power zero can skip the SDK write if the native cache was already
+zero. **Use stopPositionControl() to leave Hub control.** It first writes SDK power
+zero, then assigns native power zero to select RUN_WITHOUT_ENCODER and synchronize
+the native cache. This ordering prevents stale Hub power becoming direct output.
+Stopping is immediate and idempotent; it does not cancel scheduled commands.
+After this explicit transition, normal native power control can be used again.
+
+Subsystems keep zero selection, geometry, target policy, and lifecycle ownership.
+The library owns only mode/speed setup and the safe cache-aware stop transition.
+No wrappers, reflection, alternate controller, or hidden periodic loop are added.
+MotorPositionControlTests verifies write order, target/zero preservation, repeated
+speed changes, invalid values without acquisition, lazy lookup, cached-zero stop,
+and a transition from a previous nonzero native power value back to manual control.

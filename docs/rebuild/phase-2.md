@@ -274,3 +274,10 @@ per-dimension travel/direct-per-tick modes. Validate supplied values immediately
 resolve complete ratios only on typed target access, and preserve hardware laziness.
 Recreate order/partial-state, precedence, dimension/motor isolation, and invalid-ratio
 tests described in the [hardware guide](../architecture/hardware.md#separate-ticks-and-travel).
+
+For REQ-PLT-052, add explicit MotorEx runtime operations for normalized Hub speed
+and a safe exit to native direct power. Validate speed before acquisition, set
+RUN_TO_POSITION before SDK power, and preserve target/zero. Stop must write SDK
+zero before native zero to handle the separate upstream write cache. Reconstruct
+MotorPositionControlTests including stale-zero and previous-manual-power cases;
+see [Hub facade](../architecture/hardware.md#hub-position-control-facade).
