@@ -100,3 +100,12 @@ calibration and invalid targets MUST fail clearly without target writes. Target
 access MUST NOT change mode/power, run a software controller, or infer robot geometry.
 See [typed motor targets](../architecture/hardware.md#typed-hub-motor-targets) and
 `MotorTargetsTests` for the implementation and observable-behavior traceability.
+
+`REQ-PLT-051`: MotorEx MUST support separate same-instance lazy ticks-per-revolution
+and typed distance/angle travel-per-revolution configuration in either order.
+Partial settings MUST be accepted until typed target access, which MUST reject
+missing or unrepresentable calibration before hardware lookup. Each supplied
+value MUST be positive/finite; existing per-tick calibration MUST remain usable
+without ticks, with explicit independent per-dimension last-setting precedence.
+See [ticks and travel](../architecture/hardware.md#separate-ticks-and-travel) and
+MotorTargetsTests for traceability. No controller, mode, or power behavior changes.

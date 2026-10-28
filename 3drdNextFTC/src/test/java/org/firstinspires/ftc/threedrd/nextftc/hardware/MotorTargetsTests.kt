@@ -154,4 +154,100 @@ class MotorTargetsTests : SubsystemTests() {
         `when`(motor.motor.targetPosition).thenReturn(-4)
         assertEquals(4.0, motor.targetDistance.inMm, 0.0)
     }
+    @Test
+    fun ticksAndTravelAreLazyFluentAndOrderIndependentForBothDimensions() {
+        val active = ActiveOpMode.it
+        try {
+            ActiveOpMode.it = null
+            val motor = MotorEx("fluentTravel")
+            assertSame(motor, motor.ticks(384.5).travel(336.mm).travel(360.deg))
+            assertEquals(dev.nextftc.hardware.impl.MotorEx::class.java, motor.javaClass)
+        } finally {
+            ActiveOpMode.it = active
+        }
+        val sdk = mock(DcMotorEx::class.java)
+        val motor = MotorEx(sdk).travel(336.mm).travel(360.deg).ticks(384.5)
+        motor.targetDistance = 10.inches
+        verify(sdk).targetPosition = 291
+        `when`(sdk.targetPosition).thenReturn(291)
+        assertEquals(291 * 336.0 / 384.5, motor.targetDistance.inMm, 1e-9)
+        motor.targetAngle = 2.rev
+        verify(sdk).targetPosition = 769
+        `when`(sdk.targetPosition).thenReturn(769)
+        assertEquals(2.0, motor.targetAngle.inRev, 1e-9)
+    }
+
+    @Test
+    fun partialConfigurationFailsAtTargetUseWithoutAcquiringHardware() {
+        val map = ActiveOpMode.hardwareMap
+        val ticksOnly = MotorEx("ticksOnly").ticks(384.5)
+        val travelOnly = MotorEx("travelOnly").travel(336.mm).travel(360.deg)
+        clearInvocations(map)
+        for (motor in listOf(ticksOnly, travelOnly)) {
+            assertThrows(IllegalStateException::class.java) { motor.targetDistance }
+            assertThrows(IllegalStateException::class.java) { motor.targetDistance = 1.mm }
+            assertThrows(IllegalStateException::class.java) { motor.targetAngle }
+            assertThrows(IllegalStateException::class.java) { motor.targetAngle = 1.deg }
+        }
+        verifyNoInteractions(map)
+        val sdk = mock(DcMotorEx::class.java)
+        MotorEx(sdk).ticks(100.0).power = 0.2
+        verify(sdk).power = 0.2
+    }
+
+    @Test
+    fun invalidFluentValuesFailImmediatelyWithoutReplacingSettings() {
+        val map = ActiveOpMode.hardwareMap
+        val motor = MotorEx("badFluentTravel").ticks(100.0).travel(200.mm).travel(300.rad)
+        clearInvocations(map)
+        for (value in listOf(0.0, -1.0, Double.NaN, Double.POSITIVE_INFINITY)) {
+            assertThrows(IllegalArgumentException::class.java) { motor.ticks(value) }
+            assertThrows(IllegalArgumentException::class.java) { motor.travel(value.mm) }
+            assertThrows(IllegalArgumentException::class.java) { motor.travel(value.rad) }
+        }
+        verifyNoInteractions(map)
+        motor.targetDistance = 20.mm
+        verify(motor.motor).targetPosition = 10
+        motor.targetAngle = 60.rad
+        verify(motor.motor).targetPosition = 20
+    }
+
+    @Test
+    fun fluentAndPerTickSettingsHaveExplicitPerDimensionPrecedence() {
+        val sdk = mock(DcMotorEx::class.java)
+        val motor = MotorEx(sdk).ticks(100.0).travel(200.mm).travel(300.rad)
+        motor.distancePerTick(1.mm).anglePerTick(1.rad).ticks(50.0)
+        motor.targetDistance = 10.mm
+        motor.targetAngle = 20.rad
+        verify(sdk).targetPosition = 10
+        verify(sdk).targetPosition = 20
+        motor.travel(200.mm)
+        motor.targetDistance = 20.mm
+        verify(sdk).targetPosition = 5
+        motor.targetAngle = 30.rad
+        verify(sdk).targetPosition = 30
+        motor.travel(300.rad).ticks(100.0)
+        motor.targetAngle = 60.rad
+        verify(sdk, times(2)).targetPosition = 20
+        `when`(sdk.targetPosition).thenReturn(5)
+        assertEquals(10.0, motor.targetDistance.inMm, 0.0)
+    }
+
+    @Test
+    fun fluentMetadataIsPerMotorAndUnrepresentableRatiosFailWithoutLookup() {
+        val sdk = mock(DcMotorEx::class.java)
+        val first = MotorEx(sdk).ticks(100.0).travel(200.mm)
+        first.targetDistance = 10.mm
+        verify(sdk).targetPosition = 5
+        val map = ActiveOpMode.hardwareMap
+        val second = MotorEx("secondFluent").travel(200.mm)
+        clearInvocations(map)
+        assertThrows(IllegalStateException::class.java) { second.targetDistance = 10.mm }
+        second.ticks(Double.MAX_VALUE).travel(Double.MIN_VALUE.mm)
+        assertThrows(IllegalArgumentException::class.java) { second.targetDistance = 10.mm }
+        second.ticks(Double.MIN_VALUE).travel(Double.MAX_VALUE.mm)
+        assertThrows(IllegalArgumentException::class.java) { second.targetDistance }
+        verifyNoInteractions(map)
+    }
+
 }

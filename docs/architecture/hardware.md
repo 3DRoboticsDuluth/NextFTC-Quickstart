@@ -317,3 +317,33 @@ properties specifically address the Hub target, not a NextControl controller.
 `MotorTargetsTests` verifies native identity and lazy configuration, conversions,
 rounding, signed/multi-turn targets, logical offsets/reversal, factory/native
 constructor compatibility, independent calibrations, and failures without actuation.
+
+### Separate ticks and travel
+
+REQ-PLT-051 adds separate `.ticks(counts)` and `.travel(Distance)` or
+`.travel(Angle)` calls. Both quantities describe **the same shaft revolution**:
+
+```kotlin
+val motor = MotorEx("staging").ticks(384.5).travel(336.mm).brakeMode()
+val rotary = MotorEx("rotary").travel(360.deg).ticks(384.5)
+```
+
+Calls may appear in either order and always return the same native motor without
+hardware acquisition. Each supplied count/travel must be positive and finite.
+Partial configuration is allowed for motors that are still being configured or
+used only for power/velocity. A typed target read/write requires travel for that
+dimension and ticks; missing data or an unrepresentable ratio fails before SDK
+lookup. There is no per-cycle configuration work, reflection, or wrapper.
+
+Distance and angular travel are independent but share ticks per reference
+revolution. Include external gearing in the travel for that same reference
+revolution. Changing ticks affects all travel-based dimensions the next time a
+target is read/written; it does not rewrite an existing SDK target.
+
+The latest `travel(Distance)` or `distancePerTick()` call selects the distance
+calibration, independently of the angle equivalent. A direct per-tick calibration
+does not require ticks and is unaffected by later ticks changes; a subsequent
+travel call uses the stored ticks value again. These rules preserve the original
+per-tick APIs without silently mixing their meanings. `MotorTargetsTests` covers
+partial construction, both orders/dimensions, invalid and extreme values,
+per-motor isolation, and calibration precedence.

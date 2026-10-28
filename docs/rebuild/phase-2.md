@@ -268,3 +268,9 @@ and explicit calibration/finite/range checks. Preserve native identity, lazy
 construction, and Hub mode/power ownership. Follow the [hardware contract](../architecture/hardware.md#typed-hub-motor-targets)
 and recreate MotorTargetsTests before robot integration. Keep actual mechanism
 geometry, zero selection, Hub configuration, and calibration in TeamCode.
+
+For REQ-PLT-051, extend the weak per-motor calibration metadata with ticks and
+per-dimension travel/direct-per-tick modes. Validate supplied values immediately,
+resolve complete ratios only on typed target access, and preserve hardware laziness.
+Recreate order/partial-state, precedence, dimension/motor isolation, and invalid-ratio
+tests described in the [hardware guide](../architecture/hardware.md#separate-ticks-and-travel).
