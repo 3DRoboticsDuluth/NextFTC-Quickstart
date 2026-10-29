@@ -155,3 +155,13 @@ unit length or zero for coincident positions. It MUST ignore headings, preserve
 both poses and exact zero components for axis-aligned directions. It MUST remain
 season-neutral. PoseTests and the [Pose helper guide](../architecture/drive-navigation.md#pose-direction-helpers)
 provide traceability.
+
+`REQ-PLT-057`: The reusable curve API MUST evaluate compiled custom functions and
+built-in polynomial, 4PL/5PL logistic, exponential, logarithmic, power and Gaussian
+models without robot policy or fitting algorithms. Built-in coefficients MUST be
+mutable and per-instance; calculations MUST use current settings, reject invalid
+domains/nonfinite inputs or coefficients/nonfinite results, and avoid implicit
+clamping. Polynomial coefficients MUST be constant-first. Concrete model fields
+MUST support Panels configuration; interface-typed fields are not a promise of
+runtime polymorphic field discovery. Trace to CurveTests and the
+[calibration curve specification](../architecture/curves.md).

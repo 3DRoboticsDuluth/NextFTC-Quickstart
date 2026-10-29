@@ -79,6 +79,7 @@ nav:
           - Telemetry and logging: architecture/diagnostics.md
           - Hardware: architecture/hardware.md
           - Velocity profiles and current limiting: architecture/control.md
+          - Calibration curves: architecture/curves.md
           - Drive and navigation: architecture/drive-navigation.md
       - Requirements:
           - requirements/index.md

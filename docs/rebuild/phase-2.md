@@ -310,3 +310,12 @@ components directly and return a fresh zero vector for coincidence. Recreate
 PoseTests for exact axis components, diagonal/reverse directions, nonzero origins,
 heading independence, non-mutation and fresh zero results. Follow the
 [Pose helper contract](../architecture/drive-navigation.md#pose-direction-helpers).
+
+For REQ-PLT-057, add Curve and the analytic evaluators in nextftc.control.curves.
+Use mutable per-instance coefficients, constant-first Horner polynomial evaluation,
+explicit logistic/Gaussian scale checks, finite input/parameter/result validation,
+and stateless calculations. Recreate CurveTests before consuming the API. Document
+exact coefficient conventions and concrete-type Panels exposure in the
+[curve guide](../architecture/curves.md). Keep fitting algorithms, calibration
+measurements, chosen coefficients, input ranges and hardware limits outside these
+reusable evaluators.
