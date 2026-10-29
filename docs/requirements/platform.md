@@ -148,3 +148,10 @@ receive normal hardware and lifecycle handling. Top-level computed isAuto/isTele
 MUST reflect the current OpMode while existing ActiveOpMode extensions remain
 compatible. Trace to SubsystemDiscoveryTests, SubsystemComponentTests,
 ActiveOpModeTests and the [discovery guide](../architecture/lifecycle.md#optional-discovery-metadata).
+
+`REQ-PLT-056`: Pose.directionTo(other) MUST return a fresh native Pedro Vector
+pointing along XY displacement in the shared pose coordinate frame, normalized to
+unit length or zero for coincident positions. It MUST ignore headings, preserve
+both poses and exact zero components for axis-aligned directions. It MUST remain
+season-neutral. PoseTests and the [Pose helper guide](../architecture/drive-navigation.md#pose-direction-helpers)
+provide traceability.

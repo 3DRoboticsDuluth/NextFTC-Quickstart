@@ -233,3 +233,28 @@ recipe requires robot-centric zero-strafe input; it does not make the chassis
 holonomic. Collection telemetry reports each distinct physical motor once.
 REQ-SCF-011 is verified by TankDriveSetupTests and PedroDriverControlledTests;
 REQ-PLT-043 retains read-only telemetry checks in TelemetryTests.
+
+## Pose direction helpers
+
+REQ-PLT-056 adds the `Pose.directionTo(other)` extension in
+`org.firstinspires.ftc.threedrd.pedropathing`. It returns a fresh native Pedro
+Vector of length one pointing from this pose's XY position to the other pose's
+XY position, in their shared field coordinate frame. Headings do not affect it;
+neither pose is mutated. Coincident positions return a zero vector.
+
+```kotlin
+val pose = follower.pose
+val distance = pose.distanceFrom(goal)
+val direction = pose.directionTo(goal)
+val towardVelocity = follower.velocity.dot(direction)
+val towardAcceleration = follower.acceleration.dot(direction)
+```
+
+Pedro already supplies distanceFrom and Vector.dot. Positive projections point
+toward the other pose, negative projections away. Use the same coordinate frame
+for both poses and input vectors. The helper constructs Cartesian components
+directly, keeping axis-aligned zero components exact rather than reconstructing
+them from a polar angle. This avoids tiny orthogonal projection values affecting
+sign-based calculations. It does not model shooter offsets or prescribe robot
+control policy. PoseTests cover axes, diagonal/reverse directions, nonzero origins,
+heading independence, pose preservation and independent zero vectors.

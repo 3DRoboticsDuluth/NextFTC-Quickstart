@@ -303,3 +303,10 @@ roots and rebuild the filtered, ordered, deduplicated registration each preInit.
 Add computed isAuto/isTeleop while retaining receiver-extension compatibility.
 Recreate discovery, mode-switch and owned lifecycle tests from the
 [lifecycle contract](../architecture/lifecycle.md#optional-discovery-metadata).
+
+For REQ-PLT-056, add Pose.directionTo to the existing Pedro Pose extensions. Use
+Pedro distanceFrom to scale the XY displacement, construct Cartesian vector
+components directly and return a fresh zero vector for coincidence. Recreate
+PoseTests for exact axis components, diagonal/reverse directions, nonzero origins,
+heading independence, non-mutation and fresh zero results. Follow the
+[Pose helper contract](../architecture/drive-navigation.md#pose-direction-helpers).

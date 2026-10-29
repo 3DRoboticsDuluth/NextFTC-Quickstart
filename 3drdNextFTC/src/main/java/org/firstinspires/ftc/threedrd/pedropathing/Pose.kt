@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.threedrd.pedropathing
 
 import com.pedropathing.geometry.*
+import com.pedropathing.math.Vector
 import dev.nextftc.core.units.*
 import kotlin.math.*
 
@@ -28,6 +29,13 @@ fun Pose.midpoint(other: Pose) = Pose(
     heading + (other.heading - heading).normalizeHeading() / 2,
     coordinateSystem
 )
+
+fun Pose.directionTo(other: Pose): Vector {
+    val distance = distanceFrom(other)
+    val direction = Vector()
+    if (distance > 0.0) direction.setOrthogonalComponents((other.x - x) / distance, (other.y - y) / distance)
+    return direction
+}
 
 fun Pose.turn(degrees: Double) = withHeading(
     (heading + Math.toRadians(degrees)).normalizeHeading()
