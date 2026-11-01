@@ -17,11 +17,23 @@ bindings lifecycle, default scheduling, and explicit subsystem start/stop hooks.
 
 ## Discovery
 
-`SubsystemComponent.all()` scans the installed APK for concrete NextFTC subsystem
-implementations. Kotlin `object` instances are resolved and flattened through
+`SubsystemComponent.all(within = "subsystems")` scans the installed APK for concrete
+adapted subsystem implementations. `within` is a case-sensitive regular expression
+searched anywhere in each package name, excluding the class name. The default
+includes packages such as `teamcode.subsystems`, its descendants, and
+`subsystemsExperimental`, including matching packages in libraries. Nonmatching
+names are discarded before sorting or loading classes. Kotlin `object` instances are resolved and flattened through
 NextFTC's subsystem composition. Results are sorted by `Subsystem.order` and kept
 in a linked set. Classes are resolved through the active OpMode's class loader so
 the lifecycle and Panels operate on the same TeamCode objects after a Sloth reload.
+
+Teams using other packages must override the filter, for example
+`SubsystemComponent.all(within = "subsystems|mechanisms")`, or use `within = ".*"`
+to restore unrestricted discovery. Invalid regex syntax fails initialization.
+Explicitly supplied roots and their owned subsystems are not package-filtered;
+existing mode, disabled and ownership rules still apply. No discovery cache is
+introduced. This reduces candidate class loading, but a hardware timing comparison
+is still needed to establish the effect on initialization time.
 
 Reflection is justified here because discovery occurs once per OpMode initialization,
 removes a frequently forgotten registry, and is thoroughly tested. It is not used

@@ -54,6 +54,12 @@ defaults, and stop healthy subsystems in reverse order.
 
 Why: this is the reusable execution model all student subsystems follow.
 
+Filter APK class names by package before class loading. Expose
+`SubsystemComponent.all(within = "subsystems")` as a regex substring search;
+allow alternative packages or `.*` without changing mode and owned registration.
+Compile the regex once per discovery call and preserve fresh classloader resolution.
+See REQ-PLT-010 and the [discovery guide](../architecture/lifecycle.md#discovery).
+
 Checkpoint: binding, composition, instant, deferred, repeat, discovery, subsystem,
 and component tests pass.
 

@@ -9,6 +9,28 @@ import org.mockito.Mockito.*
 
 class SubsystemDiscoveryTests {
     @Test
+    fun filtersPackageNamesBeforeLoadingAndAllowsRegexOverrides() {
+        val loaded = mutableListOf<String>()
+        fun loader() = object : ClassLoader(javaClass.classLoader) {
+            override fun loadClass(name: String, resolve: Boolean): Class<*> {
+                loaded += name
+                return super.loadClass(name, resolve)
+            }
+        }
+        val candidate = DiscoveredSubsystem::class.java.name
+        val names = listOf("other.subsystemsExperimental.Device", "other.Subsystems", "Subsystems", candidate)
+        assertEquals(setOf(DiscoveredSubsystem), SubsystemDiscovery.discover(names, loader()))
+        assertEquals(listOf("other.subsystemsExperimental.Device", candidate).sorted(), loaded)
+
+        loaded.clear()
+        assertEquals(setOf(DiscoveredSubsystem), SubsystemDiscovery.discover(names, loader(), "fixtures$"))
+        assertEquals(listOf(candidate), loaded)
+
+        assertTrue(SubsystemDiscovery.discover(listOf(candidate), loader(), "^other\\.").isEmpty())
+        assertTrue(runCatching { SubsystemDiscovery.discover(names, loader(), "[") }.exceptionOrNull() is IllegalArgumentException)
+    }
+
+    @Test
     fun filtersMetadataBeforeSingletonAccessAndReevaluatesModeEachTime() {
         val names = listOf(OwnedSubsystem::class.java.name, DisabledDiscovered::class.java.name,
             AutoDiscovered::class.java.name, TeleopDiscovered::class.java.name, BothDiscovered::class.java.name)
@@ -63,7 +85,8 @@ class SubsystemDiscoveryTests {
             setOf(DiscoveredSubsystem),
             SubsystemDiscovery.discover(
                 failures.keys + DiscoveredSubsystem::class.java.name,
-                classLoader
+                classLoader,
+                within = ".*"
             )
         )
     }
@@ -76,7 +99,7 @@ class SubsystemDiscoveryTests {
         }
 
         val thrown = runCatching {
-            SubsystemDiscovery.discover(listOf("broken.Class"), classLoader)
+            SubsystemDiscovery.discover(listOf("broken.Class"), classLoader, within = ".*")
         }.exceptionOrNull()
 
         assertSame(failure, thrown)

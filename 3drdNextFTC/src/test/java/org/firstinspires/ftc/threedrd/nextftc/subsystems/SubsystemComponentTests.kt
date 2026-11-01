@@ -380,14 +380,16 @@ class SubsystemComponentTests {
     fun discoversFreshSubsystemInstancesForEachOpMode() {
         val subsystem = AdaptedSubsystem(TestHardware("ready"))
         var discoveries = 0
-        SubsystemComponent.discovery = {
+        val scopes = mutableListOf<String>()
+        SubsystemComponent.discovery = { within ->
+            scopes += within
             discoveries++
             setOf(subsystem)
         }
         assertNotNull(SubsystemComponent.discovery)
 
         val first = SubsystemComponent.all()
-        val second = SubsystemComponent.all()
+        val second = SubsystemComponent.all(within = "mechanisms")
         assertTrue(first.discoverAll)
         first.preInit()
         second.preInit()
@@ -395,6 +397,7 @@ class SubsystemComponentTests {
         assertEquals(setOf(subsystem), first.subsystems)
         assertEquals(setOf(subsystem), second.subsystems)
         assertEquals(2, discoveries)
+        assertEquals(listOf("subsystems", "mechanisms"), scopes)
     }
 
     @Suppress("DEPRECATION")
@@ -421,6 +424,7 @@ class SubsystemComponentTests {
                 DiscoveredSubsystem::class.java.classLoader
             )
             assertEquals(setOf(DiscoveredSubsystem), SubsystemComponent.discover())
+            assertTrue(SubsystemComponent.discover(within = "^other\\.").isEmpty())
         }
     }
 

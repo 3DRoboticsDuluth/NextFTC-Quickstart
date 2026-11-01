@@ -10,21 +10,23 @@ import org.firstinspires.ftc.threedrd.nextftc.opmodes.*
 
 class SubsystemComponent private constructor(
     private val roots: Set<NextSubsystem>,
-    val discoverAll: Boolean
+    val discoverAll: Boolean,
+    private val within: String = "subsystems"
 ) : Component {
     companion object {
-        fun discover(): Set<NextSubsystem> {
+        fun discover(within: String = "subsystems"): Set<NextSubsystem> {
             val source = hardwareMap.appContext.applicationInfo.sourceDir
             val classLoader = ActiveOpMode.it!!.javaClass.classLoader
             return SubsystemDiscovery.discover(
                 SubsystemDiscovery.classNames(source),
-                classLoader
+                classLoader,
+                within
             )
         }
 
-        var discovery: () -> Set<NextSubsystem> = ::discover
+        var discovery: (String) -> Set<NextSubsystem> = ::discover
 
-        fun all() = SubsystemComponent(emptySet(), true)
+        fun all(within: String = "subsystems") = SubsystemComponent(emptySet(), true, within)
     }
 
     constructor(vararg subsystems: NextSubsystem) : this(subsystems.toSet(), false)
@@ -32,7 +34,7 @@ class SubsystemComponent private constructor(
     var subsystems = registered(roots)
 
     override fun preInit() {
-        subsystems = registered(if (discoverAll) discovery() else roots)
+        subsystems = registered(if (discoverAll) discovery(within) else roots)
 
         subsystems.forEach {
             if (it is Subsystem) it.initializeHardware()
