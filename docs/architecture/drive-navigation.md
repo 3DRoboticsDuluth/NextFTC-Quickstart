@@ -10,6 +10,38 @@ The reusable `DriveSubsystem` turns common follower operations into NextFTC comm
 The reusable `NavSubsystem` constructs robot-dimension-aware poses. Quickstart's
 concrete `Drive` and `Nav` provide the basic season customization points.
 
+## Coordinate vocabulary and migration
+
+Use axial and lateral consistently for signed robot-relative movement and offsets:
+
+| Name | Meaning | Positive | Negative |
+|---|---|---|---|
+| `Drive.axial(distance)` / `Pose.axial(distance)` | Movement along the robot's forward axis | Forward | Backward |
+| `Drive.lateral(distance)` / `Pose.lateral(distance)` | Movement along its left axis | Left | Right |
+| `ao` | Axial offset for a destination pose | Forward | Backward |
+| `lo` | Lateral offset for a destination pose | Left | Right |
+| Pose `x`, `y` | Field coordinates | Along the corresponding field axis | Opposite that axis |
+
+Drive commands use the follower pose at execution time, keep its heading and
+retain Drive ownership. Typed distances are preferred; Double drive distances
+remain inches. `Nav.pose` rotates ao/lo using the destination heading, not the
+current robot heading. `axial` (FRONT/CENTER/BACK) and `lateral` (LEFT/CENTER/RIGHT)
+still choose robot reference points; they are not offset distances.
+
+```kotlin
+Drive.axial((-6).inches)
+Drive.lateral(3.inches)
+Nav.pose(24.inches, 48.inches, 90.deg, ao = 6.inches, lo = (-3).inches)
+```
+
+Migration: rename drive `forward` to `axial` and `strafe` to `lateral`. The old
+methods remain deprecated aliases with unchanged signs and requirements; their
+command names now use the canonical axis vocabulary. Rename Kotlin named
+arguments `axialOffset` to `ao` and `lateralOffset` to `lo` for both heading
+overloads of Nav.pose. Those old parameter names are a source compatibility
+break; positional calls and coordinate calculations remain unchanged. No field
+xo/yo offsets or additional directional helpers are introduced by this rename.
+
 ## Optional driver-command shaping
 
 `PedroDriverControlled` accepts an optional `slew: DriverSlewParameters` argument.

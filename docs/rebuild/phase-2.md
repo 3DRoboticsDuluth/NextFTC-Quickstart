@@ -54,6 +54,13 @@ defaults, and stop healthy subsystems in reverse order.
 
 Why: this is the reusable execution model all student subsystems follow.
 
+Use signed axial/lateral names for robot-relative drive movement and ao/lo for
+destination-relative pose offsets; reserve x/y for field coordinates. Keep
+forward/strafe as deprecated delegates while migrating callers. Cover signed
+movement, execution-time pose, requirements and heading overloads. REQ-PLT-034/035
+and the [coordinate guide](../architecture/drive-navigation.md#coordinate-vocabulary-and-migration)
+record source migration and the positive-forward/positive-left convention.
+
 Filter APK class names by package before class loading. Expose
 `SubsystemComponent.all(within = "subsystems")` as a regex substring search;
 allow alternative packages or `.*` without changing mode and owned registration.

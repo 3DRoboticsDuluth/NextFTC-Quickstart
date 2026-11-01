@@ -17,13 +17,13 @@ abstract class NavSubsystem(
         heading: Double = 0.0,
         axial: Axial = Axial.CENTER,
         lateral: Lateral = Lateral.CENTER,
-        axialOffset: Distance = 0.inches,
-        lateralOffset: Distance = 0.inches
+        ao: Distance = 0.inches,
+        lo: Distance = 0.inches
     ): Pose {
         val axialHeading = heading.normalizeHeading()
-        val adjustedAxial = axialOffset.inIn - axial.sign * robotLength.inIn / 2
+        val adjustedAxial = ao.inIn - axial.sign * robotLength.inIn / 2
         val lateralHeading = (heading + PI / 2).normalizeHeading()
-        val adjustedLateral = lateralOffset.inIn - lateral.sign * robotWidth.inIn / 2
+        val adjustedLateral = lo.inIn - lateral.sign * robotWidth.inIn / 2
 
         return Pose(
             x.inIn + cos(axialHeading) * adjustedAxial + cos(lateralHeading) * adjustedLateral,
@@ -38,9 +38,9 @@ abstract class NavSubsystem(
         heading: Angle,
         axial: Axial = Axial.CENTER,
         lateral: Lateral = Lateral.CENTER,
-        axialOffset: Distance = 0.inches,
-        lateralOffset: Distance = 0.inches
-    ) = pose(x, y, heading.inRad, axial, lateral, axialOffset, lateralOffset)
+        ao: Distance = 0.inches,
+        lo: Distance = 0.inches
+    ) = pose(x, y, heading.inRad, axial, lateral, ao, lo)
 
     fun line(start: Pose, end: Pose) = Path(BezierLine(start, end)).apply {
         setLinearHeadingInterpolation(start.heading, end.heading)

@@ -55,17 +55,29 @@ abstract class DriveSubsystem : Subsystem() {
         }
     }.named("${javaClass.simpleName}.curves")
 
-    fun forward(distance: Distance) = DeferredCommand(this) {
+    fun axial(distance: Distance) = DeferredCommand(this) {
         to(follower.pose.axial(distance.inIn))
-    }.named("${javaClass.simpleName}.forward")
+    }.named("${javaClass.simpleName}.axial")
 
-    fun forward(distance: Double) = forward(distance.inches)
+    fun axial(distance: Double) = axial(distance.inches)
 
-    fun strafe(distance: Distance) = DeferredCommand(this) {
+    fun lateral(distance: Distance) = DeferredCommand(this) {
         to(follower.pose.lateral(distance.inIn))
-    }.named("${javaClass.simpleName}.strafe")
+    }.named("${javaClass.simpleName}.lateral")
 
-    fun strafe(distance: Double) = strafe(distance.inches)
+    fun lateral(distance: Double) = lateral(distance.inches)
+
+    @Deprecated("Use axial for signed robot-relative movement", ReplaceWith("axial(distance)"))
+    fun forward(distance: Distance) = axial(distance)
+
+    @Deprecated("Use axial for signed robot-relative movement", ReplaceWith("axial(distance)"))
+    fun forward(distance: Double) = axial(distance)
+
+    @Deprecated("Use lateral for signed robot-relative movement", ReplaceWith("lateral(distance)"))
+    fun strafe(distance: Distance) = lateral(distance)
+
+    @Deprecated("Use lateral for signed robot-relative movement", ReplaceWith("lateral(distance)"))
+    fun strafe(distance: Double) = lateral(distance)
 
     fun turn(angle: Angle) = TurnBy(angle).requires(this).named("${javaClass.simpleName}.turn")
 

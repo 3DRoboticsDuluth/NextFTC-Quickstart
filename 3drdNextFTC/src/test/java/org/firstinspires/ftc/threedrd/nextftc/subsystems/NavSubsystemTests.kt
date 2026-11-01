@@ -28,8 +28,8 @@ class NavSubsystemTests {
             20.inches, 30.inches, PI / 2,
             axial = FRONT,
             lateral = LEFT,
-            axialOffset = 2.inches,
-            lateralOffset = 1.inches
+            ao = 2.inches,
+            lo = 1.inches
         )
         assertEquals(22.0, offset.x, 0.0001)
         assertEquals(27.0, offset.y, 0.0001)
@@ -37,6 +37,17 @@ class NavSubsystemTests {
         val opposite = nav.pose(20.inches, 30.inches, axial = BACK, lateral = RIGHT)
         assertEquals(25.0, opposite.x, 0.0001)
         assertEquals(33.0, opposite.y, 0.0001)
+    }
+
+    @Test
+    fun compactOffsetsUseTheDestinationHeadingWithBothHeadingOverloads() {
+        val angle = nav.pose(20.inches, 30.inches, 90.deg, ao = 2.inches, lo = 1.inches)
+        assertEquals(19.0, angle.x, 0.0001)
+        assertEquals(32.0, angle.y, 0.0001)
+        assertEquals(PI / 2, angle.heading, 0.0001)
+        val radians = nav.pose(20.inches, 30.inches, 0.0, ao = (-2).inches, lo = (-1).inches)
+        assertEquals(18.0, radians.x, 0.0001)
+        assertEquals(29.0, radians.y, 0.0001)
     }
 
     @Test

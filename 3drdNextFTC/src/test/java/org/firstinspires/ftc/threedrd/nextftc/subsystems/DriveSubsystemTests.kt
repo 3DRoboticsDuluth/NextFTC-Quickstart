@@ -87,6 +87,46 @@ class DriveSubsystemTests : SubsystemTests() {
     }
 
     @Test
+    fun signedAxisCommandsUseTheExecutionPoseAndRetainRequirements() {
+        `when`(follower.pose).thenReturn(Pose())
+        val cases = listOf(
+            drive.axial(5.inches) to Pose(10.0, 25.0),
+            drive.axial(-5.0) to Pose(10.0, 15.0),
+            drive.lateral(5.inches) to Pose(5.0, 20.0),
+            drive.lateral(-5.0) to Pose(15.0, 20.0),
+            drive.axial(0.0) to Pose(10.0, 20.0)
+        )
+        `when`(follower.pose).thenReturn(Pose(10.0, 20.0, Math.PI / 2))
+        cases.forEach { (command, expected) ->
+            clearInvocations(builder)
+            assertTrue(command.requirements.contains(drive))
+            assertTrue(command.name.endsWith(".axial") || command.name.endsWith(".lateral"))
+            command.start()
+            val curve = ArgumentCaptor.forClass(Curve::class.java)
+            verify(builder).addPath(curve.capture())
+            assertEquals(expected.x, curve.value.controlPoints.last().x, 0.0001)
+            assertEquals(expected.y, curve.value.controlPoints.last().y, 0.0001)
+            verify(builder).setLinearHeadingInterpolation(Math.PI / 2, Math.PI / 2, 0.33)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    @Test
+    fun oldMovementNamesRemainCompatibleAliases() {
+        `when`(follower.pose).thenReturn(Pose())
+        listOf(drive.forward(2.inches), drive.forward(2.0), drive.strafe(2.inches), drive.strafe(2.0))
+            .forEachIndexed { index, command ->
+                clearInvocations(builder)
+                command.start()
+                val curve = ArgumentCaptor.forClass(Curve::class.java)
+                verify(builder).addPath(curve.capture())
+                assertEquals(if (index < 2) 2.0 else 0.0, curve.value.controlPoints.last().x, 0.0001)
+                assertEquals(if (index < 2) 0.0 else 2.0, curve.value.controlPoints.last().y, 0.0001)
+                assertTrue(command.requirements.contains(drive))
+            }
+    }
+
+    @Test
     fun exposesPathProgressConditions() {
         val distance = drive.until(10.inches)
         `when`(follower.distanceTraveledOnPath).thenReturn(9.0, 10.0)
