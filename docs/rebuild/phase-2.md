@@ -227,6 +227,12 @@ Verify lazy construction without an active OpMode, factory configuration, direct
 upstream constructors/members/fluent APIs, fault isolation/retry, and telemetry.
 REQ-PLT-011, 030, 031, 032 and 044 trace to the adapter, subsystem, and telemetry tests.
 See [Hardware](../architecture/hardware.md) for source/binary migration details.
+
+For velocityPercentage, multiply SDK velocity writes by the native MotorEx
+direction, matching the direction already applied by its measured velocity getter.
+Test positive, negative and zero requests under reversal, signed feedback and
+later reverse() changes. Preserve native types, lazy acquisition and unchanged
+SDK direction/power settings. REQ-PLT-058 records the sign contract and migration.
 Document the type aliases separately from their same-name factory overloads:
 factories return actual upstream instances and configure SDK receivers lazily,
 whereas `Device` is a project class constructor. Retain all existing public names.

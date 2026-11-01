@@ -15,6 +15,6 @@ fun MotorEx(
 
 var MotorEx.velocityPercentage: Double
     get() = velocity / motor.motorType.achieveableMaxTicksPerSecond
-    set(value) { motor.velocity = motor.motorType.achieveableMaxTicksPerSecond * value }
+    set(value) { motor.velocity = motor.motorType.achieveableMaxTicksPerSecond * value * direction }
 
 fun MotorEx.initialize() { resetPIDFCache(); motor }

@@ -52,6 +52,32 @@ class MotorExTests : SubsystemTests() {
     }
 
     @Test
+    fun velocityPercentageHonorsFluentReversalForCommandsAndFeedback() {
+        val motor = MotorEx("reversedVelocity").reversed()
+        val type = mock(MotorConfigurationType::class.java)
+        `when`(motor.motor.motorType).thenReturn(type)
+        `when`(type.achieveableMaxTicksPerSecond).thenReturn(500.0)
+        `when`(motor.motor.velocity).thenReturn(-125.0)
+        assertEquals(0.25, motor.velocityPercentage, 0.0)
+        motor.velocityPercentage = 0.5
+        verify(motor.motor).setVelocity(-250.0)
+
+        `when`(motor.motor.velocity).thenReturn(125.0)
+        assertEquals(-0.25, motor.velocityPercentage, 0.0)
+        motor.velocityPercentage = -0.5
+        verify(motor.motor).setVelocity(250.0)
+        motor.velocityPercentage = 0.0
+        verify(motor.motor).setVelocity(-0.0)
+
+        motor.reverse()
+        motor.velocityPercentage = 0.25
+        verify(motor.motor).setVelocity(125.0)
+        assertEquals(0.25, motor.velocityPercentage, 0.0)
+        verify(motor.motor, never()).setDirection(any())
+        verify(motor.motor, never()).setPower(anyDouble())
+    }
+
+    @Test
     fun updateAppliesTheActionAndReportsTheMotor() {
         val motor = MotorEx("test", configure = {})
         var actionApplied = false

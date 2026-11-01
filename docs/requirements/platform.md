@@ -165,3 +165,11 @@ clamping. Polynomial coefficients MUST be constant-first. Concrete model fields
 MUST support Panels configuration; interface-typed fields are not a promise of
 runtime polymorphic field discovery. Trace to CurveTests and the
 [calibration curve specification](../architecture/curves.md).
+
+`REQ-PLT-058`: MotorEx.velocityPercentage MUST scale signed logical velocity
+commands by the configured maximum ticks/second and current native MotorEx
+direction. Its feedback MUST use the same logical sign convention. Fluent
+reversal, negative/zero requests and later direction changes MUST remain
+consistent without mutating SDK direction or power. MotorExTests verifies
+forward and reversed commands, feedback and direction changes. See the
+[hardware guide](../architecture/hardware.md) for the behavior correction.

@@ -155,6 +155,19 @@ motor.velocityPercentage = 0.5 // local extension
 imu.zero()                  // upstream method, directly available
 ```
 
+`velocityPercentage` uses the native MotorEx logical direction for both commands
+and feedback (REQ-PLT-058). With `.reversed()`, a positive percentage sends negative
+SDK ticks/second, and negative measured SDK velocity reads as positive logical
+velocity. Negative requests reverse that relationship; zero requests stop velocity
+demand. The helper reads the current direction on every call, so later `reverse()`
+changes are honored without caching or changing SDK direction/power settings.
+
+This corrects earlier versions that reversed feedback but bypassed reversal on
+velocity writes. Teams already using `.reversed()` with this helper must review
+their direction settings: remove compensating sign flips or duplicate reversal
+only when appropriate for the mechanism, then validate direction on hardware.
+SDK direction and NextFTC logical reversal compose; they are separate settings.
+
 `imuParameters` represents the team's configured SDK parameters, not a template
 orientation. Configuration lambdas receive the underlying FTC SDK device and run
 on first acquisition. Short `MotorEx("name")`, `ServoEx("name")`, and
