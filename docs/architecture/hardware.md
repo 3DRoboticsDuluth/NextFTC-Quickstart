@@ -196,7 +196,7 @@ discovery or the initialization extensions rather than casting them to it.
 A package wildcard import includes the aliases, factories, and extensions:
 
 ```kotlin
-import org.firstinspires.ftc.threedrd.nextftc.hardware.*
+import com.threedrd.nextftc.hardware.*
 ```
 
 With explicit imports, add the extension imports you use (`initialize`,
@@ -223,8 +223,8 @@ val laser by Device("laser2", DigitalChannel::class.java) { mode = INPUT }
 ```
 
 Replace an explicit import of
-`org.firstinspires.ftc.threedrd.nextftc.hardware.device` with
-`org.firstinspires.ftc.threedrd.nextftc.hardware.Device`. An existing wildcard
+`com.threedrd.nextftc.hardware.device` with
+`com.threedrd.nextftc.hardware.Device`. An existing wildcard
 import of that package needs no change. Calls without a configuration block
 also use `Device(name, type)`; its configuration block defaults to empty.
 Hardware names, initialization timing, configuration, and delegated access to
@@ -281,7 +281,7 @@ For example (illustrative calibration, not a measured mechanism):
 
 ```kotlin
 import dev.nextftc.core.units.*
-import org.firstinspires.ftc.threedrd.nextftc.hardware.*
+import com.threedrd.nextftc.hardware.*
 
 val slide = MotorEx("slide").brakeMode().distancePerTick(0.01.inches)
 val turret = MotorEx("turret").anglePerTick(1.deg)

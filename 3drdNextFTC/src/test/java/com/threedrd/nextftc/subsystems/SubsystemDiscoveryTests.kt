@@ -1,0 +1,155 @@
+package com.threedrd.nextftc.subsystems
+
+import dalvik.system.*
+import java.util.*
+import com.threedrd.nextftc.subsystems.fixtures.*
+import org.junit.Assert.*
+import org.junit.*
+import org.mockito.Mockito.*
+
+class SubsystemDiscoveryTests {
+    @Test
+    fun filtersPackageNamesBeforeLoadingAndAllowsRegexOverrides() {
+        val loaded = mutableListOf<String>()
+        fun loader() = object : ClassLoader(javaClass.classLoader) {
+            override fun loadClass(name: String, resolve: Boolean): Class<*> {
+                loaded += name
+                return super.loadClass(name, resolve)
+            }
+        }
+        val candidate = DiscoveredSubsystem::class.java.name
+        val names = listOf("other.subsystemsExperimental.Device", "other.Subsystems", "Subsystems", candidate)
+        assertEquals(setOf(DiscoveredSubsystem), SubsystemDiscovery.discover(names, loader()))
+        assertEquals(listOf("other.subsystemsExperimental.Device", candidate).sorted(), loaded)
+
+        loaded.clear()
+        assertEquals(setOf(DiscoveredSubsystem), SubsystemDiscovery.discover(names, loader(), "fixtures$"))
+        assertEquals(listOf(candidate), loaded)
+
+        assertTrue(SubsystemDiscovery.discover(listOf(candidate), loader(), "^other\\.").isEmpty())
+        assertTrue(runCatching { SubsystemDiscovery.discover(names, loader(), "[") }.exceptionOrNull() is IllegalArgumentException)
+    }
+
+    @Test
+    fun filtersMetadataBeforeSingletonAccessAndReevaluatesModeEachTime() {
+        val names = listOf(OwnedSubsystem::class.java.name, DisabledDiscovered::class.java.name,
+            AutoDiscovered::class.java.name, TeleopDiscovered::class.java.name, BothDiscovered::class.java.name)
+        dev.nextftc.ftc.ActiveOpMode.it = com.threedrd.nextftc.opmodes.ActiveOpModeTests.Auto()
+        assertEquals(setOf(AutoDiscovered, BothDiscovered), SubsystemDiscovery.discover(names))
+        dev.nextftc.ftc.ActiveOpMode.it = com.threedrd.nextftc.opmodes.ActiveOpModeTests.Teleop()
+        assertEquals(setOf(TeleopDiscovered, BothDiscovered), SubsystemDiscovery.discover(names))
+    }
+
+    @Test
+    fun discoversTopLevelSingletonSubsystemsRegardlessOfPackage() {
+        val discovered = SubsystemDiscovery.discover(
+            listOf(
+                String::class.java.name,
+                NotASubsystem::class.java.name,
+                AbstractSubsystem::class.java.name,
+                NestedSubsystem.Instance::class.java.name,
+                DiscoveredSubsystem::class.java.name
+            ),
+            javaClass.classLoader
+        )
+
+        assertEquals(setOf(DiscoveredSubsystem), discovered)
+    }
+
+    @Test
+    fun usesTheSubsystemClassLoaderByDefault() {
+        assertEquals(
+            setOf(DiscoveredSubsystem),
+            SubsystemDiscovery.discover(listOf(DiscoveredSubsystem::class.java.name))
+        )
+    }
+
+    @Test
+    fun skipsClassesUnavailableOnTheRobotRuntime() {
+        val failures = mapOf(
+            "missing.Direct" to ClassNotFoundException("missing.Direct"),
+            "missing.Dependency" to NoClassDefFoundError("missing.Dependency"),
+            "missing.Wrapped" to RuntimeException(
+                "missing.Wrapped",
+                ClassNotFoundException("missing.Wrapped")
+            )
+        )
+        val classLoader = object : ClassLoader(javaClass.classLoader) {
+            override fun loadClass(name: String, resolve: Boolean): Class<*> {
+                failures[name]?.let { throw it }
+                return super.loadClass(name, resolve)
+            }
+        }
+
+        assertEquals(
+            setOf(DiscoveredSubsystem),
+            SubsystemDiscovery.discover(
+                failures.keys + DiscoveredSubsystem::class.java.name,
+                classLoader,
+                within = ".*"
+            )
+        )
+    }
+
+    @Test
+    fun preservesUnrelatedClassLoadingFailures() {
+        val failure = IllegalStateException("broken loader")
+        val classLoader = object : ClassLoader(javaClass.classLoader) {
+            override fun loadClass(name: String, resolve: Boolean): Class<*> = throw failure
+        }
+
+        val thrown = runCatching {
+            SubsystemDiscovery.discover(listOf("broken.Class"), classLoader, within = ".*")
+        }.exceptionOrNull()
+
+        assertSame(failure, thrown)
+    }
+
+    @Test
+    fun rejectsConstructedSubsystems() {
+        val exception = runCatching {
+            SubsystemDiscovery.discover(
+                listOf(ConstructedSubsystem::class.java.name),
+                javaClass.classLoader
+            )
+        }.exceptionOrNull()
+
+        assertEquals(
+            "${ConstructedSubsystem::class.java.name} must be a Kotlin object",
+            exception?.message
+        )
+    }
+
+    @Test
+    fun rejectsAnInvalidInstanceField() {
+        val exception = runCatching {
+            SubsystemDiscovery.discover(
+                listOf(InvalidInstanceSubsystem::class.java.name),
+                javaClass.classLoader
+            )
+        }.exceptionOrNull()
+
+        assertEquals(
+            "${InvalidInstanceSubsystem::class.java.name} must be a Kotlin object",
+            exception?.message
+        )
+    }
+
+    @Suppress("DEPRECATION")
+    @Test
+    fun readsClassNamesFromTheRobotControllerApk() {
+        mockConstruction(DexFile::class.java) { dex, context ->
+            assertEquals("robot.apk", context.arguments()[0])
+            `when`(dex.entries()).thenReturn(
+                Collections.enumeration(listOf("Deflector", "Gate"))
+            )
+        }.use { dexFiles ->
+            assertEquals(
+                listOf("Deflector", "Gate"),
+                SubsystemDiscovery.classNames("robot.apk")
+            )
+            assertEquals(1, dexFiles.constructed().size)
+            verify(dexFiles.constructed().single()).close()
+        }
+    }
+}

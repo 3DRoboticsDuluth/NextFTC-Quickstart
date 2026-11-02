@@ -9,8 +9,8 @@ import com.bylazar.configurables.annotations.*
 import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.hardware.DigitalChannel.Mode.INPUT
 import dev.nextftc.ftc.Gamepads.gamepad2
-import org.firstinspires.ftc.threedrd.nextftc.hardware.*
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
+import com.threedrd.nextftc.hardware.*
+import com.threedrd.nextftc.subsystems.*
 
 @Configurable
 object Roller : Subsystem() {

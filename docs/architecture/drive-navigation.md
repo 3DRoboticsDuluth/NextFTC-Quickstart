@@ -63,7 +63,7 @@ val driverControlled = PedroDriverControlled(
 )
 ```
 
-Import `DriverSlewParameters` from `org.firstinspires.ftc.threedrd.pedropathing`
+Import `DriverSlewParameters` from `com.threedrd.pedropathing`
 and `SCurveParameters` from the library's `nextftc.control.interpolators` package.
 Keep `DRIVER_SLEW` on the owning `@Configurable` subsystem: Panels discovers both
 mutable nested tuning groups. Parameters may be shared; command state must not be.
@@ -269,7 +269,7 @@ REQ-PLT-043 retains read-only telemetry checks in TelemetryTests.
 ## Pose direction helpers
 
 REQ-PLT-056 adds the `Pose.directionTo(other)` extension in
-`org.firstinspires.ftc.threedrd.pedropathing`. It returns a fresh native Pedro
+`com.threedrd.pedropathing`. It returns a fresh native Pedro
 Vector of length one pointing from this pose's XY position to the other pose's
 XY position, in their shared field coordinate frame. Headings do not affect it;
 neither pose is mutated. Coincident positions return a zero vector.

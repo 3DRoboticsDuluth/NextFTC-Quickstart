@@ -1,0 +1,437 @@
+package com.threedrd.nextftc.subsystems
+
+import android.content.*
+import android.content.pm.*
+import com.qualcomm.robotcore.eventloop.opmode.*
+import com.qualcomm.robotcore.hardware.*
+import dalvik.system.*
+import dev.nextftc.core.commands.*
+import dev.nextftc.ftc.*
+import dev.nextftc.core.subsystems.Subsystem as NextSubsystem
+import java.util.*
+import com.threedrd.nextftc.hardware.*
+import com.threedrd.nextftc.logging.*
+import com.threedrd.nextftc.telemetry.TelemetryLevel.ERROR
+import com.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
+import com.threedrd.nextftc.subsystems.fixtures.*
+import org.firstinspires.ftc.robotcore.external.*
+import org.junit.*
+import org.junit.Assert.*
+import org.mockito.Mockito.*
+
+class SubsystemComponentTests {
+    @TeleOp
+    private class TestTeleop : LinearOpMode() {
+        override fun runOpMode() = Unit
+    }
+
+    @Autonomous
+    private class TestAuto : LinearOpMode() {
+        override fun runOpMode() = Unit
+    }
+
+    private class TestHardware(
+        override val name: String,
+        val failure: Exception? = null
+    ) : Hardware {
+        var initializations = 0
+
+        override fun initialize() {
+            initializations++
+            failure?.let { throw it }
+        }
+    }
+
+    private class PersistentCommand(requirement: Any) : Command() {
+        override val isDone = false
+
+        init {
+            requires(requirement)
+        }
+    }
+
+    private class OneShotCommand(requirement: Any) : Command() {
+        override val isDone = true
+
+        init {
+            requires(requirement)
+        }
+    }
+
+    private class AdaptedSubsystem(val hardware: TestHardware) : Subsystem() {
+        var initializations = 0
+        var starts = 0
+        var controls = 0
+        var stops = 0
+        var updates = 0
+        val idle = PersistentCommand(this)
+        override val defaultCommand get() = idle
+
+        override fun initialize() {
+            initializations++
+        }
+
+        override fun periodic() {
+            updates++
+        }
+
+        override fun start() {
+            starts++
+        }
+
+        override fun controls() {
+            controls++
+        }
+
+        override fun stop() {
+            stops++
+        }
+    }
+
+    private class NativeSubsystem : NextSubsystem {
+        var initializations = 0
+        var updates = 0
+
+        override fun initialize() {
+            initializations++
+        }
+
+        override fun periodic() {
+            updates++
+        }
+    }
+
+    @Discovery(owned = true)
+    private class Child : Subsystem() {
+        val hardware = TestHardware("owned")
+        var initialized = 0
+        var updates = 0
+        var stops = 0
+        override fun initialize() { initialized++ }
+        override fun periodic() { updates++ }
+        override fun stop() { stops++ }
+    }
+
+    @Discovery(mode = DiscoveryMode.AUTO)
+    private class AutoChild : Subsystem()
+
+    @Discovery(disabled = true)
+    private class DisabledChild : Subsystem()
+
+    @Test
+    fun registersOwnedChildrenOnceAndFiltersParentsAndChildrenAcrossModes() {
+        val child = Child()
+        val auto = AutoChild()
+        val disabled = DisabledChild()
+        val parent = object : Subsystem() {
+            override val subsystems = setOf(this, child, auto, disabled)
+        }
+        activate(TestTeleop())
+        val component = SubsystemComponent(parent, child)
+        component.preInit()
+        component.preUpdate()
+        component.preStop()
+        assertEquals(setOf(parent, child), component.subsystems)
+        assertEquals(1, child.initialized)
+        assertEquals(1, child.hardware.initializations)
+        assertEquals(1, child.updates)
+        assertEquals(1, child.stops)
+        activate(TestAuto())
+        component.preInit()
+        assertEquals(setOf(parent, child, auto), component.subsystems)
+        assertEquals(2, child.initialized)
+        val excludedParent = object : NextSubsystem {
+            override val subsystems = setOf(child)
+        }
+        assertEquals(setOf(child), SubsystemComponent(excludedParent).subsystems)
+        assertTrue(SubsystemComponent(disabled).subsystems.isEmpty())
+        activate(TestTeleop())
+        assertTrue(SubsystemComponent(auto).subsystems.isEmpty())
+    }
+
+    private class OrderedSubsystem(
+        override val order: Int,
+        val updates: MutableList<Int>
+    ) : Subsystem() {
+        override fun periodic() {
+            updates += order
+        }
+    }
+
+    private lateinit var telemetry: Telemetry
+
+    @Before
+    fun setUp() {
+        CommandManager.cancelAll()
+        CommandManager.run()
+        telemetry = mock(Telemetry::class.java)
+        val telemetryLog = mock(Telemetry.Log::class.java)
+        `when`(telemetry.log()).thenReturn(telemetryLog)
+        `when`(telemetryLog.capacity).thenReturn(9)
+        TeamTelemetry.output = telemetry
+        TeamTelemetry.LEVEL = ERROR
+        TeamTelemetry.FILTER = ""
+        TeamTelemetry.DISPLAY_FILTER = ""
+        ActiveOpMode.it = object : LinearOpMode() {
+            override fun runOpMode() = Unit
+        }.apply {
+            hardwareMap = mock(HardwareMap::class.java)
+            this.telemetry = this@SubsystemComponentTests.telemetry
+        }
+    }
+
+    @After
+    fun tearDown() {
+        CommandManager.cancelAll()
+        CommandManager.run()
+        SubsystemComponent.discovery = SubsystemComponent::discover
+    }
+
+    @Test
+    fun initializesAndUpdatesReadyAndNativeSubsystems() {
+        activate(TestTeleop())
+        val adapted = AdaptedSubsystem(TestHardware("ready"))
+        val native = NativeSubsystem()
+        val component = SubsystemComponent(adapted, native)
+        assertFalse(component.discoverAll)
+        component.subsystems = component.subsystems
+
+        component.preInit()
+        component.preWaitForStart()
+        component.preStartButtonPressed()
+        CommandManager.run()
+        component.preUpdate()
+        CommandManager.run()
+        component.preStop()
+
+        assertEquals(setOf(adapted, native), component.subsystems)
+        assertEquals(1, adapted.hardware.initializations)
+        assertEquals(1, adapted.initializations)
+        assertEquals(1, adapted.starts)
+        assertEquals(1, adapted.controls)
+        assertEquals(1, adapted.stops)
+        assertEquals(2, adapted.updates)
+        assertEquals(1, native.initializations)
+        assertEquals(2, native.updates)
+        assertTrue(CommandManager.hasCommandsUsing(adapted))
+    }
+
+    @Test
+    fun startsWithoutCreatingDriverControlsDuringAutonomous() {
+        activate(TestAuto())
+        val subsystem = AdaptedSubsystem(TestHardware("ready"))
+
+        SubsystemComponent(subsystem).preStartButtonPressed()
+
+        assertEquals(1, subsystem.starts)
+        assertEquals(0, subsystem.controls)
+    }
+
+    @Test
+    fun skipsDisabledSubsystemLifecycle() {
+        val subsystem = AdaptedSubsystem(
+            TestHardware("bad", IllegalStateException("missing"))
+        )
+        val component = SubsystemComponent(subsystem)
+
+        component.preInit()
+        component.preStartButtonPressed()
+        component.preUpdate()
+        component.preStop()
+
+        assertTrue(subsystem.disabled)
+        assertEquals(0, subsystem.initializations)
+        assertEquals(0, subsystem.starts)
+        assertEquals(0, subsystem.stops)
+        assertEquals(0, subsystem.updates)
+        assertFalse(CommandManager.hasCommandsUsing(subsystem))
+        verify(telemetry).addData(
+            "E | AdaptedSubsystem | Status", "Disabled (see Logcat)" as Any
+        )
+    }
+
+    @Test
+    fun doesNotReplaceACommandAlreadyUsingTheSubsystem() {
+        val subsystem = AdaptedSubsystem(TestHardware("ready"))
+        val active = PersistentCommand(subsystem)
+        val component = SubsystemComponent(subsystem)
+        active.schedule()
+        CommandManager.run()
+
+        component.preInit()
+        component.preUpdate()
+        CommandManager.run()
+
+        assertTrue(active.isScheduled)
+        assertFalse(subsystem.idle.isScheduled)
+        verify(telemetry, times(0)).addData(
+            "E | AdaptedSubsystem | Status", "Disabled (see Logcat)" as Any
+        )
+    }
+
+    @Test
+    fun schedulesDefaultsOnlyDuringActiveUpdates() {
+        val subsystem = AdaptedSubsystem(TestHardware("ready"))
+        val component = SubsystemComponent(subsystem)
+
+        component.preWaitForStart()
+        CommandManager.run()
+        assertFalse(subsystem.idle.isScheduled)
+
+        component.preUpdate()
+        CommandManager.run()
+        assertTrue(subsystem.idle.isScheduled)
+    }
+
+    @Test
+    fun resumesDefaultAfterAnotherCommandFinishes() {
+        val subsystem = AdaptedSubsystem(TestHardware("ready"))
+        val component = SubsystemComponent(subsystem)
+        component.preUpdate()
+        CommandManager.run()
+        assertTrue(subsystem.idle.isScheduled)
+
+        OneShotCommand(subsystem).schedule()
+        CommandManager.run()
+        assertFalse(subsystem.idle.isScheduled)
+        CommandManager.run()
+
+        component.preUpdate()
+        CommandManager.run()
+        assertTrue(subsystem.idle.isScheduled)
+    }
+
+    @Test
+    fun defaultControlsRequireNoSpecialHandling() {
+        val subsystem = object : Subsystem() {}
+        subsystem.controls()
+    }
+
+    @Test
+    fun updatesSubsystemsInExplicitOrder() {
+        val updates = mutableListOf<Int>()
+        val component = SubsystemComponent(
+            OrderedSubsystem(1, updates),
+            OrderedSubsystem(-1, updates),
+            OrderedSubsystem(0, updates)
+        )
+
+        component.preUpdate()
+
+        assertEquals(listOf(-1, 0, 1), updates)
+    }
+
+    @Test
+    fun stopsAdaptedSubsystemsInReverseOrder() {
+        val stops = mutableListOf<Int>()
+        val disabled = object : Subsystem() {
+            override val order = 2
+            override fun stop() { stops += order }
+        }.apply { errors += "unavailable" }
+        val component = SubsystemComponent(
+            object : Subsystem() {
+                override val order = -1
+                override fun stop() { stops += order }
+            },
+            object : Subsystem() {
+                override val order = 1
+                override fun stop() { stops += order }
+            },
+            disabled
+        )
+
+        component.preStop()
+
+        assertEquals(listOf(1, -1), stops)
+    }
+
+    @Test
+    fun continuesStoppingAfterASubsystemFails() {
+        val stops = mutableListOf<Int>()
+        val component = SubsystemComponent(
+            object : Subsystem() {
+                override val order = -1
+                override fun stop() { stops += order }
+            },
+            object : Subsystem() {
+                override val order = 0
+                override fun stop() {
+                    stops += order
+                    error("failed")
+                }
+            },
+            object : Subsystem() {
+                override val order = 1
+                override fun stop() { stops += order }
+            }
+        )
+
+        component.preStop()
+
+        assertEquals(listOf(1, 0, -1), stops)
+    }
+
+    @Test
+    fun defaultStopRequiresNoSpecialHandling() {
+        object : Subsystem() {}.stop()
+    }
+
+    @Test
+    fun discoversFreshSubsystemInstancesForEachOpMode() {
+        val subsystem = AdaptedSubsystem(TestHardware("ready"))
+        var discoveries = 0
+        val scopes = mutableListOf<String>()
+        SubsystemComponent.discovery = { within ->
+            scopes += within
+            discoveries++
+            setOf(subsystem)
+        }
+        assertNotNull(SubsystemComponent.discovery)
+
+        val first = SubsystemComponent.all()
+        val second = SubsystemComponent.all(within = "mechanisms")
+        assertTrue(first.discoverAll)
+        first.preInit()
+        second.preInit()
+
+        assertEquals(setOf(subsystem), first.subsystems)
+        assertEquals(setOf(subsystem), second.subsystems)
+        assertEquals(2, discoveries)
+        assertEquals(listOf("subsystems", "mechanisms"), scopes)
+    }
+
+    @Suppress("DEPRECATION")
+    @Test
+    fun discoversSubsystemsFromTheActiveRobotController() {
+        val context = mock(Context::class.java)
+        val applicationInfo = ApplicationInfo().apply { sourceDir = "robot.apk" }
+        `when`(context.applicationInfo).thenReturn(applicationInfo)
+        val hardwareMap = HardwareMap(
+            context,
+            mock(OpModeManagerNotifier::class.java)
+        )
+        ActiveOpMode.it = object : LinearOpMode() {
+            override fun runOpMode() = Unit
+        }.apply { this.hardwareMap = hardwareMap }
+
+        mockConstruction(DexFile::class.java) { dex, _ ->
+            `when`(dex.entries()).thenReturn(
+                Collections.enumeration(listOf(DiscoveredSubsystem::class.java.name))
+            )
+        }.use {
+            assertSame(
+                ActiveOpMode.it!!.javaClass.classLoader,
+                DiscoveredSubsystem::class.java.classLoader
+            )
+            assertEquals(setOf(DiscoveredSubsystem), SubsystemComponent.discover())
+            assertTrue(SubsystemComponent.discover(within = "^other\\.").isEmpty())
+        }
+    }
+
+    private fun activate(opMode: LinearOpMode) {
+        ActiveOpMode.it = opMode.apply {
+            hardwareMap = mock(HardwareMap::class.java)
+            telemetry = this@SubsystemComponentTests.telemetry
+        }
+    }
+}

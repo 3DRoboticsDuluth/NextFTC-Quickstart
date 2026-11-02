@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.qualcomm.robotcore.util.*
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
+import com.threedrd.nextftc.subsystems.*
 
 object Timing : Subsystem() {
     var playTimer = ElapsedTime()

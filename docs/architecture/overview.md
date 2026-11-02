@@ -20,6 +20,17 @@ Dependencies point downward toward more reusable behavior:
 TeamCode ───────► 3drdNextFTC ─────► NextFTC / FTC / Panels / Pedro
 ```
 
+## Reusable packages and migration
+
+Reusable NextFTC integrations use `com.threedrd.nextftc`; Pedro integrations use
+`com.threedrd.pedropathing`. Team robot code remains in its existing package.
+
+This is a source-breaking package rename from `org.firstinspires.ftc.threedrd`.
+Replace that prefix with `com.threedrd` in imports and fully qualified references,
+including tests and reflection configuration. Gradle module names and upstream
+NextFTC, Pedro and FTC SDK packages are unchanged. Perform a full APK deployment
+after updating; Sloth alone cannot replace the library classes.
+
 ## Ownership Rule
 
 A practical test decides where code belongs:

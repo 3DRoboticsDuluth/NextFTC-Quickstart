@@ -12,8 +12,8 @@ import dev.nextftc.ftc.*
 import kotlin.reflect.*
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.full.*
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
+import com.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
+import com.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
 import org.junit.*
 import org.junit.Assert.*
 import org.mockito.Mockito.*
@@ -107,7 +107,7 @@ class DriveTests : SubsystemTests() {
     }
     @Test
     fun periodicReportsAllFourActualMotorsWithoutChangingThem() {
-        TeamTelemetry.LEVEL = org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
+        TeamTelemetry.LEVEL = com.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
         `when`(follower.pose).thenReturn(Pose())
         motors.forEachIndexed { index, motor ->
             val type = mock(com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType::class.java)

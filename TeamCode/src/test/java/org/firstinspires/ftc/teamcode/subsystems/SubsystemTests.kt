@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.subsystems
 import com.qualcomm.robotcore.eventloop.opmode.*
 import com.qualcomm.robotcore.hardware.*
 import dev.nextftc.ftc.*
-import org.firstinspires.ftc.threedrd.nextftc.logging.*
-import org.firstinspires.ftc.threedrd.nextftc.logging.LogLevel.OFF
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.INFO
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
+import com.threedrd.nextftc.logging.*
+import com.threedrd.nextftc.logging.LogLevel.OFF
+import com.threedrd.nextftc.telemetry.TelemetryLevel.INFO
+import com.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
 import org.firstinspires.ftc.robotcore.external.*
 import org.mockito.Answers.RETURNS_DEFAULTS
 import org.mockito.Mockito.*

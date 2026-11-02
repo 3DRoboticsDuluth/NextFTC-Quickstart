@@ -20,7 +20,7 @@ Read `docs/project-context.md` for the project's purpose, architectural rational
 
 ## Architecture and ownership
 
-- Keep reusable, season-neutral NextFTC and Pedro adaptations in `3drdNextFTC` under the `org.firstinspires.ftc.threedrd` namespace. This includes common hardware wrappers and updates, command composition, subsystem lifecycle, configuration infrastructure, logging, telemetry, and the reusable drive/navigation foundations.
+- Keep reusable, season-neutral NextFTC and Pedro adaptations in `3drdNextFTC` under the `com.threedrd` namespace. This includes common hardware wrappers and updates, command composition, subsystem lifecycle, configuration infrastructure, logging, telemetry, and the reusable drive/navigation foundations.
 - Reusable library modules must not depend on `TeamCode` or contain season-specific types, constants, poses, hardware names, or behavior.
 - Keep season-, game-, robot-, and team-policy-specific behavior in `TeamCode`. In particular, hardware telemetry presentation belongs in `TeamCode` because teams may choose different captions, levels, precision, and displayed values, while generic hardware update mechanics belong in `3drdNextFTC`.
 - Before adding code to `TeamCode/adaptations`, decide whether it is genuinely robot-specific. Prefer the reusable library for stable cross-team behavior, but do not force policy or likely customization points into the library merely to reduce TeamCode size.

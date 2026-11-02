@@ -10,10 +10,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS
 import org.firstinspires.ftc.robotcore.external.navigation.*
 import org.firstinspires.ftc.teamcode.subsystems.*
-import org.firstinspires.ftc.threedrd.nextftc.hardware.*
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.INFO
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
+import com.threedrd.nextftc.hardware.*
+import com.threedrd.nextftc.telemetry.TelemetryLevel.INFO
+import com.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
+import com.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
 import org.junit.Assert.*
 import org.junit.*
 import org.mockito.ArgumentMatchers.*

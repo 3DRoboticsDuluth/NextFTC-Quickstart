@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.subsystems
 
 import com.qualcomm.robotcore.util.*
 import dev.nextftc.ftc.*
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
+import com.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
+import com.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
 import org.junit.*
 import org.mockito.Mockito.*
 

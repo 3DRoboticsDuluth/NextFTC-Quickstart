@@ -1,0 +1,16 @@
+package com.threedrd.ftc
+
+import java.io.*
+
+open class Storage(val file: File) {
+    constructor(fileName: String) : this(File("/sdcard/FIRST/settings", fileName))
+
+    open fun read(): String? {
+        return if (file.exists()) file.readText() else null
+    }
+
+    open fun write(value: String) {
+        file.absoluteFile.parentFile!!.mkdirs()
+        file.writeText(value)
+    }
+}

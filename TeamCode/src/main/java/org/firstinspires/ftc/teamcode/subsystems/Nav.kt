@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import dev.nextftc.core.units.*
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
+import com.threedrd.nextftc.subsystems.*
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants.robotLength
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.Constants.robotWidth
 

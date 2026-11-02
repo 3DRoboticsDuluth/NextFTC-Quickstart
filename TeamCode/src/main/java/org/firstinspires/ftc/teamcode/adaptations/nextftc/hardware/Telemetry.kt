@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE as CR_REV
 import com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS
-import org.firstinspires.ftc.threedrd.nextftc.hardware.*
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.Telemetry.add
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
-import org.firstinspires.ftc.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
+import com.threedrd.nextftc.hardware.*
+import com.threedrd.nextftc.telemetry.Telemetry.add
+import com.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
+import com.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
 
 fun configureHardwareTelemetry() {
     HardwareTelemetry.servo = { tel() }

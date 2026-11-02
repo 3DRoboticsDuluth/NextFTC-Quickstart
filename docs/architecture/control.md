@@ -8,7 +8,7 @@ these optional utilities does not change existing robot behavior.
 ## Choose a velocity profile
 
 ```kotlin
-import org.firstinspires.ftc.threedrd.nextftc.control.interpolators.*
+import com.threedrd.nextftc.control.interpolators.*
 
 val controller = controlSystem {
     velPid(PID)
@@ -157,9 +157,9 @@ Velocity goal → Interpolator → PID + feedforward → Current limiter → Mot
 
 ```kotlin
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS
-import org.firstinspires.ftc.threedrd.nextftc.control.CurrentLimiter
-import org.firstinspires.ftc.threedrd.nextftc.hardware.update
-import org.firstinspires.ftc.threedrd.nextftc.hardware.velocityPercentage
+import com.threedrd.nextftc.control.CurrentLimiter
+import com.threedrd.nextftc.hardware.update
+import com.threedrd.nextftc.hardware.velocityPercentage
 
 val limiter = CurrentLimiter(maxCurrent = 5.0, reductionRate = 2.0, recoveryRate = 0.5)
 

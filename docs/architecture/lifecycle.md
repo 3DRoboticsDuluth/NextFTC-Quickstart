@@ -82,8 +82,8 @@ is not Teleop.
 `@Discovery` changes registration only where the default is unsuitable:
 
 ```kotlin
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.Discovery
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.DiscoveryMode.AUTO
+import com.threedrd.nextftc.subsystems.Discovery
+import com.threedrd.nextftc.subsystems.DiscoveryMode.AUTO
 
 @Discovery(mode = AUTO)
 object Auto : Subsystem() { /* autonomous initialize/start/periodic/stop */ }

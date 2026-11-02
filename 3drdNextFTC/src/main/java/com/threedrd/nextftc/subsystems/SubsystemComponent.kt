@@ -1,0 +1,93 @@
+package com.threedrd.nextftc.subsystems
+
+import dev.nextftc.core.commands.*
+import dev.nextftc.core.commands.utility.*
+import dev.nextftc.core.components.*
+import dev.nextftc.ftc.*
+import dev.nextftc.ftc.ActiveOpMode.hardwareMap
+import dev.nextftc.core.subsystems.Subsystem as NextSubsystem
+import com.threedrd.nextftc.opmodes.*
+
+class SubsystemComponent private constructor(
+    private val roots: Set<NextSubsystem>,
+    val discoverAll: Boolean,
+    private val within: String = "subsystems"
+) : Component {
+    companion object {
+        fun discover(within: String = "subsystems"): Set<NextSubsystem> {
+            val source = hardwareMap.appContext.applicationInfo.sourceDir
+            val classLoader = ActiveOpMode.it!!.javaClass.classLoader
+            return SubsystemDiscovery.discover(
+                SubsystemDiscovery.classNames(source),
+                classLoader,
+                within
+            )
+        }
+
+        var discovery: (String) -> Set<NextSubsystem> = ::discover
+
+        fun all(within: String = "subsystems") = SubsystemComponent(emptySet(), true, within)
+    }
+
+    constructor(vararg subsystems: NextSubsystem) : this(subsystems.toSet(), false)
+
+    var subsystems = registered(roots)
+
+    override fun preInit() {
+        subsystems = registered(if (discoverAll) discovery(within) else roots)
+
+        subsystems.forEach {
+            if (it is Subsystem) it.initializeHardware()
+            if (it !is Subsystem || !it.disabled) it.initialize()
+        }
+    }
+
+    override fun preWaitForStart() = updateSubsystems(false)
+
+    override fun preStartButtonPressed() {
+        val active = subsystems.filterIsInstance<Subsystem>().filterNot { it.disabled }
+        active.forEach { it.start() }
+        if (isTeleop) active.forEach { it.controls() }
+    }
+
+    override fun preUpdate() = updateSubsystems(true)
+
+    override fun preStop() {
+        subsystems.reversed()
+            .filterIsInstance<Subsystem>()
+            .filterNot { it.disabled }
+            .forEach {
+                try {
+                    it.stop()
+                } catch (exception: Exception) {
+                    it.log.error("Stop | $exception")
+                }
+            }
+    }
+
+    fun updateSubsystems(scheduleDefaults: Boolean) {
+        subsystems.forEach {
+            if (it is Subsystem && it.disabled) {
+                it.reportDisabled()
+                return@forEach
+            }
+
+            it.periodic()
+
+            if (scheduleDefaults && !CommandManager.hasCommandsUsing(it)) {
+                val command = it.defaultCommand
+                if (command !is NullCommand) command.schedule()
+            }
+        }
+    }
+
+    fun ordered(subsystems: Iterable<NextSubsystem>) = subsystems
+        .sortedBy { (it as? Subsystem)?.order ?: 0 }
+        .toCollection(linkedSetOf())
+
+    private fun registered(roots: Set<NextSubsystem>) = ordered(
+        roots.filter { it.javaClass.participates() }
+            .flatMap { it.subsystems }
+            .filter { it.javaClass.participates() }
+    )
+}

@@ -1,7 +1,7 @@
 # Calibration curves
 
 `3drdNextFTC` provides season-neutral, stateless curve evaluators under
-`org.firstinspires.ftc.threedrd.nextftc.control.curves` (REQ-PLT-057).
+`com.threedrd.nextftc.control.curves` (REQ-PLT-057).
 They implement `Curve.calculate(x)` and return a number in the units established
 by the calibration. They do not command hardware or fit coefficients from data.
 

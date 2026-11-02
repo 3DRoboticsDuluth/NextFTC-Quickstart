@@ -8,7 +8,7 @@ jacoco {
 }
 
 android {
-    namespace = 'org.firstinspires.ftc.threedrd.nextftc'
+    namespace = 'com.threedrd.nextftc'
     compileSdk 34
 
     defaultConfig {

@@ -1,0 +1,62 @@
+package com.threedrd.nextftc.subsystems
+
+import java.lang.*
+import dev.nextftc.core.commands.*
+import com.threedrd.nextftc.commands.*
+import com.threedrd.nextftc.hardware.*
+import com.threedrd.nextftc.logging.*
+import com.threedrd.nextftc.telemetry.*
+
+abstract class Subsystem : dev.nextftc.core.subsystems.Subsystem {
+    open val order = 0
+    val errors = mutableListOf<String>()
+    val disabled get() = errors.isNotEmpty()
+    val tel = Tel(javaClass.simpleName)
+    val log = Logger(javaClass.simpleName)
+
+    fun reportDisabled() {
+        tel.error("Status", "Disabled (see Logcat)")
+    }
+
+    fun initializeHardware() {
+        errors.clear()
+        javaClass.declaredFields.mapNotNull { field ->
+            field.isAccessible = true
+            when (val device = field.get(this)) {
+                is Hardware -> Triple(device, device.name, device::initialize)
+                is ServoEx -> Triple(device, field.name, device::initialize)
+                is CRServoEx -> Triple(device, field.name, device::initialize)
+                is MotorEx -> Triple(device, field.name, device::initialize)
+                is IMUEx -> Triple(device, field.name, device::initialize)
+                else -> null
+            }
+        }.distinctBy { it.first }.forEach { (_, name, initialize) ->
+            try {
+                initialize()
+            } catch (exception: Exception) {
+                val message = "$name: $exception"
+                errors += message
+                log.error("Hardware | $message")
+            }
+        }
+    }
+
+    open fun start() = Unit
+
+    open fun controls() = Unit
+
+    open fun stop() = Unit
+
+    override fun instant(action: Runnable) =
+        InstantCommand(this, action)
+
+    override fun instant(name: String, action: Runnable) =
+        InstantCommand(this, action).named(name)
+
+    fun deferred(create: () -> Command) = DeferredCommand(this, create = create)
+    fun <A> deferred(create: (A) -> Command) = DeferredCommandFactory1(this, command = create)
+    fun <A, B, C> deferred(create: (A, B, C) -> Command) =
+        DeferredCommandFactory3(this, command = create)
+    fun <A, B, C> deferred(second: B, third: C, create: (A, B, C) -> Command) =
+        DefaultedDeferredCommandFactory3(this, second = second, third = third, command = create)
+}

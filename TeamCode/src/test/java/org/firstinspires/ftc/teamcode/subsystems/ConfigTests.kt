@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
-import org.firstinspires.ftc.threedrd.nextftc.config.Diagnostics.Level.INFO
+import com.threedrd.nextftc.config.Diagnostics.Level.INFO
 import org.junit.Assert.*
 import org.junit.*
 

@@ -1,0 +1,14 @@
+package com.threedrd.nextftc.bindings
+
+import dev.nextftc.bindings.*
+import dev.nextftc.core.components.*
+
+object BindingsComponent : Component {
+    override fun preInit() = BindingManager.reset()
+
+    override fun preWaitForStart() = BindingManager.update()
+
+    override fun preUpdate() = BindingManager.update()
+
+    override fun postStop() = BindingManager.reset()
+}

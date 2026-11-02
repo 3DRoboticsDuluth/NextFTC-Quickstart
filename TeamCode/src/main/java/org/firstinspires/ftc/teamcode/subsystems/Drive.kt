@@ -4,8 +4,8 @@ import com.bylazar.configurables.annotations.*
 import org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware.*
 import dev.nextftc.extensions.pedro.PedroComponent.Companion.follower
 import dev.nextftc.ftc.Gamepads.gamepad1
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
-import org.firstinspires.ftc.threedrd.pedropathing.*
+import com.threedrd.nextftc.subsystems.*
+import com.threedrd.pedropathing.*
 import org.firstinspires.ftc.teamcode.subsystems.Config.state
 
 @Configurable

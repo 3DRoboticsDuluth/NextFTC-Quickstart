@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.bylazar.configurables.annotations.*
-import org.firstinspires.ftc.threedrd.nextftc.config.Diagnostics.Level.INFO
-import org.firstinspires.ftc.threedrd.nextftc.config.*
-import org.firstinspires.ftc.threedrd.nextftc.subsystems.*
+import com.threedrd.nextftc.config.Diagnostics.Level.INFO
+import com.threedrd.nextftc.config.*
+import com.threedrd.nextftc.subsystems.*
 
 @Configurable
 object Config : ConfigSubsystem() {
