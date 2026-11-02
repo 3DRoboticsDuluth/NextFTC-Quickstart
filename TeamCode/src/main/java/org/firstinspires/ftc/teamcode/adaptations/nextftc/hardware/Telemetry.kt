@@ -13,25 +13,13 @@ import com.threedrd.nextftc.telemetry.Telemetry.add
 import com.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
 import com.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
 
-fun ServoEx.update(action: ServoEx.() -> Unit) {
-    action()
-    tel()
-}
+fun ServoEx.update(action: ServoEx.() -> Unit) { action(); tel() }
 
-fun CRServoEx.update(action: CRServoEx.() -> Unit) {
-    action()
-    tel()
-}
+fun CRServoEx.update(action: CRServoEx.() -> Unit) { action(); tel() }
 
-fun MotorEx.update(action: MotorEx.() -> Unit) {
-    action()
-    tel()
-}
+fun MotorEx.update(action: MotorEx.() -> Unit) { action(); tel() }
 
-fun IMUEx.update(action: IMUEx.() -> Unit) {
-    action()
-    tel()
-}
+fun IMUEx.update(action: IMUEx.() -> Unit) { action(); tel() }
 
 fun ServoEx.tel() {
     val source = name.humanize()
