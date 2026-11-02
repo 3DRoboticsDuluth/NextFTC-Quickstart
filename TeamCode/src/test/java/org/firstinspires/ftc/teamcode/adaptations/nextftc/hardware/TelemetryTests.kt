@@ -21,8 +21,7 @@ import org.mockito.Mockito.*
 
 class TelemetryTests : SubsystemTests() {
     @Before
-    fun configureTelemetry() {
-        configureHardwareTelemetry()
+    fun configureTelemetryLevel() {
         TeamTelemetry.LEVEL = VERBOSE
         TeamTelemetry.FILTER = ""
     }
@@ -34,7 +33,10 @@ class TelemetryTests : SubsystemTests() {
         val telemetry = ActiveOpMode.telemetry
         clearInvocations(telemetry)
 
-        servo.update { position = 0.426 }
+        servo.update { assertSame(servo, this); position = 0.426 }
+        val order = inOrder(servo.servo, telemetry)
+        order.verify(servo.servo).setPosition(0.426)
+        order.verify(telemetry).addData("D | Test Servo | Position", "0.43" as Any)
         `when`(servo.servo.direction).thenReturn(FORWARD)
         servo.tel()
 
@@ -53,7 +55,10 @@ class TelemetryTests : SubsystemTests() {
         clearInvocations(telemetry)
 
         `when`(servo.servo.direction).thenReturn(CR_REVERSE)
-        servo.update { power = 0.256 }
+        servo.update { assertSame(servo, this); power = 0.256 }
+        val order = inOrder(servo.servo, telemetry)
+        order.verify(servo.servo).setPower(0.256)
+        order.verify(telemetry).addData("D | Test Servo | Power", "0.26" as Any)
         `when`(servo.servo.direction).thenReturn(CR_FORWARD)
         servo.update { }
 
@@ -77,7 +82,10 @@ class TelemetryTests : SubsystemTests() {
         clearInvocations(telemetry)
 
         `when`(motor.motor.power).thenReturn(0.456)
-        motor.update { power = 0.456 }
+        motor.update { assertSame(motor, this); power = 0.456 }
+        val order = inOrder(motor.motor, telemetry)
+        order.verify(motor.motor).setPower(0.456)
+        order.verify(telemetry).addData("V | Test Motor | Current (A)", 1.234 as Any)
 
         verify(telemetry).addData("V | Test Motor | Current (A)", 1.234 as Any)
         verify(telemetry).addData("D | Test Motor | Power", 0.456 as Any)
@@ -101,12 +109,26 @@ class TelemetryTests : SubsystemTests() {
         var updated = false
         clearInvocations(telemetry)
 
-        imu.update { updated = true }
+        `when`(imu.imu.robotYawPitchRollAngles).thenAnswer { assertTrue(updated); angles }
+        imu.update { assertSame(imu, this); updated = true }
 
         assertTrue(updated)
         verify(telemetry).addData("D | Test Imu | Yaw (deg)", "10.1" as Any)
         verify(telemetry).addData("D | Test Imu | Pitch (deg)", "20.0" as Any)
         verify(telemetry).addData("D | Test Imu | Roll (deg)", "30.1" as Any)
+    }
+
+    @Test
+    fun failedUpdatePropagatesWithoutReportingHardware() {
+        val motor = MotorEx("testMotor")
+        val telemetry = ActiveOpMode.telemetry
+        clearInvocations(telemetry, ActiveOpMode.hardwareMap)
+        val failure = IllegalStateException("Update failed")
+
+        assertSame(failure, assertThrows(IllegalStateException::class.java) { motor.update { throw failure } })
+
+        verify(telemetry, never()).addData(anyString(), any())
+        verifyNoInteractions(ActiveOpMode.hardwareMap)
     }
 
     @Test

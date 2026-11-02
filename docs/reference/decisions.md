@@ -85,13 +85,14 @@ levels/filters and a convenient shared config default.
 **Why:** Driver/Panels state is replaced every frame; Logcat/history is cumulative.
 Duplicating high-rate state into logs creates noise and cost.
 
-## Hardware Update Hooks Are Split Between Library and TeamCode
+## Hardware Updates and Reporting Live Together in TeamCode
 
-**Decision:** Keep mutation-then-hook `update` in the reusable hardware API and
-specific `tel()` fields/levels in TeamCode.
+**Decision:** Keep the four mutation-then-report `update` extensions beside the
+`tel()` extensions in TeamCode. The shared library has no reporting callbacks.
 
-**Why:** Ordering and wrapper integration are universal; what students want to see
-for a motor or sensor is a team policy.
+**Why:** The extensions can call team-owned reporting directly. This preserves
+action-before-report ordering and native hardware types without mutable callbacks
+or a configuration call in every OpMode foundation.
 
 ## Commands Use Delegated Naming and Deferred Construction
 

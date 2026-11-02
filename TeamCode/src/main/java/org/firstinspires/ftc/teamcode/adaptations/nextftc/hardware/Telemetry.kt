@@ -13,11 +13,24 @@ import com.threedrd.nextftc.telemetry.Telemetry.add
 import com.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
 import com.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
 
-fun configureHardwareTelemetry() {
-    HardwareTelemetry.servo = { tel() }
-    HardwareTelemetry.continuousServo = { tel() }
-    HardwareTelemetry.motor = { tel() }
-    HardwareTelemetry.imu = { tel() }
+fun ServoEx.update(action: ServoEx.() -> Unit) {
+    action()
+    tel()
+}
+
+fun CRServoEx.update(action: CRServoEx.() -> Unit) {
+    action()
+    tel()
+}
+
+fun MotorEx.update(action: MotorEx.() -> Unit) {
+    action()
+    tel()
+}
+
+fun IMUEx.update(action: IMUEx.() -> Unit) {
+    action()
+    tel()
 }
 
 fun ServoEx.tel() {

@@ -8,13 +8,11 @@ import com.threedrd.nextftc.config.*
 import com.threedrd.nextftc.subsystems.*
 import com.threedrd.nextftc.telemetry.*
 import com.threedrd.pedropathing.*
-import org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware.*
 import org.firstinspires.ftc.teamcode.adaptations.pedropathing.*
 import org.firstinspires.ftc.teamcode.subsystems.*
 
 abstract class OpMode : NextFTCOpMode() {
     init {
-        configureHardwareTelemetry()
         addComponents(
             TelemetryComponent,
             BindingsComponent,

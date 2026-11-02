@@ -18,19 +18,6 @@ class CRServoExTests : SubsystemTests() {
     }
 
     @Test
-    fun updateAppliesTheActionAndReportsTheServo() {
-        val servo = CRServoEx("test")
-        var actionApplied = false
-        var reported: CRServoEx? = null
-        HardwareTelemetry.continuousServo(servo)
-        HardwareTelemetry.continuousServo = { reported = this }
-
-        servo.update { actionApplied = true }
-
-        assertTrue(actionApplied)
-        assertSame(servo, reported)
-    }
-    @Test
     fun nativeFactoryStaysLazyAndReportsRegisteredName() {
         val map = dev.nextftc.ftc.ActiveOpMode.hardwareMap
         clearInvocations(map)

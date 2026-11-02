@@ -31,19 +31,6 @@ class IMUExTests : SubsystemTests() {
     }
 
     @Test
-    fun updateAppliesTheActionAndReportsTheImu() {
-        val imu = IMUEx("test")
-        var actionApplied = false
-        var reported: IMUEx? = null
-        HardwareTelemetry.imu(imu)
-        HardwareTelemetry.imu = { reported = this }
-
-        imu.update { actionApplied = true }
-
-        assertTrue(actionApplied)
-        assertSame(imu, reported)
-    }
-    @Test
     fun originalConstructorAndUnregisteredDeviceNameRemainAvailable() {
         val sdk = mock(com.qualcomm.robotcore.hardware.IMU::class.java)
         val imu = IMUEx(sdk)

@@ -1,7 +1,8 @@
 # Hardware
 
 Hardware adapters make lazy FTC device acquisition, subsystem fault isolation,
-configuration, telemetry hooks, and tests consistent across device types.
+configuration and tests consistent across device types. TeamCode adds telemetry-aware
+updates beside its reporting policy.
 
 ## Adapter families
 
@@ -230,15 +231,16 @@ also use `Device(name, type)`; its configuration block defaults to empty.
 Hardware names, initialization timing, configuration, and delegated access to
 the underlying device remain unchanged.
 
-## Update Hook
+## Updates and Telemetry
 
 ```kotlin
 servo.update { position = POS }
 ```
 
-`update` applies the receiver lambda, then invokes the configured telemetry hook.
-The shared library owns the reliable ordering; TeamCode decides what `tel()` means
-for each hardware type. Current policy reports:
+`update` and `tel()` both live in TeamCode's `adaptations.nextftc.hardware` package.
+Each `update` applies the receiver lambda, then calls that hardware type's `tel()`
+directly. No callback registration or OpMode setup is needed. If the action throws,
+the exception propagates and telemetry is not called. Current policy reports:
 
 | Hardware | Debug | Verbose |
 |---|---|---|
@@ -249,6 +251,14 @@ for each hardware type. Current policy reports:
 
 Values are formatted to stable, sensible precision. Teams may change this policy
 without changing the wrappers.
+
+Migration: replace explicit imports of `com.threedrd.nextftc.hardware.update`
+with `org.firstinspires.ftc.teamcode.adaptations.nextftc.hardware.update` (or your
+team's corresponding package). A library hardware wildcard import alone no longer
+provides `update`. Remove `configureHardwareTelemetry()` from OpMode construction;
+`HardwareTelemetry` and its callbacks have been removed. The four update extensions
+remain action-then-report operations on native NextFTC types. Teams using the
+library outside this scaffold can define their own reporting extensions.
 
 ## Caching
 
@@ -454,7 +464,7 @@ RUN_TO_POSITION and never selects a different mode or changes the target. Invali
 speed fails before acquisition; valid access in another mode fails without changing
 mode or power. Native velocity remains measured signed encoder ticks/second.
 Setting speed each periodic cycle applies live settings; the SDK caches unchanged
-hardware writes. update() applies the block before its configured hardware telemetry.
+hardware writes. TeamCode's `update()` applies the block before calling `tel()`.
 
 `stop()` uses the existing explicit SDK-zero-before-native-zero operation to avoid
 the native cached-zero hazard, and returns to native direct-power mode. It does

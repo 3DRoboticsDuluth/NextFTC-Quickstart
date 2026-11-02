@@ -87,19 +87,6 @@ class ServoExTests : SubsystemTests() {
     }
 
     @Test
-    fun updateAppliesTheActionAndReportsTheServo() {
-        val servo = ServoEx("test")
-        var actionApplied = false
-        var reported: ServoEx? = null
-        HardwareTelemetry.servo(servo)
-        HardwareTelemetry.servo = { reported = this }
-
-        servo.update { actionApplied = true }
-
-        assertTrue(actionApplied)
-        assertSame(servo, reported)
-    }
-    @Test
     fun nativeFactoryStaysLazyAndReportsRegisteredName() {
         val map = dev.nextftc.ftc.ActiveOpMode.hardwareMap
         clearInvocations(map)

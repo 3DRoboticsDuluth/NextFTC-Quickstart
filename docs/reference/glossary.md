@@ -26,7 +26,7 @@
 
 **Hardware wrapper**
 : A lazy, testable 3DRD/NextFTC device abstraction participating in subsystem
-  initialization and telemetry hooks.
+  initialization. TeamCode extensions add reporting after updates.
 
 **Panels**
 : The ByLazar web dashboard used for FTC tuning, configurables, telemetry, camera,

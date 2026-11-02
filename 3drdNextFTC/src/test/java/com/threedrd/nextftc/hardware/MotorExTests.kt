@@ -78,19 +78,6 @@ class MotorExTests : SubsystemTests() {
     }
 
     @Test
-    fun updateAppliesTheActionAndReportsTheMotor() {
-        val motor = MotorEx("test", configure = {})
-        var actionApplied = false
-        var reported: MotorEx? = null
-        HardwareTelemetry.motor(motor)
-        HardwareTelemetry.motor = { reported = this }
-
-        motor.update { actionApplied = true }
-
-        assertTrue(actionApplied)
-        assertSame(motor, reported)
-    }
-    @Test
     fun originalConstructorAndPreviouslyNestedApiRemainDirect() {
         val map = dev.nextftc.ftc.ActiveOpMode.hardwareMap
         val sdk = mock(com.qualcomm.robotcore.hardware.DcMotorEx::class.java)

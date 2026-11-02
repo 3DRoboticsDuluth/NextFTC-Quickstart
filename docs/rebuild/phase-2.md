@@ -35,9 +35,10 @@ Checkpoint: diagnostics, logging, telemetry, component, and mode-helper tests pa
 ### 3. Hardware Wrappers — `9f0b1860`
 
 Implement lazy wrappers for servo, continuous servo, motor, IMU, and arbitrary
-hardware. Each implements the common `Hardware` initialization contract. Provide
-`update` extensions that mutate then call a configurable telemetry hook. Create a
-hardware-independent test harness capable of providing devices by configured name.
+hardware. Preserve native NextFTC types and the shared initialization extensions;
+use the `Hardware` contract for generic devices. Create a hardware-independent test
+harness capable of providing devices by configured name. Keep reporting out of this
+layer; TeamCode supplies `update` and `tel()` together in step 8.
 
 Why: singleton subsystems need safe declaration before an active hardware map and a
 uniform failure/testing seam.
@@ -106,7 +107,7 @@ Why: sensor chatter is cross-season behavior and does not belong in one intake.
 
 Create:
 
-- TeamCode hardware telemetry policy;
+- TeamCode hardware telemetry policy and the four `update` extensions beside `tel()`;
 - Template Pedro constants with 18-inch placeholder dimensions, drivetrain-encoder
   localization, and defaults;
 - Shared `OpMode` composition root;
@@ -338,3 +339,9 @@ exact coefficient conventions and concrete-type Panels exposure in the
 [curve guide](../architecture/curves.md). Keep fitting algorithms, calibration
 measurements, chosen coefficients, input ranges and hardware limits outside these
 reusable evaluators.
+
+The hardware update migration removes library callbacks and OpMode registration.
+Implement action-then-`tel()` directly in TeamCode for servo, continuous servo,
+motor and IMU. Verify write/report order and failure propagation without a setup
+call. See REQ-PLT-032, retired REQ-PLT-031/REQ-SCF-006 and REQ-SCF-014, and the
+[hardware update guide](../architecture/hardware.md#updates-and-telemetry).

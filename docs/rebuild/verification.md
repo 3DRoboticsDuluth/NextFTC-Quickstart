@@ -101,3 +101,10 @@ configuration without an active OpMode, original constructors and servo fluent r
 initialization, failure isolation and retry, and telemetry/update behavior.
 No robot deployment or physical test was performed. Consuming teams must rebuild
 and perform a full install for the changed runtime types before using Sloth.
+
+## Hardware update ownership
+
+REQ-SCF-014 and REQ-PLT-032 are verified by TeamCode's hardware `TelemetryTests`: all
+four native hardware types apply their action before reporting without callback
+registration; update failures propagate without reporting or acquiring hardware.
+The former library hook tests are replaced by these observable TeamCode tests.
