@@ -249,6 +249,12 @@ the exception propagates and telemetry is not called. Current policy reports:
 | Motor | Power, velocity, encoder position | current, velocity percentage, RPM |
 | IMU | Yaw, pitch, roll | — |
 
+Hardware reporters use the existing `Tel` lambda overloads, such as
+`tel.debug("Velocity") { velocity }`. Disabled levels skip diagnostic reads and
+formatting; DEBUG skips VERBOSE current and motor-type reads. Normal hardware
+initialization and drive-name resolution are unchanged. Telemetry remains separate
+from RobotLog event logging.
+
 Values are formatted to stable, sensible precision. Teams may change this policy
 without changing the wrappers.
 

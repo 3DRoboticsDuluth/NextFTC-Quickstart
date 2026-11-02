@@ -108,3 +108,6 @@ REQ-SCF-014 and REQ-PLT-032 are verified by TeamCode's hardware `TelemetryTests`
 four native hardware types apply their action before reporting without callback
 registration; update failures propagate without reporting or acquiring hardware.
 The former library hook tests are replaced by these observable TeamCode tests.
+
+REQ-SCF-015 traces to hardware TelemetryTests: INFO skips diagnostic reads and
+DEBUG skips VERBOSE current/motor-type reads while enabled fields remain unchanged.

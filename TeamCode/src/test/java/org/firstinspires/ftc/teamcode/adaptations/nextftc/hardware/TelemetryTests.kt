@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS
 import org.firstinspires.ftc.robotcore.external.navigation.*
 import org.firstinspires.ftc.teamcode.subsystems.*
 import com.threedrd.nextftc.hardware.*
+import com.threedrd.nextftc.telemetry.TelemetryLevel.DEBUG
 import com.threedrd.nextftc.telemetry.TelemetryLevel.INFO
 import com.threedrd.nextftc.telemetry.TelemetryLevel.VERBOSE
 import com.threedrd.nextftc.telemetry.Telemetry as TeamTelemetry
@@ -197,6 +198,39 @@ class TelemetryTests : SubsystemTests() {
         mock(com.pedropathing.ftc.drivetrains.Mecanum::class.java).tel()
         verify(telemetry, never()).addData(anyString(), any())
         verify(ActiveOpMode.hardwareMap, never()).getNamesOf(any())
+    }
+
+    @Test
+    fun infoLevelSkipsHardwareDiagnosticReads() {
+        val servo = ServoEx("testServo")
+        val continuous = CRServoEx("testServo")
+        val motor = MotorEx("testMotor")
+        val imu = IMUEx("testImu")
+        listOf(servo.servo, continuous.servo, motor.motor, imu.imu).forEach { clearInvocations(it) }
+        TeamTelemetry.LEVEL = INFO
+
+        servo.tel()
+        continuous.tel()
+        motor.tel()
+        imu.tel()
+
+        verifyNoInteractions(servo.servo, continuous.servo, motor.motor, imu.imu)
+    }
+
+    @Test
+    fun debugMotorTelemetrySkipsVerboseHardwareReads() {
+        val motor = MotorEx("testMotor")
+        motor.initialize()
+        clearInvocations(motor.motor)
+        TeamTelemetry.LEVEL = DEBUG
+
+        motor.tel()
+
+        verify(motor.motor).getPower()
+        verify(motor.motor).getVelocity()
+        verify(motor.motor).getCurrentPosition()
+        verify(motor.motor, never()).getCurrent(any())
+        verify(motor.motor, never()).getMotorType()
     }
 
 }

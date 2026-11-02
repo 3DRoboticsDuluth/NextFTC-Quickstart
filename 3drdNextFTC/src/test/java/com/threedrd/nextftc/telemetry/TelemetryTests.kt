@@ -131,10 +131,12 @@ class TelemetryTests {
         Telemetry.LEVEL = INFO
         val tel = Tel("Gate")
 
+        assertFalse(Telemetry.add("Gate", DEBUG, "Hidden eager", 99))
         tel.debug("Hidden") { ++evaluations }
         tel.info("Visible") { ++evaluations }
 
         assertEquals(1, evaluations)
+        verify(output, never()).addData("D | Gate | Hidden eager", 99 as Any)
         verify(output, never()).addData("D | Gate | Hidden", 1 as Any)
         verify(output).addData("I | Gate | Visible", 1 as Any)
     }

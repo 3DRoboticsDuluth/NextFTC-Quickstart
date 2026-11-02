@@ -107,7 +107,7 @@ Why: sensor chatter is cross-season behavior and does not belong in one intake.
 
 Create:
 
-- TeamCode hardware telemetry policy and the four `update` extensions beside `tel()`;
+- TeamCode hardware telemetry policy using existing `Tel` value lambdas, and the four `update` extensions beside `tel()`;
 - Template Pedro constants with 18-inch placeholder dimensions, drivetrain-encoder
   localization, and defaults;
 - Shared `OpMode` composition root;
