@@ -58,14 +58,6 @@ repositories {
     maven { url = uri('https://repo.dairy.foundation/releases') }
 }
 
-configurations.configureEach {
-    resolutionStrategy.dependencySubstitution {
-        substitute module('com.bylazar:fullpanels') using module(
-            'com.bylazar.sloth:fullpanels:0.3.2+1.0.13'
-        )
-    }
-}
-
 dependencies {
     implementation project(':FtcRobotController')
     implementation project(':3drdNextFTC')

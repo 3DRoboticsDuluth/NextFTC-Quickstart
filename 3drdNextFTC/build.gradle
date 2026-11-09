@@ -35,12 +35,13 @@ kotlin {
 
 repositories {
     maven { url = 'https://mymaven.bylazar.com/releases' }
+    maven { url = 'https://repo.dairy.foundation/releases' }
     maven { url = 'https://maven.pedropathing.com/' }
 }
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect:2.4.20'
-    api 'com.bylazar:fullpanels:1.0.13'
+    api 'com.bylazar:fullpanels:1.0.20'
     api 'dev.nextftc:control:1.0.0'
     api 'dev.nextftc:ftc:1.1.0'
     api 'dev.nextftc:hardware:1.1.0'

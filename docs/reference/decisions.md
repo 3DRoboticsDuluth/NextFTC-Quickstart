@@ -196,3 +196,10 @@ automatic initialization and subsystem fault isolation without requiring them
 to implement our Hardware marker. Use the same pattern for servos so fluent
 returns remain discoverable and students have one consistent declaration style.
 Device keeps its existing SDK-device delegate. Avoid a vendor fork or bytecode changes.
+
+## Use official Panels with native Sloth support
+
+FullPanels 1.0.20 replaces the older Dairy-packaged 1.0.13 fork. Official Panels
+integrated Sloth support in 1.0.16; retaining the old dependency substitution
+would silently prevent the update. Keep Dairy repositories for transitive
+Sloth dependencies and require a full install for the version change.

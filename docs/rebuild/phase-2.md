@@ -353,3 +353,12 @@ Reuse pathConstraints.translationalConstraint and Pose.distanceFrom for the trav
 guard and Pose.face for bearing. Keep axial/lateral and aliases on curve. See the
 [navigation contract](../architecture/drive-navigation.md#point-to-point-and-absolute-turns).
 Tests skipped by user request; robot accuracy/repeatability remain unrecorded.
+
+For the official Panels update, select FullPanels 1.0.20 in 3drdNextFTC, remove
+TeamCode's legacy com.bylazar.sloth substitution and add Dairy releases to the
+library module's repositories. Native Sloth support began in FullPanels 1.0.16.
+This supersedes the older fork step above while keeping Sloth/Load 0.3.2 and
+offline Sloth workflows. REQ-PLT-006 maps to dependency insight, the full APK
+build and the [deployment guide](../guides/deployment.md#official-panels-with-sloth).
+Unit tests skipped by request; runtime hot-load and Restart Robot checks remain
+hardware validation.

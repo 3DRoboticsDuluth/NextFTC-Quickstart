@@ -182,3 +182,9 @@ Axial/lateral and aliases MUST preserve prior behavior. Traceability:
 DriveSubsystem, adapted TurnTo and the [navigation contract](../architecture/drive-navigation.md#point-to-point-and-absolute-turns).
 Tests skipped by user request; originating robot reported working behavior,
 with accuracy/repeatability unrecorded.
+
+REQ-PLT-006 Panels compatibility: use official FullPanels 1.0.20 with native
+Sloth support, without the legacy 1.0.13 fork substitution. Keep Dairy releases
+available to application and library resolution. Validate the resolved runtime
+and APK separately from hardware hot-reload and Restart Robot behavior; see the
+[deployment guide](../guides/deployment.md#official-panels-with-sloth).

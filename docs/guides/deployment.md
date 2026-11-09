@@ -104,3 +104,17 @@ Before treating Sloth as established team workflow, verify on a physical control
    deployment reconnects automatically once the controller and its Wi-Fi are back.
 7. After an online full build has primed the computer, **Deploy Sloth** succeeds
    after restarting Android Studio with internet access unavailable.
+
+## Official Panels with Sloth
+
+Use `com.bylazar:fullpanels:1.0.20`. Official FullPanels has included Sloth support
+since 1.0.16, so remove the older substitution to
+`com.bylazar.sloth:fullpanels:0.3.2+1.0.13`. Keep Dairy's releases repository in
+both TeamCode and 3drdNextFTC for the integrated Sloth dependencies. Sloth and
+Load remain at 0.3.2; FTC SDK 12 and Kotlin 2.4.20 meet Panels' requirements.
+
+[Official FullPanels changelog](https://panels.bylazar.com/docs/com.bylazar.fullpanels/)
+records native Sloth support and the 1.0.20 Restart Robot/dashboard fix. Install
+this dependency update with Deploy Full, then verify Panels configuration and
+field/telemetry widgets across a Sloth reload and Restart Robot. Desktop builds
+do not establish those hardware/runtime checks.
