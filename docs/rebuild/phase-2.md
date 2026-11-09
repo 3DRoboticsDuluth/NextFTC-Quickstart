@@ -345,3 +345,11 @@ Implement action-then-`tel()` directly in TeamCode for servo, continuous servo,
 motor and IMU. Verify write/report order and failure propagation without a setup
 call. See REQ-PLT-032, retired REQ-PLT-031/REQ-SCF-006 and REQ-SCF-014, and the
 [hardware update guide](../architecture/hardware.md#updates-and-telemetry).
+
+For REQ-PLT-034, add adapted TurnTo with signed target-minus-current heading and
+Pedro relative turn integration. Add DriveSubsystem.turnTo overloads and line;
+change to to a deferred face/line/final-turn sequence with reverse before holdEnd.
+Reuse pathConstraints.translationalConstraint and Pose.distanceFrom for the travel
+guard and Pose.face for bearing. Keep axial/lateral and aliases on curve. See the
+[navigation contract](../architecture/drive-navigation.md#point-to-point-and-absolute-turns).
+Tests skipped by user request; robot accuracy/repeatability remain unrecorded.

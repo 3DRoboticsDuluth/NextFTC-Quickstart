@@ -8,6 +8,7 @@ import dev.nextftc.extensions.pedro.*
 import dev.nextftc.extensions.pedro.PedroComponent.Companion.follower
 import com.threedrd.nextftc.commands.*
 import com.threedrd.pedropathing.*
+import com.threedrd.pedropathing.TurnTo
 
 abstract class DriveSubsystem : Subsystem() {
     protected open val headingEnd = 0.33
@@ -31,11 +32,20 @@ abstract class DriveSubsystem : Subsystem() {
             follow(builder.build(), holdEnd)
         }.named("${javaClass.simpleName}.paths")
 
-    fun to(pose: Pose, holdEnd: Boolean = true) = paths(holdEnd) {
+    fun to(pose: Pose, reverse: Boolean = false, holdEnd: Boolean = true) = DeferredCommand(this) {
         val start = follower.pose
-        addPath(BezierCurve(start, start.midpoint(pose), pose))
-        setLinearHeadingInterpolation(start.heading, pose.heading, headingEnd)
-    }.named("${javaClass.simpleName}.to")
+        val finish = turnTo(pose.heading.rad)
+        if (start.distanceFrom(pose) <= follower.pathConstraints.translationalConstraint) return@DeferredCommand finish
+        val bearing = start.face(pose, if (reverse) 180.0 else 0.0).heading
+        turnTo(bearing.rad).then(line(pose.withHeading(bearing), holdEnd = false)).then(finish)
+    }.then(InstantCommand(this) {
+        if (holdEnd) follower.holdPoint(pose) else follower.breakFollowing()
+    }).named("${javaClass.simpleName}.to")
+
+    fun line(pose: Pose, holdEnd: Boolean = true) = paths(holdEnd) {
+        addPath(BezierLine(follower.pose, pose))
+        setConstantHeadingInterpolation(pose.heading)
+    }.named("${javaClass.simpleName}.line")
 
     fun curve(vararg poses: Pose, holdEnd: Boolean = true) = paths(holdEnd) {
         val start = follower.pose
@@ -56,13 +66,13 @@ abstract class DriveSubsystem : Subsystem() {
     }.named("${javaClass.simpleName}.curves")
 
     fun axial(distance: Distance) = DeferredCommand(this) {
-        to(follower.pose.axial(distance.inIn))
+        curve(follower.pose.axial(distance.inIn))
     }.named("${javaClass.simpleName}.axial")
 
     fun axial(distance: Double) = axial(distance.inches)
 
     fun lateral(distance: Distance) = DeferredCommand(this) {
-        to(follower.pose.lateral(distance.inIn))
+        curve(follower.pose.lateral(distance.inIn))
     }.named("${javaClass.simpleName}.lateral")
 
     fun lateral(distance: Double) = lateral(distance.inches)
@@ -82,6 +92,10 @@ abstract class DriveSubsystem : Subsystem() {
     fun turn(angle: Angle) = TurnBy(angle).requires(this).named("${javaClass.simpleName}.turn")
 
     fun turn(degrees: Double) = turn(degrees.deg)
+
+    fun turnTo(heading: Angle) = TurnTo(heading).requires(this).named("${javaClass.simpleName}.turnTo")
+
+    fun turnTo(degrees: Double) = turnTo(degrees.deg)
 
     fun until(distance: Distance) = WaitUntil {
         if (distance.inIn >= 0) follower.distanceTraveledOnPath >= distance.inIn

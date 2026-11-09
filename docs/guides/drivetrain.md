@@ -98,6 +98,11 @@ cannot detect sideways skid and wheel slip.
 
 ### Validation and limits
 
+The [point-to-point helpers](../architecture/drive-navigation.md#point-to-point-and-absolute-turns)
+provide turn/straight-drive/final-turn movement and optional reverse approach.
+Use curve(destination) for the old continuous to behavior. Deploy Full is required
+for the new reusable TurnTo class; Sloth alone cannot install it.
+
 The coach reports the earlier setup was drivable after disabling strafe and
 setting conversion factors. `TankDriveSetupTests` checks paired motor lookup,
 same-side powers without lateral demand, forward/heading calculations, and zero

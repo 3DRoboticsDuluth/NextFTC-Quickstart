@@ -290,3 +290,29 @@ them from a polar angle. This avoids tiny orthogonal projection values affecting
 sign-based calculations. It does not model shooter offsets or prescribe robot
 control policy. PoseTests cover axes, diagonal/reverse directions, nonzero origins,
 heading independence, pose preservation and independent zero vectors.
+
+## Point-to-point and absolute turns
+
+`Drive.turnTo(heading)` targets an absolute heading; `turn(angle)` remains relative.
+Both accept typed angles or degrees and claim Drive. Adapted `TurnTo` computes
+signed shortest target-minus-current heading at command start and calls Pedro's
+relative turn, avoiding Pedro 2.1.2's unsigned turnTo calculation. It waits for
+Pedro's turning flag and cancels following on interruption.
+
+`Drive.to(pose, reverse = false, holdEnd = true)` turns toward destination X/Y,
+travels straight at constant heading, then turns in place to the final heading.
+Reverse offsets only the travel heading by 180 degrees. Already-reached positions
+skip travel using Pose.distanceFrom and the follower path constraints' translational
+tolerance. Pose.face provides the bearing. Apply hold/stop after the final turn.
+
+`Drive.line(pose, holdEnd = true)` creates a live-start BezierLine with constant
+supplied heading, without initial/final turns. Tank callers must align first.
+`curve(pose)` retains the former continuous linear-heading `to` behavior.
+Axial/lateral now use curve, preserving signed movement and forward/strafe aliases.
+Lateral movement still requires a holonomic chassis. The deferred sequence claims
+Drive throughout; these helpers do not establish general differential path following.
+
+Use **Deploy Full** for these library changes; Sloth alone cannot install TurnTo.
+The originating tank checkout reported working absolute-turn and reverse maneuvers,
+but setup, accuracy and repeatability were not fully recorded. Tests were skipped
+by user request. Validate each robot's encoder geometry and floor tracking.

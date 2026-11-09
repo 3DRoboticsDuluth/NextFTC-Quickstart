@@ -173,3 +173,12 @@ reversal, negative/zero requests and later direction changes MUST remain
 consistent without mutating SDK direction or power. MotorExTests verifies
 forward and reversed commands, feedback and direction changes. See the
 [hardware guide](../architecture/hardware.md) for the behavior correction.
+
+REQ-PLT-034 point-to-point extension: turnTo MUST preserve signed shortest turns.
+line MUST use constant supplied heading. to MUST face, travel straight and match
+final heading, support reverse=false before holdEnd=true, skip travel within the
+configured translational tolerance, and apply hold/stop after the final turn.
+Axial/lateral and aliases MUST preserve prior behavior. Traceability:
+DriveSubsystem, adapted TurnTo and the [navigation contract](../architecture/drive-navigation.md#point-to-point-and-absolute-turns).
+Tests skipped by user request; originating robot reported working behavior,
+with accuracy/repeatability unrecorded.
