@@ -352,7 +352,7 @@ change to to a deferred face/line/final-turn sequence with reverse before holdEn
 Reuse pathConstraints.translationalConstraint and Pose.distanceFrom for the travel
 guard and Pose.face for bearing. Keep axial/lateral and aliases on curve. See the
 [navigation contract](../architecture/drive-navigation.md#point-to-point-and-absolute-turns).
-Tests skipped by user request; robot accuracy/repeatability remain unrecorded.
+DriveSubsystemTests now covers this sequence; robot accuracy/repeatability remain unrecorded.
 
 For the official Panels update, select FullPanels 1.0.20 in 3drdNextFTC, remove
 TeamCode's legacy com.bylazar.sloth substitution and add Dairy releases to the
@@ -362,3 +362,13 @@ offline Sloth workflows. REQ-PLT-006 maps to dependency insight, the full APK
 build and the [deployment guide](../guides/deployment.md#official-panels-with-sloth).
 Unit tests skipped by request; runtime hot-load and Restart Robot checks remain
 hardware validation.
+
+For REQ-SCF-016, import Tuning.java, including its Drawing helper, from Pedro
+Quickstart v2.1.2 at 4c556792df0dd72e37575b21bfc8cb77805537af into TeamCode's
+adaptations/pedropathing package. Replace the TeleOp annotation with Utility and
+call Constants.INSTANCE.createFollower from Java. Add the upstream menu dependency
+com.pedropathing:telemetry:1.0.0 to TeamCode. Preserve the vendor code's Java shape
+and use the existing constants as the only follower configuration source.
+TuningTests verifies registration, menu content, follower replacement and stop
+requests. Use Deploy Full for this dependency and structural change, then verify
+the Driver Station Utility menu and each hardware-appropriate procedure.

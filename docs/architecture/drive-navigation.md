@@ -314,5 +314,17 @@ Drive throughout; these helpers do not establish general differential path follo
 
 Use **Deploy Full** for these library changes; Sloth alone cannot install TurnTo.
 The originating tank checkout reported working absolute-turn and reverse maneuvers,
-but setup, accuracy and repeatability were not fully recorded. Tests were skipped
-by user request. Validate each robot's encoder geometry and floor tracking.
+but setup, accuracy and repeatability were not fully recorded. DriveSubsystemTests
+now verifies signed turns, forward/reverse point-to-point sequencing, nearby
+destinations, constant-heading lines, interruption, and hold/stop outcomes.
+Validate each robot's encoder geometry and floor tracking.
+
+## Tuning lifecycle
+
+The Pedro tuning launcher is vendor Java under TeamCode's
+`adaptations/pedropathing` package. It uses Pedro's SelectableOpMode lifecycle,
+with Utility registration, and builds its follower from the existing Constants.
+This preserves the upstream tuning workflow and avoids running the robot's
+NextFTC subsystem discovery or default driver command alongside the selected
+tuner. Competition OpModes continue to use the shared robot OpMode lifecycle.
+See REQ-SCF-016 and the [tuning guide](../guides/drivetrain.md#pedro-tuning-utility).

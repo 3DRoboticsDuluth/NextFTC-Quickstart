@@ -18,6 +18,33 @@ Pedro `Constants`. Configure names, motor/encoder directions, measured dimension
 and conversion factors. The [first-robot guide](first-robot.md) supplies the complete
 example. Verify heading and driver perspective before enabling field-centric control.
 
+## Pedro tuning utility
+
+Install the current checkout with **Deploy Full**, then open **Driver Station
+Settings → Utility OpModes → Pedro Tuning**. The launcher contains the upstream
+Localization, Automatic, Manual, Tests, and Swerve menus. Select the procedure
+appropriate to your hardware and follow the Pedro 2 instructions. Tuning and
+motion tests can command the drive motors.
+
+The utility builds a fresh follower through TeamCode's existing
+`adaptations/pedropathing/Constants.kt`. Set the hardware names, directions,
+localizer, and measured geometry there first. Copy the tuning results into those
+constants; the utility does not rewrite the source file. The default Quickstart
+is mecanum with drive-encoder localization. The Swerve menu is supplied upstream
+and requires a matching drivetrain setup; its presence does not configure swerve.
+
+The source is the [Pedro Quickstart v2.1.2 tuning file](https://github.com/Pedro-Pathing/Quickstart/blob/v2.1.2/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pedroPathing/Tuning.java),
+including its Drawing helper, at commit
+`4c556792df0dd72e37575b21bfc8cb77805537af`. We retain its Java layout and
+authorship. Local changes are the adaptations package, the Utility annotation,
+and calls to the existing Kotlin Constants object. The launcher uses Pedro's
+`SelectableOpMode` from `com.pedropathing:telemetry:1.0.0`, while pathing stays
+on 2.1.2 and Panels uses the project's existing version.
+
+[FIRST's Utility category](https://ftc-docs.firstinspires.org/en/latest/utility_opmodes/index.html)
+is available starting in SDK 11.2. The SDK 12 launcher registration keeps this
+menu out of the competition Auto and Teleop selectors.
+
 ## Two-motor tank with arcade control
 
 Pedro FTC 2.1.2 has no native tank drivetrain. The earlier arcade branch assigns

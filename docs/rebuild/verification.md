@@ -111,3 +111,21 @@ The former library hook tests are replaced by these observable TeamCode tests.
 
 REQ-SCF-015 traces to hardware TelemetryTests: INFO skips diagnostic reads and
 DEBUG skips VERBOSE current/motor-type reads while enabled fields remain unchanged.
+
+## Pedro 2 tuning utility integration
+
+REQ-SCF-016 imports the vendor Tuning.java and its embedded Drawing helper from
+Pedro Quickstart v2.1.2. TuningTests checks Utility-only registration, the upstream
+menu folders, replacement follower creation through TeamCode Constants, and the
+zero-drive helper. DriveSubsystemTests also updates the older point-to-point test
+for the current face/line/final-turn behavior and covers its branches.
+
+The existing owned-Kotlin coverage gates remain in force. Their class directories
+are the Kotlin compiler outputs, so the imported vendor Java internals are not
+included in those percentages. No coverage exclusions or thresholds were changed.
+The integration tests do not establish numerical accuracy of all upstream tuners.
+
+A full APK installation and physical verification of Driver Station Utility
+selection, localization, calibration, motion tests, drawing and Stop remain open.
+Use the [drivetrain guide](../guides/drivetrain.md#pedro-tuning-utility) to select
+the procedures appropriate to the actual chassis and localizer.
