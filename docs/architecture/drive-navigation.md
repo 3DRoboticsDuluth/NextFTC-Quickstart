@@ -273,6 +273,12 @@ that movement.
 ## Drawing
 
 `PedroDrawingComponent` draws Pedro's robot pose and heading using the configured robot radius.
+Its constructor order is `robotRadius`, `field`, then `getFollower`, with defaults
+for all three. OpMode uses `PedroDrawingComponent(Constants.robotRadius)`.
+For existing positional calls, move the radius first. Named arguments keep their
+names, and the follower supplier can be a trailing lambda.
+PedroDrawingComponentTests covers the radius-first constructor and defaults
+(REQ-PLT-036).
 It is diagnostic only; it must never feed localization. Robot length and width live
 with the Pedro constants because they configure both navigation alignment and field
 representation.

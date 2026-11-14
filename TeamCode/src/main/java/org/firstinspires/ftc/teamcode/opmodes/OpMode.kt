@@ -18,7 +18,7 @@ abstract class OpMode : NextFTCOpMode() {
             BindingsComponent,
             BulkReadComponent,
             PedroComponent(Constants::createFollower),
-            PedroDrawingComponent(robotRadius = Constants.robotRadius),
+            PedroDrawingComponent(Constants.robotRadius),
             ConfigComponent(Config),
             SubsystemComponent.all()
         )

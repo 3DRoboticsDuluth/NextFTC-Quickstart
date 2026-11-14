@@ -9,9 +9,9 @@ import dev.nextftc.core.components.*
 import dev.nextftc.extensions.pedro.PedroComponent.Companion.follower
 
 class PedroDrawingComponent(
+    val robotRadius: Double = 9.0,
     val field: FieldManager = PanelsField.field,
-    val getFollower: () -> Follower = { follower },
-    val robotRadius: Double = 9.0
+    val getFollower: () -> Follower = { follower }
 ) : Component {
     val targetStyle = Style("#666", "#3F51B5", 2.0)
     val robotStyle = Style("#666", "#4CAF50", 2.0)

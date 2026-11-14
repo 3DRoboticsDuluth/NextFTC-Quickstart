@@ -22,7 +22,7 @@ class PedroDrawingComponentTests : SubsystemTests() {
         field = FieldManager()
         follower = mock(Follower::class.java)
         history = mock(PoseHistory::class.java)
-        drawing = PedroDrawingComponent(field, { follower }, 7.125)
+        drawing = PedroDrawingComponent(7.125, field) { follower }
 
         `when`(history.xPositionsArray).thenReturn(doubleArrayOf(1.0, 2.0))
         `when`(history.yPositionsArray).thenReturn(doubleArrayOf(3.0, 4.0))
