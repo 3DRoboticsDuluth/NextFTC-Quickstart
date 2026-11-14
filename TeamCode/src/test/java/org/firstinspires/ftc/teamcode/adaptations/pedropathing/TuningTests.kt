@@ -25,6 +25,7 @@ class TuningTests {
     fun registersOnlyAsAPedroUtility() {
         val annotation = requireNotNull(Tuning::class.java.getAnnotation(Utility::class.java))
         assertEquals("Pedro Tuning", annotation.name)
+        assertEquals("", annotation.description)
         assertFalse(Tuning::class.java.isAnnotationPresent(TeleOp::class.java))
         assertFalse(Tuning::class.java.isAnnotationPresent(Autonomous::class.java))
         assertEquals(SelectableOpMode::class.java, Tuning::class.java.superclass)
