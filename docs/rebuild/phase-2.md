@@ -372,3 +372,14 @@ and use the existing constants as the only follower configuration source.
 TuningTests verifies registration, menu content, follower replacement and stop
 requests. Use Deploy Full for this dependency and structural change, then verify
 the Driver Station Utility menu and each hardware-appropriate procedure.
+
+For the REQ-PLT-034 through extension, replace DriveSubsystem.curves with
+through(vararg poses, holdEnd=true). Add the reusable PathBuilder.through helper
+to require a destination, extrapolate a previous point from the supplied start
+and first destination, and call Pedro's curveThrough(previous, start, 0.5, poses).
+Use paths to read follower.pose at execution time and apply global linear heading
+interpolation across the chain. Retain Drive ownership. Do not use Pedro 2.1.2's
+general BezierCurve.through factory, which failed a four-point numerical test.
+PathBuilderTests checks waypoint passage, matching join derivatives, a single
+destination, repeated points and missing destinations. DriveSubsystemTests checks
+live-start forwarding, both hold values, naming, headings and requirements.

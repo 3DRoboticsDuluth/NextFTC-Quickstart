@@ -185,7 +185,7 @@ at this field point” instead of repeating trigonometry.
 
 ## Paths Are Late-Bound
 
-`DriveSubsystem.paths`, `to`, `curve`, and `curves` create deferred commands. The
+`DriveSubsystem.paths`, `to`, `curve`, and `through` create deferred commands. The
 start pose comes from `follower.pose` when execution begins. Decode helpers such as
 `toSpike`, `toDeposit`, and `toParking` are delegated deferred properties for the
 same reason.
@@ -193,6 +193,40 @@ same reason.
 Curved paths are the default for efficient travel. Straight line helpers remain
 available where geometry demands them. Heading interpolation reaches the final
 heading at the overridable `headingEnd` fraction.
+
+### Curve control points and through waypoints
+
+`Drive.curve(vararg poses, holdEnd = true)` uses the supplied intermediate poses
+as Bezier control points. `Drive.through(vararg poses, holdEnd = true)` visits
+each supplied X/Y waypoint using a chain of cubic Bezier segments. Both acquire
+the start pose when the command begins and reserve Drive throughout the command.
+Through accepts one or more destinations and holds only at the final endpoint
+when requested. Passing an intermediate waypoint does not add a stop command.
+
+```kotlin
+Drive.through(Nav.pose(1.tiles, 2.tiles), Nav.pose(3.tiles, 1.tiles, 90.deg))
+```
+
+Through uses one global start-to-final heading interpolation across the chain,
+reaching the final heading at headingEnd of total chain distance. Intermediate
+pose headings do not define heading constraints. The global interpolation avoids
+restarting heading interpolation on every segment.
+
+The PathBuilder.through helper uses Pedro's curveThrough cubic-chain routine at
+tension 0.5. It supplies the execution-time start explicitly and extrapolates a
+previous point from the first destination. Adjacent segments have matching
+first derivatives at their shared waypoint. This produces Catmull-Rom
+interpolation with the number of segments proportional to the number of
+destinations. It avoids Pedro 2.1.2's general BezierCurve.through vararg factory,
+which failed a four-point numerical waypoint test. PathBuilderTests checks the
+real path geometry and join derivatives, one-destination straight travel,
+repeated-point finiteness, and rejection of missing destinations.
+DriveSubsystemTests checks live-start forwarding, global heading, ownership,
+naming and both hold choices. Physical tracking accuracy remains robot validation.
+
+The former `curves(...)` method has been removed. Replace those calls with
+`through(...)` to visit the same destinations with smooth segment joins. Use
+`paths` for explicitly chosen control points and segment shapes.
 
 ## Typed `until`
 

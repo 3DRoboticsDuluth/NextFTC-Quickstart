@@ -56,14 +56,11 @@ abstract class DriveSubsystem : Subsystem() {
         setLinearHeadingInterpolation(start.heading, poses.last().heading, headingEnd)
     }.named("${javaClass.simpleName}.curve")
 
-    fun curves(vararg poses: Pose, holdEnd: Boolean = true) = paths(holdEnd) {
-        var start = follower.pose
-        poses.forEach { end ->
-            addPath(BezierCurve(start, start.midpoint(end), end))
-            setLinearHeadingInterpolation(start.heading, end.heading, headingEnd)
-            start = end
-        }
-    }.named("${javaClass.simpleName}.curves")
+    fun through(vararg poses: Pose, holdEnd: Boolean = true) = paths(holdEnd) {
+        val start = follower.pose
+        this.through(start, *poses)
+        setGlobalLinearHeadingInterpolation(start.heading, poses.last().heading, headingEnd)
+    }.named("${javaClass.simpleName}.through")
 
     fun axial(distance: Distance) = DeferredCommand(this) {
         curve(follower.pose.axial(distance.inIn))

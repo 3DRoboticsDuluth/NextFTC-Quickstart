@@ -189,3 +189,13 @@ Sloth support, without the legacy 1.0.13 fork substitution. Keep Dairy releases
 available to application and library resolution. Validate the resolved runtime
 and APK separately from hardware hot-reload and Restart Robot behavior; see the
 [deployment guide](../guides/deployment.md#official-panels-with-sloth).
+
+The REQ-PLT-034 through extension, through(vararg poses, holdEnd=true), MUST build
+a deferred cubic Bezier chain from the execution-time pose through every supplied
+X/Y waypoint. It MUST accept one or more destinations, retain Drive ownership,
+use global start-to-final heading interpolation, and optionally hold at the final
+endpoint. It MUST reject missing destinations and preserve matching join
+derivatives. The former curves helper is removed. PathBuilderTests checks real
+geometry and join derivatives. DriveSubsystemTests checks execution-time start,
+heading, ownership, naming and hold choices. See the
+[navigation contract](../architecture/drive-navigation.md#curve-control-points-and-through-waypoints).

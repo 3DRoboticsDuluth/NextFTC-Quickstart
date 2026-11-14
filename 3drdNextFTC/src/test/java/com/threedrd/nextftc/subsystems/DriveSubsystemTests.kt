@@ -23,7 +23,7 @@ class DriveSubsystemTests : SubsystemTests() {
     @Before
     fun setUp() {
         follower = mock(Follower::class.java)
-        builder = mock(PathBuilder::class.java)
+        builder = mock(PathBuilder::class.java, RETURNS_SELF)
         chain = mock(PathChain::class.java)
         `when`(follower.pathBuilder()).thenReturn(builder)
         `when`(builder.addPath(any(Curve::class.java))).thenReturn(builder)
@@ -55,8 +55,45 @@ class DriveSubsystemTests : SubsystemTests() {
         drive.paths { addPath(BezierLine(start, end)) }.start()
         drive.curve(end, holdEnd = false).start()
         drive.curve(middle, end).start()
-        drive.curves(middle, end).start()
-        verify(builder, times(5)).addPath(any(Curve::class.java))
+        drive.through(middle, end).start()
+        verify(builder, times(3)).addPath(any(Curve::class.java))
+    }
+
+    @Test
+    fun throughUsesTheExecutionPoseAndOneFollowerChain() {
+        `when`(follower.pose).thenReturn(Pose(-50.0, -50.0))
+        val waypoints = arrayOf(Pose(4.0, 8.0, 0.8), Pose(10.0, 3.0, 1.0), Pose(15.0, 7.0, 1.5))
+        val command = drive.through(*waypoints, holdEnd = false)
+        assertTrue(command.requirements.contains(drive))
+        assertTrue(command.name.endsWith(".through"))
+        verifyNoInteractions(builder)
+        val start = Pose(1.0, 2.0, 0.25)
+        `when`(follower.pose).thenReturn(start)
+        command.start()
+        val previous = ArgumentCaptor.forClass(Pose::class.java)
+        verify(builder).curveThrough(previous.capture(), eq(start), eq(0.5), eq(waypoints[0]), eq(waypoints[1]), eq(waypoints[2]))
+        assertEquals(-2.0, previous.value.x, 0.000001)
+        assertEquals(-4.0, previous.value.y, 0.000001)
+        verify(builder).setGlobalLinearHeadingInterpolation(start.heading, waypoints.last().heading, 0.33)
+        verify(follower).followPath(chain, false)
+    }
+
+    @Test
+    fun throughUsesDefaultEndHoldAndAcceptsOneDestination() {
+        val start = Pose(2.0, 4.0, 0.1)
+        val end = Pose(8.0, 10.0, 0.6)
+        `when`(follower.pose).thenReturn(start)
+        drive.through(end).start()
+        verify(builder).setGlobalLinearHeadingInterpolation(start.heading, end.heading, 0.33)
+        verify(follower).followPath(chain, true)
+    }
+
+    @Test
+    fun throughRejectsMissingDestinationsBeforeFollowing() {
+        `when`(follower.pose).thenReturn(Pose())
+        assertThrows(IllegalArgumentException::class.java) { drive.through().start() }
+        verify(builder, never()).build()
+        verify(follower, never()).followPath(any(PathChain::class.java), anyBoolean())
     }
 
     @Test
