@@ -53,11 +53,74 @@ class DriveSubsystemTests : SubsystemTests() {
 
         clearInvocations(builder, follower)
         drive.paths { addPath(BezierLine(start, end)) }.start()
-        drive.to(end).start()
         drive.curve(end, holdEnd = false).start()
         drive.curve(middle, end).start()
         drive.curves(middle, end).start()
-        verify(builder, times(6)).addPath(any(Curve::class.java))
+        verify(builder, times(5)).addPath(any(Curve::class.java))
+    }
+
+    @Test
+    fun absoluteTurnsPreserveDirectionAndCancelPedroOnInterruption() {
+        `when`(follower.heading).thenReturn(Math.toRadians(170.0))
+        val turn = drive.turnTo((-170).deg)
+        assertTrue(turn.requirements.contains(drive))
+        turn.start()
+        verify(follower).turn(doubleThat { kotlin.math.abs(it - Math.toRadians(20.0)) < 1e-12 })
+        `when`(follower.isTurning).thenReturn(true, false)
+        assertFalse(turn.isDone)
+        assertTrue(turn.isDone)
+        turn.stop(false)
+        verify(follower, never()).breakFollowing()
+        turn.stop(true)
+        verify(follower).breakFollowing()
+
+        `when`(follower.heading).thenReturn(Math.toRadians(-170.0))
+        drive.turnTo(170.0).start()
+        verify(follower).turn(doubleThat { kotlin.math.abs(it - Math.toRadians(-20.0)) < 1e-12 })
+    }
+
+    @Test
+    fun pointToPointFacesTravelsAndFinishesWithTheRequestedHeading() {
+        follower.pathConstraints = PathConstraints.defaultConstraints
+        `when`(follower.pose).thenReturn(Pose())
+        val destination = Pose(0.0, 10.0, Math.PI)
+        for (reverse in listOf(false, true)) {
+            for (hold in listOf(false, true)) {
+                clearInvocations(builder, follower)
+                val command = drive.to(destination, reverse, hold)
+                assertTrue(command.requirements.contains(drive))
+                command.start()
+                repeat(12) { if (!command.isDone) command.update() }
+                assertTrue(command.isDone)
+                val path = ArgumentCaptor.forClass(Curve::class.java)
+                verify(builder).addPath(path.capture())
+                assertEquals(destination.x, path.value.controlPoints.last().x, 0.0)
+                assertEquals(destination.y, path.value.controlPoints.last().y, 0.0)
+                val heading = if (reverse) -Math.PI / 2 else Math.PI / 2
+                verify(builder).setConstantHeadingInterpolation(heading)
+                verify(follower).turn(heading)
+                verify(follower).turn(Math.PI)
+                if (hold) verify(follower).holdPoint(destination)
+                else verify(follower).breakFollowing()
+            }
+        }
+    }
+
+    @Test
+    fun nearbyDestinationOnlyTurnsAndLineUsesItsSuppliedHeading() {
+        follower.pathConstraints = PathConstraints.defaultConstraints
+        val pose = Pose(2.0, 3.0, 0.0)
+        `when`(follower.pose).thenReturn(pose)
+        val destination = Pose(2.0, 3.0, Math.PI / 2)
+        val command = drive.to(destination)
+        command.start()
+        repeat(8) { if (!command.isDone) command.update() }
+        assertTrue(command.isDone)
+        verify(follower).turn(Math.PI / 2)
+        verify(follower).holdPoint(destination)
+        verify(builder, never()).addPath(any(Curve::class.java))
+        drive.line(destination).start()
+        verify(builder).setConstantHeadingInterpolation(Math.PI / 2)
     }
 
     @Test

@@ -180,8 +180,9 @@ final heading, support reverse=false before holdEnd=true, skip travel within the
 configured translational tolerance, and apply hold/stop after the final turn.
 Axial/lateral and aliases MUST preserve prior behavior. Traceability:
 DriveSubsystem, adapted TurnTo and the [navigation contract](../architecture/drive-navigation.md#point-to-point-and-absolute-turns).
-Tests skipped by user request; originating robot reported working behavior,
-with accuracy/repeatability unrecorded.
+DriveSubsystemTests verifies the sequence, signed turns, reverse, proximity
+handling, line heading, interruption, and hold/stop behavior. The originating
+robot reported working behavior, with accuracy/repeatability unrecorded.
 
 REQ-PLT-006 Panels compatibility: use official FullPanels 1.0.20 with native
 Sloth support, without the legacy 1.0.13 fork substitution. Keep Dairy releases
