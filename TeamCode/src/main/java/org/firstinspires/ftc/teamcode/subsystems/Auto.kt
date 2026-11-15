@@ -7,8 +7,6 @@ import com.threedrd.pedropathing.*
 
 @Discovery(mode = AUTO)
 object Auto : Subsystem() {
-    val execute = Drive.to(Nav.end)
-
     override fun initialize() = follower.resetStartingPose(Nav.start)
-    override fun start() { execute.schedule() }
+    override fun start() = Drive.to(Nav.end).schedule()
 }

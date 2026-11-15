@@ -272,17 +272,15 @@ class Teleop : OpMode()
 
 Subsystem controls are registered once and activate after Teleop Start. The config
 menu remains available during init. Quickstart's Auto subsystem is discovered only
-for autonomous. It establishes `Nav.start` during initialization and schedules its
+for autonomous. It establishes `Nav.start` during initialization and constructs and schedules Drive's
 deferred command from the subsystem's start hook. Import AUTO from
 `com.threedrd.nextftc.subsystems.DiscoveryMode`.
 
 ```kotlin
 @Discovery(mode = AUTO)
 object Auto : Subsystem() {
-    val execute = Drive.to(Nav.end)
-
     override fun initialize() = follower.resetStartingPose(Nav.start)
-    override fun start() { execute.schedule() }
+    override fun start() = Drive.to(Nav.end).schedule()
 }
 ```
 

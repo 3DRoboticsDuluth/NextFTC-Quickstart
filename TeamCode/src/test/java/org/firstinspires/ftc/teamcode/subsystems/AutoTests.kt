@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.pedropathing.follower.*
+import com.pedropathing.paths.PathConstraints
 import com.qualcomm.robotcore.eventloop.opmode.*
 import dev.nextftc.extensions.pedro.*
 import dev.nextftc.ftc.*
@@ -34,11 +35,14 @@ class AutoTests : SubsystemTests() {
         assertEquals(setOf(Auto), subsystems.subsystems)
         verify(follower).setStartingPose(Nav.start)
         verify(follower).setPose(Nav.start)
-        assertFalse(Auto.execute.isScheduled)
+        assertFalse(CommandManager.hasCommandsUsing(Drive))
 
+        `when`(follower.pose).thenReturn(Nav.end)
+        follower.pathConstraints = PathConstraints.defaultConstraints
         clearInvocations(follower)
         subsystems.preStartButtonPressed()
-        assertTrue(Auto.execute.isScheduled)
+        CommandManager.run()
+        assertTrue(CommandManager.hasCommandsUsing(Drive))
         verify(follower, never()).setStartingPose(any())
         verify(follower, never()).setPose(any())
     }
@@ -50,14 +54,8 @@ class AutoTests : SubsystemTests() {
         subsystems.preInit()
         subsystems.preStartButtonPressed()
         assertTrue(subsystems.subsystems.isEmpty())
-        assertFalse(Auto.execute.isScheduled)
+        assertFalse(CommandManager.hasCommandsUsing(Drive))
         verifyNoInteractions(follower)
-    }
-
-    @Test
-    fun exposesTheDeferredDriveCommand() {
-        assertEquals("Drive.to", Auto.execute.name)
-        assertTrue(Auto.execute.requirements.contains(Drive))
     }
 
     fun useOpMode(opMode: LinearOpMode) {

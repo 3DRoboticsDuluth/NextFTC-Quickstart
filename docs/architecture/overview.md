@@ -59,8 +59,9 @@ hardware telemetry policy and adds components in an intentional order:
 
 Teleop and Auto inherit this root without extra code. The sample Auto subsystem
 uses `@Discovery(mode = AUTO)` to participate only during autonomous. Its initialize
-hook establishes the neutral starting pose, and its start hook schedules the
-top-level deferred command. The shared component owns those lifecycle calls.
+hook establishes the neutral starting pose, and its start hook constructs and
+schedules a fresh `Drive.to(Nav.end)` command. The shared component owns those
+lifecycle calls.
 
 ## Data and Control Flow
 

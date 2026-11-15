@@ -115,7 +115,7 @@ Create:
 - Reusable driving/diagnostic `Config`;
 - Concrete, customizable `Drive` and `Nav` subsystems with start/end poses;
 - An `@Discovery(mode = AUTO)` subsystem that initializes Nav.start and schedules
-  the small deferred `Auto.execute` command from its start hook toward Nav.end;
+  a fresh deferred `Drive.to(Nav.end)` command from its start hook;
 - Hardware-free `Timing` subsystem;
 - Tests for all scaffold code.
 
@@ -388,6 +388,7 @@ live-start forwarding, both hold values, naming, headings and requirements.
 REQ-SCF-009 now uses the REQ-PLT-055 mode filter in the neutral Auto example.
 Keep the Auto OpMode empty. Mark the Auto subsystem with DiscoveryMode.AUTO,
 initialize the start pose unconditionally inside that registered subsystem, and
-schedule execute in its start hook. Test actual SubsystemComponent registration
+construct and schedule `Drive.to(Nav.end)` in its start hook. Test actual
+SubsystemComponent registration
 in Auto and Teleop, initialization before scheduling, and omission of pose resets
 at Start. Remove the older OpMode onStartButtonPressed scheduling callback.
