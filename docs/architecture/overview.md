@@ -57,9 +57,10 @@ hardware telemetry policy and adds components in an intentional order:
 6. `ConfigComponent` restores and persists settings.
 7. `SubsystemComponent.all()` discovers and runs subsystems.
 
-Teleop inherits this root without extra code. The sample Auto subsystem establishes
-the neutral starting pose during autonomous initialization, and the Auto OpMode
-schedules its top-level deferred command in `onStartButtonPressed()`.
+Teleop and Auto inherit this root without extra code. The sample Auto subsystem
+uses `@Discovery(mode = AUTO)` to participate only during autonomous. Its initialize
+hook establishes the neutral starting pose, and its start hook schedules the
+top-level deferred command. The shared component owns those lifecycle calls.
 
 ## Data and Control Flow
 

@@ -1,26 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes
 
-import dev.nextftc.core.commands.*
-import org.firstinspires.ftc.teamcode.subsystems.Auto.execute
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.junit.*
 import org.junit.Assert.*
 
 class AutoTests {
-    @After
-    fun tearDown() {
-        CommandManager.cancelAll()
-        CommandManager.run()
-    }
-
     @Test
-    fun compositionCanBeCreated() {
+    fun compositionCanBeCreatedAndIsRegisteredAsAutonomous() {
         assertNotNull(Auto())
-    }
-
-    @Test
-    fun schedulesTheExampleRoutineAtStart() {
-        Auto().onStartButtonPressed()
-
-        assertTrue(execute.isScheduled)
+        assertTrue(Auto::class.java.isAnnotationPresent(Autonomous::class.java))
     }
 }

@@ -111,11 +111,11 @@ Create:
 - Template Pedro constants with 18-inch placeholder dimensions, drivetrain-encoder
   localization, and defaults;
 - Shared `OpMode` composition root;
-- FTC-discoverable Teleop and an Auto that schedules a neutral example routine;
+- Empty FTC-discoverable Teleop and Auto OpModes;
 - Reusable driving/diagnostic `Config`;
 - Concrete, customizable `Drive` and `Nav` subsystems with start/end poses;
-- A small `Auto.execute` command that drives from the initialized start toward the
-  example end pose;
+- An `@Discovery(mode = AUTO)` subsystem that initializes Nav.start and schedules
+  the small deferred `Auto.execute` command from its start hook toward Nav.end;
 - Hardware-free `Timing` subsystem;
 - Tests for all scaffold code.
 
@@ -384,3 +384,10 @@ general BezierCurve.through factory, which failed a four-point numerical test.
 PathBuilderTests checks waypoint passage, matching join derivatives, a single
 destination, repeated points and missing destinations. DriveSubsystemTests checks
 live-start forwarding, both hold values, naming, headings and requirements.
+
+REQ-SCF-009 now uses the REQ-PLT-055 mode filter in the neutral Auto example.
+Keep the Auto OpMode empty. Mark the Auto subsystem with DiscoveryMode.AUTO,
+initialize the start pose unconditionally inside that registered subsystem, and
+schedule execute in its start hook. Test actual SubsystemComponent registration
+in Auto and Teleop, initialization before scheduling, and omission of pose resets
+at Start. Remove the older OpMode onStartButtonPressed scheduling callback.

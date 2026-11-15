@@ -4,6 +4,8 @@ import com.pedropathing.follower.*
 import com.qualcomm.robotcore.eventloop.opmode.*
 import dev.nextftc.extensions.pedro.*
 import dev.nextftc.ftc.*
+import dev.nextftc.core.commands.CommandManager
+import com.threedrd.nextftc.subsystems.SubsystemComponent
 import org.junit.*
 import org.junit.Assert.*
 import org.mockito.Mockito.*
@@ -19,20 +21,36 @@ class AutoTests : SubsystemTests() {
     }
 
     @After
-    fun tearDown() = component.postStop()
+    fun tearDown() {
+        CommandManager.cancelAll()
+        component.postStop()
+    }
 
     @Test
-    fun resetsTheStartingPoseOnlyForAutonomous() {
+    fun autonomousLifecycleInitializesThenSchedulesWithoutResettingPoseAtStart() {
         useOpMode(AutonomousTestOpMode())
-        Auto.initialize()
-
+        val subsystems = SubsystemComponent(Auto)
+        subsystems.preInit()
+        assertEquals(setOf(Auto), subsystems.subsystems)
         verify(follower).setStartingPose(Nav.start)
         verify(follower).setPose(Nav.start)
+        assertFalse(Auto.execute.isScheduled)
 
         clearInvocations(follower)
-        useOpMode(TeleopTestOpMode())
-        Auto.initialize()
+        subsystems.preStartButtonPressed()
+        assertTrue(Auto.execute.isScheduled)
+        verify(follower, never()).setStartingPose(any())
+        verify(follower, never()).setPose(any())
+    }
 
+    @Test
+    fun teleopOmitsAutoInitializationAndStart() {
+        useOpMode(TeleopTestOpMode())
+        val subsystems = SubsystemComponent(Auto)
+        subsystems.preInit()
+        subsystems.preStartButtonPressed()
+        assertTrue(subsystems.subsystems.isEmpty())
+        assertFalse(Auto.execute.isScheduled)
         verifyNoInteractions(follower)
     }
 

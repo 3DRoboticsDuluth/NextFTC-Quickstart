@@ -271,29 +271,32 @@ class Teleop : OpMode()
 ```
 
 Subsystem controls are registered once and activate after Teleop Start. The config
-menu remains available during init. Quickstart's Auto subsystem establishes
-`Nav.start` during autonomous initialization and exposes a named, deferred command:
+menu remains available during init. Quickstart's Auto subsystem is discovered only
+for autonomous. It establishes `Nav.start` during initialization and schedules its
+deferred command from the subsystem's start hook. Import AUTO from
+`com.threedrd.nextftc.subsystems.DiscoveryMode`.
 
 ```kotlin
+@Discovery(mode = AUTO)
 object Auto : Subsystem() {
     val execute = Drive.to(Nav.end)
 
-    override fun initialize() {
-        if (ActiveOpMode.isAutonomous) follower.resetStartingPose(Nav.start)
-    }
+    override fun initialize() = follower.resetStartingPose(Nav.start)
+    override fun start() { execute.schedule() }
 }
 ```
 
-The Auto OpMode schedules that entry command only after Start:
+The Auto OpMode remains empty, like Teleop:
 
 ```kotlin
 @Autonomous
-class Auto : OpMode() {
-    override fun onStartButtonPressed() {
-        execute.schedule()
-    }
-}
+class Auto : OpMode()
 ```
+
+Mode-aware subsystem registration excludes Auto entirely during Teleop. The
+shared component runs initialize during Init and start after the Start button.
+The start hook schedules the command without resetting any pose adjustments made
+during initialization.
 
 `Drive.to()` is already deferred and owns Drive, so another deferred wrapper and
 duplicate requirement declaration would add no behavior. It reads the live follower
