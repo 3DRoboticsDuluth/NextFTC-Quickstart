@@ -307,7 +307,8 @@ selected-dimension readback metadata, Hub-only speed, and stop(). Reuse the expl
 safe-stop operation, preserve initial logical zero unless requested, and capture
 current position as the stopped initial target before selecting Hub mode. Preserve
 all previous helpers. Recreate target dispatch/readback, initial target/zero, speed
-mode checks, and lifecycle tests in the two existing motor test classes. Follow
+read-mode checks, mode-before-power writes, recovery from an external mode change,
+and lifecycle tests in the two existing motor test classes. Follow
 [the live motor surface](../architecture/hardware.md#position-mode-with-live-target-and-speed).
 
 For REQ-PLT-054, add MotorPIDF extension properties for Hub position P and velocity

@@ -465,24 +465,25 @@ before acquisition. Absolute logical-zero, rounding, and unwrapped-angle rules
 remain unchanged.
 
 `speed` gets/sets the SDK's commanded normalized maximum movement speed (0..1),
-not measured velocity or an electrical-power/current ceiling. It requires Hub
-RUN_TO_POSITION and never selects a different mode or changes the target. Invalid
-speed fails before acquisition; valid access in another mode fails without changing
-mode or power. Native velocity remains measured signed encoder ticks/second.
+not measured velocity or an electrical-power/current ceiling. Writing speed
+selects RUN_TO_POSITION before applying power, reusing positionControl(value)
+without changing the target or logical zero. Reading speed still requires
+RUN_TO_POSITION. Invalid speed fails before acquisition or actuation.
+Native velocity remains measured signed encoder ticks/second.
 Setting speed each periodic cycle applies live settings; the SDK caches unchanged
 hardware writes. TeamCode's `update()` applies the block before calling `tel()`.
 
 `stop()` uses the existing explicit SDK-zero-before-native-zero operation to avoid
 the native cached-zero hazard, and returns to native direct-power mode. It does
 not cancel scheduler commands or redefine logical zero. Normal OpMode shutdown
-ends periodic updates; later speed writes in direct mode fail instead of silently
-re-enabling motion. stopPositionControl() remains a compatibility alias, and
+ends periodic updates. A subsequent speed write explicitly resumes position
+control, so lifecycle cleanup must be followed by no further periodic updates. stopPositionControl() remains a compatibility alias, and
 positionControl(speed) retains its previous explicit setup behavior.
 
 MotorTargetsTests and MotorPositionControlTests cover both target dimensions,
 readback selection, unsupported/incomplete quantities, default-preserve and explicit
 re-zero setup, stopped initial targets, repeated lifecycle setup, measured-velocity
-independence, mode-preserving live speed updates, invalid input, and safe stopping.
+independence, mode-reasserting live speed updates, invalid input, and safe stopping.
 
 ## Hub PIDF tuning
 

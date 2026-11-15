@@ -122,9 +122,10 @@ and MotorPositionControlTests for behavior and traceability.
 `REQ-PLT-053`: MotorEx MUST support positionMode(zero=false), a Quantity target
 accepting Distance/Angle, normalized Hub speed, and cache-safe stop(). Mode setup
 MUST begin stopped at the current position, preserve logical zero by default, and
-optionally recapture it without a hardware encoder reset. Target/speed updates
-MUST NOT change modes; speed MUST require Hub position mode and remain distinct
-from measured velocity. Generic target readback MUST use the most recently
+optionally recapture it without a hardware encoder reset. Target updates MUST
+NOT change modes. Speed writes MUST select Hub position mode before applying
+power without changing the target or logical zero. Speed reads MUST require Hub
+position mode, and speed MUST remain distinct from measured velocity. Generic target readback MUST use the most recently
 calibrated or successfully assigned dimension, including explicit typed setters.
 Unsupported/incomplete quantities and invalid speed MUST fail clearly without
 actuation. Existing helper signatures MUST remain available. Tests and reconstruction

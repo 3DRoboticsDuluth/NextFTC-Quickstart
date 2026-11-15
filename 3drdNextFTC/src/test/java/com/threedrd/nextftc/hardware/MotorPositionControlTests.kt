@@ -136,7 +136,7 @@ class MotorPositionControlTests : SubsystemTests() {
     }
 
     @Test
-    fun speedIsAHubCommandAndDoesNotChangeModeTargetOrMeasuredVelocity() {
+    fun speedSelectsPositionModeWithoutChangingTargetOrMeasuredVelocity() {
         val sdk = mock(DcMotorEx::class.java)
         `when`(sdk.mode).thenReturn(RUN_TO_POSITION)
         `when`(sdk.power).thenReturn(0.3)
@@ -152,7 +152,7 @@ class MotorPositionControlTests : SubsystemTests() {
         verify(sdk).power = 0.5
         verify(sdk).power = 0.0
         verify(sdk).power = 1.0
-        verify(sdk, never()).setMode(any())
+        verify(sdk, times(4)).mode = RUN_TO_POSITION
         verify(sdk, never()).setTargetPosition(anyInt())
         assertEquals(125.0, motor.velocity, 0.0)
         motor.stop()
@@ -161,7 +161,24 @@ class MotorPositionControlTests : SubsystemTests() {
     }
 
     @Test
-    fun speedRequiresPositionModeAndInvalidValuesFailBeforeAcquisition() {
+    fun speedRecoversPositionModeAfterAnExternalModeChangeWithoutResettingTheDatum() {
+        val sdk = mock(DcMotorEx::class.java)
+        `when`(sdk.currentPosition).thenReturn(100)
+        val motor = MotorEx(sdk)
+        motor.currentPosition = 25.0
+        motor.positionMode()
+        sdk.mode = RUN_WITHOUT_ENCODER
+        clearInvocations(sdk)
+        motor.speed = 0.4
+        val order = inOrder(sdk)
+        order.verify(sdk).mode = RUN_TO_POSITION
+        order.verify(sdk).power = 0.4
+        verifyNoMoreInteractions(sdk)
+        assertEquals(25.0, motor.currentPosition, 0.0)
+    }
+
+    @Test
+    fun speedReadRequiresPositionModeAndInvalidWritesFailBeforeAcquisition() {
         val map = ActiveOpMode.hardwareMap
         val motor = MotorEx("invalidSpeedProperty")
         clearInvocations(map)
@@ -173,8 +190,14 @@ class MotorPositionControlTests : SubsystemTests() {
         `when`(sdk.mode).thenReturn(RUN_WITHOUT_ENCODER)
         val manual = MotorEx(sdk)
         assertThrows(IllegalStateException::class.java) { manual.speed }
-        assertThrows(IllegalStateException::class.java) { manual.speed = 0.2 }
         verify(sdk, never()).setPower(anyDouble())
+        clearInvocations(sdk)
+        manual.speed = 0.2
+        val order = inOrder(sdk)
+        order.verify(sdk).mode = RUN_TO_POSITION
+        order.verify(sdk).power = 0.2
+        verify(sdk, never()).setTargetPosition(anyInt())
+        verify(sdk, never()).getCurrentPosition()
     }
 
 }

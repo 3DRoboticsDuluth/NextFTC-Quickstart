@@ -21,10 +21,7 @@ fun MotorEx.positionMode(zero: Boolean = false) {
 
 var MotorEx.speed: Double
     get() = positionMotor().power
-    set(value) {
-        require(value in 0.0..1.0) { "Position-control speed must be between 0 and 1" }
-        positionMotor().power = value
-    }
+    set(value) = positionControl(value)
 
 private fun MotorEx.positionMotor() = motor.also {
     check(it.mode == RUN_TO_POSITION) { "Call positionMode() before using speed" }
