@@ -27,6 +27,7 @@ Verify portable ADB discovery without changing a robot connection:
 ./scripts/adb.sh version
 ```
 
+The library check also runs `:3drdSettingsProcessor:check`.
 This verifies reusable-library tests, TeamCode tests, 100% line and branch
 thresholds, lint/check tasks, dependency compatibility, and debug APK assembly. Do
 not weaken a threshold to make the command pass.

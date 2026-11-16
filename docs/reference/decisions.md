@@ -203,3 +203,17 @@ FullPanels 1.0.20 replaces the older Dairy-packaged 1.0.13 fork. Official Panels
 integrated Sloth support in 1.0.16; retaining the old dependency substitution
 would silently prevent the update. Keep Dairy repositories for transitive
 Sloth dependencies and require a full install for the version change.
+
+
+## Generate singleton settings order at build time
+
+Android reflection does not guarantee source field order. Constructor ordering
+alone therefore cannot satisfy REQ-PLT-021 for the preferred Config singleton.
+Use a small KSP module to generate per-owner field-name metadata; leave student
+properties, Panels and persistence unchanged. Prefer this over numeric priorities,
+a manually duplicated list, or moving settings into a nested constructor object.
+The processor runs only at build time. Resolve metadata with the owner's class
+loader so the library does not capture a TeamCode class in a static registry.
+The legacy path remains available for consumers that do not apply the processor.
+Initial deployment and structural settings changes require Deploy Full;
+hardware/Sloth class-replacement validation remains separate from desktop tests.

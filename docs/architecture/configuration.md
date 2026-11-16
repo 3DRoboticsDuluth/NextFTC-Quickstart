@@ -24,7 +24,11 @@ object Config : ConfigSubsystem() {
 }
 ```
 
-Reflection finds `@Setting` fields in source declaration order. The property's type
+The build-time `3drdSettingsProcessor` uses KSP to generate a small `Config$SettingOrder`
+class beside each settings owner. The menu reads its field names once through the
+owner's class loader, then uses reflection to access the real settings. This makes
+singleton menu order follow source declarations on Android as well as desktop,
+without numeric priorities, a manual list, or changes to Panels discovery. The property's type
 selects Boolean, enum, numeric, or provider-backed behavior. Metadata supplies
 increment, range, format, whether a started OpMode may edit it, and an optional
 dynamic string-options provider.
@@ -88,3 +92,29 @@ The reusable subsystem does not know about alliance, side, or autonomous strateg
 selection. A season may add those settings and validate them before Auto starts.
 That policy correctly remains in TeamCode rather than the reusable configuration
 library.
+
+
+## Source-order generation and deployment
+
+Both TeamCode and 3drdNextFTC apply KSP and depend on the JVM-only
+`3drdSettingsProcessor` module. Its processor is not packaged in the robot APK.
+Each generated Java class depends only on its owner's source file, so moving,
+adding or removing settings updates the metadata during normal variant compilation.
+The processor also handles nested owners and ignores unannotated properties.
+Generated files stay under each module's `build/generated/ksp` directory.
+
+If metadata is absent (for example, an older external library), constructor
+parameter ordering remains supported, followed by the remaining reflected fields.
+Source order of singleton fields is not promised without generation. The menu
+still works; it does not silently disable settings or require a central registry.
+
+The runtime uses the settings owner's class loader rather than a global registry
+or process-wide cache. A full install is required when first introducing this
+processor or adding/removing settings because the generated class is structural
+code. Reordering settings changes its static metadata; use Deploy Full to verify
+that change on hardware. Sloth's offline build includes KSP, but a dry-run or a
+successful APK build does not prove hot-loaded class replacement or Android menu
+ordering. No robot deployment has been performed for this change.
+
+New development computers must run an online full build to cache KSP and its
+processor dependencies before the offline Deploy Sloth workflow is used.

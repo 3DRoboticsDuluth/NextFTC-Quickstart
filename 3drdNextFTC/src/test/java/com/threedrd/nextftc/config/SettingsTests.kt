@@ -112,6 +112,22 @@ class SettingsTests {
         assertFalse(setting.change(1))
     }
 
+    class GeneratedSettings {
+        @Setting var zebra = false
+        @Setting var alpha = false
+        @Setting var remainder = false
+    }
+
+    @Test
+    fun generatedOrderOverridesReflectedOrderAndPreservesUnlistedFields() {
+        val config = GeneratedSettings()
+        val settings = config.settings(GeneratedSettings::class.java.declaredFields.reversed())
+        assertEquals(listOf("Zebra", "Alpha", "Remainder"), settings.map { it.key })
+        assertTrue(settings.first().change(1))
+        assertTrue(config.zebra)
+        assertFalse(config.alpha)
+    }
+
     data class ConstructorSettings(
         @Setting var zebra: Boolean = false,
         @Setting var alpha: Boolean = false,

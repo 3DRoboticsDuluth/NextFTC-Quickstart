@@ -13,3 +13,5 @@ plugins {
 include ':FtcRobotController'
 include ':3drdNextFTC'
 include ':TeamCode'
+
+include ':3drdSettingsProcessor'

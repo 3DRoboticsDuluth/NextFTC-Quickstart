@@ -392,3 +392,15 @@ construct and schedule `Drive.to(Nav.end)` in its start hook. Test actual
 SubsystemComponent registration
 in Auto and Teleop, initialization before scheduling, and omission of pose resets
 at Start. Remove the older OpMode onStartButtonPressed scheduling callback.
+
+
+For REQ-PLT-021, include the JVM-only 3drdSettingsProcessor module, declare KSP
+2.3.12 in the root plugin block, and apply KSP with the processor dependency to
+3drdNextFTC and TeamCode. Generate one Java metadata class per settings owner
+using KSP source declaration order and an isolating dependency on that owner's
+file. Settings.settings reads the metadata through the owner's class loader once
+when constructing the menu, with legacy constructor/reflection fallback when
+metadata is absent. Keep settings on the singleton and do not add order numbers.
+The normal library check also runs processor tests. Verify metadata after a source
+reorder and deletion, verify offline compilation and Sloth task wiring, and use a
+full robot install for Android/source-order acceptance.

@@ -11,13 +11,20 @@ internal fun Any.settings(fields: Iterable<Field>): List<SettingItem> {
         .mapNotNull { field ->
             field.getAnnotation(Setting::class.java)?.let { field.name to (field to it) }
         }.toMap(linkedMapOf())
-    val ordered = this::class.primaryConstructor?.parameters.orEmpty()
-        .mapNotNull { parameter -> remaining.remove(parameter.name!!) }
+    val names = javaClass.settingOrder() ?: this::class.primaryConstructor?.parameters.orEmpty().map { it.name!! }
+    val ordered = names.mapNotNull { remaining.remove(it) }
 
     return (ordered + remaining.values).map { (field, setting) ->
         field.isAccessible = true
         field.toSettingItem(this, setting)
     }
+}
+
+internal fun Class<*>.settingOrder(): List<String>? = try {
+    @Suppress("UNCHECKED_CAST")
+    (Class.forName(name + "\$SettingOrder", true, classLoader).getField("names").get(null) as Array<String>).toList()
+} catch (_: ClassNotFoundException) {
+    null
 }
 
 fun Field.toSettingItem(owner: Any, setting: Setting): SettingItem {

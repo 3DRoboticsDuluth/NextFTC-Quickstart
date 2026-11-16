@@ -11,6 +11,7 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'com.google.devtools.ksp'
 apply plugin: 'jacoco'
 apply plugin: 'dev.frozenmilk.sinister.sloth.load'
 
@@ -59,6 +60,7 @@ repositories {
 }
 
 dependencies {
+    ksp project(':3drdSettingsProcessor')
     implementation project(':FtcRobotController')
     implementation project(':3drdNextFTC')
     implementation 'com.pedropathing:telemetry:1.0.0'
