@@ -9,6 +9,7 @@ import org.junit.Assert.*
 import org.junit.*
 import org.mockito.Mockito.*
 import dev.nextftc.extensions.pedro.*
+import dev.nextftc.extensions.pedro.PedroComponent
 import com.threedrd.testing.*
 
 class PedroDrawingComponentTests : SubsystemTests() {

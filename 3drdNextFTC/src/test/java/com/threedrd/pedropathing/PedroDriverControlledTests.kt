@@ -2,6 +2,7 @@ package com.threedrd.pedropathing
 
 import com.pedropathing.follower.*
 import dev.nextftc.extensions.pedro.*
+import dev.nextftc.extensions.pedro.PedroComponent
 import java.util.function.*
 import org.junit.*
 import org.junit.Assert.*

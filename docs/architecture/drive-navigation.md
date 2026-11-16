@@ -368,3 +368,43 @@ This preserves the upstream tuning workflow and avoids running the robot's
 NextFTC subsystem discovery or default driver command alongside the selected
 tuner. Competition OpModes continue to use the shared robot OpMode lifecycle.
 See REQ-SCF-016 and the [tuning guide](../guides/drivetrain.md#pedro-tuning-utility).
+
+
+## Follower lifetime across OpModes
+
+TeamCode's constants object implements PedroConfig, supplying createFollower and
+robotRadius. The shared OpMode registers PedroComponent(Constants) alongside its
+other components. Each OpMode gets its own component; a single shared follower
+inside the library component is created on first successful initialization and
+reused while the incoming hardware map is the same object. A different map (for
+example after a Sloth hardware-map rebuild) invalidates the cached follower, so the
+factory creates fresh hardware references. Development reloads may reset the pose;
+no pose transfer is attempted. Normal Auto-to-Teleop transitions sharing the map
+retain localization. This assumes one robot configuration; changing constants
+without replacing the map requires restarting the Robot Controller.
+The component combines the upstream NextFTC PedroComponent and PedroDrawingComponent.
+Initialization cancels following and refreshes localization without setting the pose.
+Init and active loops update before drawing, and preStop immediately breaks following
+before postStop clears the upstream active reference. Drive.stop remains immediate
+and idempotent.
+No background update loop runs between OpModes. Pinpoint tracks onboard while
+powered; the next update reads movement that occurred during that interval.
+This avoids reconstructing Pedro's Pinpoint localizer, whose constructor writes
+its starting pose into the device. TeamCode remains responsible for intentional starting-pose resets; the component
+never assigns a starting pose on its own.
+
+The cached follower and hardware references survive normal OpMode transitions,
+but a new hardware map invalidates them. A Robot Controller restart also clears
+them. Use a full deployment for this
+library/OpMode structural change; do not assume a Sloth deployment refreshes the
+retained factory or changed constants. Non-Pinpoint localizers may have different
+between-OpMode tracking behavior. Hardware validation must cover stopping during
+a path, pushing the robot after Auto stops, Teleop initialization, Teleop-first
+startup, repeated OpModes, and Sloth reload followed by Teleop without the empty-name
+telemetry failure. Desktop tests verify lifecycle reuse, map invalidation and fresh reads,
+not Android hardware-reference validity or physical odometry.
+
+Reconstruction: add the combined PedroComponent in the reusable
+Pedro package, implement PedroConfig on the team's constants, register
+PedroComponent(Constants) in the shared OpMode, and preserve Drive lifecycle stop.
+REQ-PLT-060 and PedroComponentTests track this contract.

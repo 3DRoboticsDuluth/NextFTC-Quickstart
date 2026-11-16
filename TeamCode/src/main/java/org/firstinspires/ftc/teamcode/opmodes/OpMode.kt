@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes
 
-import dev.nextftc.extensions.pedro.*
 import dev.nextftc.ftc.*
 import dev.nextftc.ftc.components.*
 import com.threedrd.nextftc.bindings.*
@@ -17,8 +16,7 @@ abstract class OpMode : NextFTCOpMode() {
             TelemetryComponent,
             BindingsComponent,
             BulkReadComponent,
-            PedroComponent(Constants::createFollower),
-            PedroDrawingComponent(Constants.robotRadius),
+            PedroComponent(Constants),
             ConfigComponent(Config),
             SubsystemComponent.all()
         )

@@ -200,3 +200,14 @@ derivatives. The former curves helper is removed. PathBuilderTests checks real
 geometry and join derivatives. DriveSubsystemTests checks execution-time start,
 heading, ownership, naming and hold choices. See the
 [navigation contract](../architecture/drive-navigation.md#curve-control-points-and-through-waypoints).
+
+`REQ-PLT-060`: The shared PedroComponent MUST lazily create one retained follower
+for the current hardware-map instance and reuse it across component and OpMode
+instances while that map is unchanged. A different hardware-map instance MUST
+invalidate the cached follower and create a fresh one without transferring pose.
+Each initialization
+MUST cancel following and refresh localization without setting the pose. PedroConfig
+supplies follower creation and robot radius. PedroComponentTests verifies lazy
+creation, cross-component reuse, update/drawing order, immediate stop, no pose
+writes, hardware-map replacement and creation retry. TeamCode registers a fresh component per OpMode and
+retains Drive.stop cleanup. This is in-memory retention, not restart persistence.

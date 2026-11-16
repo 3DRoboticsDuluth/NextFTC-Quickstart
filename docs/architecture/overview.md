@@ -52,7 +52,10 @@ hardware telemetry policy and adds components in an intentional order:
 1. `TelemetryComponent` starts and closes each display frame.
 2. `BindingsComponent` prevents stale/duplicated bindings.
 3. `BulkReadComponent` enables efficient hub reads.
-4. `PedroComponent` owns the follower.
+4. The shared `PedroComponent` combines upstream follower lifecycle and Panels
+   drawing, retaining the follower across OpModes. Team constants implement
+   `PedroConfig` for follower creation and robot radius. See
+   [follower lifetime](drive-navigation.md#follower-lifetime-across-opmodes).
 5. `PedroDrawingComponent` mirrors field state to Panels.
 6. `ConfigComponent` restores and persists settings.
 7. `SubsystemComponent.all()` discovers and runs subsystems.

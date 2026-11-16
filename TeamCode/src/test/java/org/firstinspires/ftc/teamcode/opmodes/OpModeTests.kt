@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes
 
-import dev.nextftc.extensions.pedro.*
 import com.threedrd.nextftc.bindings.*
 import com.threedrd.nextftc.config.*
 import com.threedrd.nextftc.telemetry.*
@@ -17,8 +16,10 @@ class OpModeTests {
         assertNotNull(opMode)
         assertTrue(opMode.components.contains(TelemetryComponent))
         assertEquals(1, opMode.components.count { it === BindingsComponent })
-        assertTrue(opMode.components.any { it is PedroComponent })
-        assertTrue(opMode.components.any { it is PedroDrawingComponent })
+        val next = object : OpMode() {}
+        assertNotSame(opMode.components.filterIsInstance<PedroComponent>().single(),
+            next.components.filterIsInstance<PedroComponent>().single())
+        assertFalse(opMode.components.any { it is PedroDrawingComponent })
         val component = opMode.components.filterIsInstance<ConfigComponent<*>>().single()
         assertSame(Config, component.config)
         assertEquals("config.json", component.persistence.fileName)

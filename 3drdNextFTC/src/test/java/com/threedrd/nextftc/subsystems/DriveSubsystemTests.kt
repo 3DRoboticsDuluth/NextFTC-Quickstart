@@ -5,6 +5,7 @@ import com.pedropathing.geometry.*
 import com.pedropathing.paths.*
 import dev.nextftc.core.units.*
 import dev.nextftc.extensions.pedro.*
+import dev.nextftc.extensions.pedro.PedroComponent
 import com.threedrd.pedropathing.*
 import com.threedrd.testing.*
 import org.junit.*
