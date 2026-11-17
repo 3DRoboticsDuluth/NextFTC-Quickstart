@@ -80,6 +80,7 @@ nav:
           - Hardware: architecture/hardware.md
           - Velocity profiles and current limiting: architecture/control.md
           - Calibration curves: architecture/curves.md
+          - Servo angle mapping: architecture/servo-angle.md
           - Drive and navigation: architecture/drive-navigation.md
       - Requirements:
           - requirements/index.md

@@ -9,6 +9,8 @@ typealias ServoEx = dev.nextftc.hardware.impl.ServoEx
 private class ServoConfiguration {
     private val pending = mutableListOf<Servo.() -> Unit>()
     private var device: Servo? = null
+    private var rangeMin: Double? = null
+    private var rangeMax: Double? = null
 
     fun configure(block: Servo.() -> Unit) {
         val sdk = device
@@ -20,6 +22,15 @@ private class ServoConfiguration {
         pending.clear()
         device = sdk
         return sdk
+    }
+
+    fun scaleRange(min: Double, max: Double, owner: ServoEx) {
+        if (min == rangeMin && max == rangeMax) return
+        configure { scaleRange(min, max) }
+        // Reapply the logical demand: the native cache cannot see an SDK range change.
+        device?.position = owner.position
+        rangeMin = min
+        rangeMax = max
     }
 }
 
@@ -42,7 +53,7 @@ fun ServoEx(
 fun ServoEx.scaleRange(min: Double, max: Double) = apply {
     requireNotNull(configurations[this]) {
         "scaleRange requires the project ServoEx factory"
-    }.configure { scaleRange(min, max) }
+    }.scaleRange(min, max, this)
 }
 
 val ServoEx.name get() = hardwareMap.getNamesOf(servo).firstOrNull() ?: servo.deviceName

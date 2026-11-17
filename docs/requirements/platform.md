@@ -211,3 +211,16 @@ supplies follower creation and robot radius. PedroComponentTests verifies lazy
 creation, cross-component reuse, update/drawing order, immediate stop, no pose
 writes, hardware-map replacement and creation retry. TeamCode registers a fresh component per OpMode and
 retains Drive.stop cleanup. This is in-memory retention, not restart persistence.
+
+
+`REQ-PLT-061`: ServoAngle MUST map typed output angles to logical 0–1 servo
+positions using live, independent degree endpoints. It MUST support decreasing
+endpoints, wrapped bearings and multi-turn travel, selecting a reachable turn
+nearest the supplied current logical position. Invalid calibration/nonfinite input
+or an unreachable bearing MUST return null without hardware access. Equal default
+endpoints MUST leave the mapper unconfigured. The native ServoEx scaleRange bridge
+MUST retain lazy acquisition, skip unchanged ranges, and reapply cached logical
+position after a live range change so native position caching cannot suppress it.
+ServoAngleTests and ServoExTests verify these contracts. See the
+[servo angle guide](../architecture/servo-angle.md); robot geometry and hold/fault
+policy belong to the consumer.

@@ -7,6 +7,38 @@ import org.junit.*
 
 class ServoExTests : SubsystemTests() {
     @Test
+    fun liveRangeReappliesCachedLogicalDemandOnlyWhenEndpointsChange() {
+        val servo = ServoEx("cachedRange").scaleRange(0.1, 0.9)
+        servo.position = 0.4
+        val sdk = servo.servo
+        clearInvocations(sdk)
+        servo.scaleRange(0.2, 0.8)
+        val order = inOrder(sdk)
+        order.verify(sdk).scaleRange(0.2, 0.8)
+        order.verify(sdk).setPosition(0.4)
+        clearInvocations(sdk)
+        servo.position = 0.4
+        servo.scaleRange(0.2, 0.8)
+        verifyNoInteractions(sdk)
+        servo.scaleRange(0.2, 0.7)
+        verify(sdk).scaleRange(0.2, 0.7)
+        verify(sdk).setPosition(0.4)
+    }
+
+    @Test
+    fun sdkScalingAndNativeReversalApplyExactlyOnce() {
+        val controller = mock(com.qualcomm.robotcore.hardware.ServoController::class.java)
+        val sdk = com.qualcomm.robotcore.hardware.ServoImpl(controller, 0)
+        `when`(dev.nextftc.ftc.ActiveOpMode.hardwareMap.get(com.qualcomm.robotcore.hardware.Servo::class.java, "physicalRange"))
+            .thenReturn(sdk)
+        val servo = ServoEx("physicalRange").scaleRange(0.2, 0.8).reversed()
+        servo.position = 0.25
+        val position = org.mockito.ArgumentCaptor.forClass(Double::class.javaObjectType)
+        verify(controller).setServoPosition(eq(0), position.capture())
+        assertEquals(0.65, position.value, 0.000001)
+    }
+
+    @Test
     fun fluentRangePreservesLazyLookupNativeIdentityAndQueuedConfigurationOrder() {
         val map = dev.nextftc.ftc.ActiveOpMode.hardwareMap
         clearInvocations(map)

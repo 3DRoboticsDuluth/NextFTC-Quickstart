@@ -514,3 +514,15 @@ initialization clears the applied-value caches, so settings are reapplied each
 OpMode. These helpers do not select modes, change targets, or command output.
 Use these helpers consistently: direct SDK coefficient writes bypass the caches.
 Hub gains reset on power cycling and require physical tuning and validation.
+
+
+## Live servo travel and angle calibration
+
+ServoEx.scaleRange retains the native type and lazy initialization. Repeating the
+same fluent range is cached; changing it after acquisition reapplies the current
+logical position through the SDK's new range. Call it with live endpoint settings
+inside normal updates when tuning with Panels. Positions are always logical 0–1
+within that range, so do not clamp them again to full-travel endpoint values.
+Use the reusable [ServoAngle mapper](servo-angle.md) to convert measured angles
+into those logical positions. It handles wrapping and reachability without owning
+the servo or introducing another hardware wrapper.
