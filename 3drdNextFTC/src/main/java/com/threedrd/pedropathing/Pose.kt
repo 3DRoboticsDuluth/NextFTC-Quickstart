@@ -23,6 +23,8 @@ fun Pose.lateral(distance: Double) = Pose(
 
 fun Pose.lateral(distance: Distance) = lateral(distance.inIn)
 
+fun Pose.transform(local: Pose) = plus(local.rotate(heading, false))
+
 fun Pose.midpoint(other: Pose) = Pose(
     (x + other.x) / 2,
     (y + other.y) / 2,

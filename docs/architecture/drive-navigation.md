@@ -408,3 +408,30 @@ Reconstruction: add the combined PedroComponent in the reusable
 Pedro package, implement PedroConfig on the team's constants, register
 PedroComponent(Constants) in the shared OpMode, and preserve Drive lifecycle stop.
 REQ-PLT-060 and PedroComponentTests track this contract.
+
+
+## Local pose transforms
+
+`Pose.transform(local)` composes a robot-relative mounting pose with the robot's
+field pose. Local X is forward and local Y is left in the Pedro coordinate basis.
+It rotates the displacement by the parent heading, then adds the parent position
+and heading using the native Pedro methods:
+
+```kotlin
+val turret = robot.transform(mountingPose)
+```
+
+For a robot at (10, 20) facing 90 degrees and a mount at (4, 2) facing 30 degrees
+relative to robot forward, the result is (8, 24) facing 120 degrees. Plain
+`robot.plus(mountingPose)` would incorrectly add the local offsets along field X/Y.
+
+Use the same coordinate basis for the parent and local pose. The extension returns
+a fresh native Pose, preserves the parent's coordinate-system tag, and does not
+mutate either input. Heading is the native sum, without additional normalization;
+use normalizeHeading when a wrapped angular difference is needed. Keep the mounting
+pose fixed and derive a moving mechanism's commanded orientation separately.
+
+REQ-PLT-062 and PoseTests cover cardinal/noncardinal headings, negative and zero
+local displacement, mounting-heading addition exactly once, and input immutability.
+This season-neutral helper adds no localization reset, hardware access or aiming
+policy. Physical mounting measurements remain the consumer's responsibility.

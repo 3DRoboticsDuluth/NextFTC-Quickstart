@@ -224,3 +224,12 @@ position after a live range change so native position caching cannot suppress it
 ServoAngleTests and ServoExTests verify these contracts. See the
 [servo angle guide](../architecture/servo-angle.md); robot geometry and hold/fault
 policy belong to the consumer.
+
+
+`REQ-PLT-062`: Pose.transform(local) MUST rotate local X/Y displacement by the
+parent heading before translating it into the parent frame. It MUST add the local
+heading exactly once, return a fresh native Pose with the parent's coordinate-system
+tag, and leave both inputs unchanged. Inputs use the same coordinate basis; heading
+retains native Pedro addition semantics without extra normalization. PoseTests
+verifies cardinal/noncardinal rotations, negative/zero offsets and unchanged inputs.
+See [local pose transforms](../architecture/drive-navigation.md#local-pose-transforms).

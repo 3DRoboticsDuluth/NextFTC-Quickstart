@@ -8,6 +8,50 @@ import org.junit.*
 
 class PoseTests {
     @Test
+    fun transformRotatesLocalOffsetsAndAddsMountingHeadingOnceWithoutMutatingInputs() {
+        val local = Pose(4.0, 2.0, PI / 6)
+        val cases = listOf(
+            Triple(0.0, 14.0, 22.0),
+            Triple(PI / 2, 8.0, 24.0),
+            Triple(PI, 6.0, 18.0),
+            Triple(-PI / 2, 12.0, 16.0)
+        )
+        for ((heading, x, y) in cases) {
+            val parent = Pose(10.0, 20.0, heading)
+            val transformed = parent.transform(local)
+            assertEquals(x, transformed.x, 0.000000001)
+            assertEquals(y, transformed.y, 0.000000001)
+            assertEquals(heading + PI / 6, transformed.heading, 0.000000001)
+            assertSame(parent.coordinateSystem, transformed.coordinateSystem)
+            assertNotSame(parent, transformed)
+            assertNotSame(local, transformed)
+            assertEquals(10.0, parent.x, 0.0)
+            assertEquals(20.0, parent.y, 0.0)
+            assertEquals(heading, parent.heading, 0.0)
+        }
+        assertEquals(4.0, local.x, 0.0)
+        assertEquals(2.0, local.y, 0.0)
+        assertEquals(PI / 6, local.heading, 0.0)
+    }
+
+    @Test
+    fun transformHandlesNegativeOffsetsAtANoncardinalHeading() {
+        val transformed = Pose(-7.0, 3.0, PI / 4).transform(Pose(-4.0, 2.0, -PI / 3))
+        assertEquals(-7.0 - 3 * sqrt(2.0), transformed.x, 0.000000001)
+        assertEquals(3.0 - sqrt(2.0), transformed.y, 0.000000001)
+        assertEquals(-PI / 12, transformed.heading, 0.000000001)
+    }
+
+    @Test
+    fun transformWithZeroDisplacementPreservesPositionAndNativeHeadingSum() {
+        val parent = Pose(10.0, 20.0, Math.toRadians(170.0))
+        val transformed = parent.transform(Pose(0.0, 0.0, Math.toRadians(30.0)))
+        assertEquals(10.0, transformed.x, 0.0)
+        assertEquals(20.0, transformed.y, 0.0)
+        assertEquals(Math.toRadians(200.0), transformed.heading, 0.000000001)
+    }
+
+    @Test
     fun directionUsesFieldDisplacementRegardlessOfEitherHeadingAndDoesNotMutatePoses() {
         val origin = Pose(10.0, 20.0, PI / 2)
         val goal = Pose(13.0, 24.0, -PI)
