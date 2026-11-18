@@ -10,7 +10,7 @@ private class ServoConfiguration {
     private val pending = mutableListOf<Servo.() -> Unit>()
     private var device: Servo? = null
     private var rangeMin: Double? = null
-    private var rangeMax: Double? = null
+    private var rangeMax = 1.0
 
     fun configure(block: Servo.() -> Unit) {
         val sdk = device
@@ -31,6 +31,13 @@ private class ServoConfiguration {
         device?.position = owner.position
         rangeMin = min
         rangeMax = max
+    }
+
+    fun restoreRange(owner: ServoEx) {
+        if (device == null) return
+        val min = rangeMin ?: return
+        rangeMin = null
+        scaleRange(min, rangeMax, owner)
     }
 }
 
@@ -58,4 +65,4 @@ fun ServoEx.scaleRange(min: Double, max: Double) = apply {
 
 val ServoEx.name get() = hardwareMap.getNamesOf(servo).firstOrNull() ?: servo.deviceName
 
-fun ServoEx.initialize() { servo }
+fun ServoEx.initialize() { configurations[this]?.restoreRange(this); servo }

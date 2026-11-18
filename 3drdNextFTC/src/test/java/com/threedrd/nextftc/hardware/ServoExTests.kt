@@ -7,6 +7,27 @@ import org.junit.*
 
 class ServoExTests : SubsystemTests() {
     @Test
+    fun initializationRestoresSdkRangeAfterAnOpModeReset() {
+        val controller = mock(com.qualcomm.robotcore.hardware.ServoController::class.java)
+        val sdk = com.qualcomm.robotcore.hardware.ServoImpl(controller, 0)
+        `when`(dev.nextftc.ftc.ActiveOpMode.hardwareMap.get(com.qualcomm.robotcore.hardware.Servo::class.java, "retainedRange")).thenReturn(sdk)
+        val servo = ServoEx("retainedRange").scaleRange(0.2, 0.8)
+        servo.initialize()
+        servo.position = 0.11
+        verify(controller).setServoPosition(0, 0.266)
+        sdk.resetDeviceConfigurationForOpMode()
+        sdk.position = 0.11
+        verify(controller).setServoPosition(0, 0.11)
+        clearInvocations(controller)
+        servo.initialize()
+        verify(controller).setServoPosition(0, 0.266)
+        clearInvocations(controller)
+        servo.scaleRange(0.2, 0.8)
+        servo.position = 0.11
+        verifyNoInteractions(controller)
+    }
+
+    @Test
     fun liveRangeReappliesCachedLogicalDemandOnlyWhenEndpointsChange() {
         val servo = ServoEx("cachedRange").scaleRange(0.1, 0.9)
         servo.position = 0.4
@@ -55,7 +76,7 @@ class ServoExTests : SubsystemTests() {
         order.verify(sdk).direction = com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE
         fluent.initialize()
         verify(map).get(com.qualcomm.robotcore.hardware.Servo::class.java, "fluentRange")
-        verify(sdk).scaleRange(0.2, 0.8)
+        verify(sdk, times(2)).scaleRange(0.2, 0.8)
     }
 
     @Test
@@ -116,6 +137,9 @@ class ServoExTests : SubsystemTests() {
         servo.initialize()
 
         assertNotNull(servo.servo)
+        clearInvocations(servo.servo)
+        servo.initialize()
+        verifyNoInteractions(servo.servo)
     }
 
     @Test

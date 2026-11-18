@@ -214,13 +214,16 @@ retains Drive.stop cleanup. This is in-memory retention, not restart persistence
 
 
 `REQ-PLT-061`: ServoAngle MUST map typed output angles to logical 0–1 servo
-positions using live, independent degree endpoints. It MUST support decreasing
-endpoints, wrapped bearings and multi-turn travel, selecting a reachable turn
+positions using two live, independent measured degree/unscaled-position pairs
+and separate safe servo limits. Measurements need not be endpoints. It MUST support
+reversed pairs, wrapped bearings and multi-turn travel, selecting a reachable turn
 nearest the supplied current logical position. Invalid calibration/nonfinite input
 or an unreachable bearing MUST return null without hardware access. Equal default
-endpoints MUST leave the mapper unconfigured. The native ServoEx scaleRange bridge
+angles MUST leave the mapper unconfigured. The native ServoEx scaleRange bridge
 MUST retain lazy acquisition, skip unchanged ranges, and reapply cached logical
 position after a live range change so native position caching cannot suppress it.
+Hardware initialization MUST restore the saved range and demand after SDK OpMode
+configuration resets, while preserving first-acquisition laziness.
 ServoAngleTests and ServoExTests verify these contracts. See the
 [servo angle guide](../architecture/servo-angle.md); robot geometry and hold/fault
 policy belong to the consumer.
