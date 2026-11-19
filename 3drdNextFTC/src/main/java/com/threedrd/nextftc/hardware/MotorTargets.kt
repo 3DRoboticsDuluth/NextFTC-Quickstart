@@ -50,6 +50,9 @@ fun MotorEx.anglePerTick(value: Angle) = apply {
     kinds[this] = TargetKind.ANGLE
 }
 
+fun MotorEx.atPosition(value: Distance) = atPosition(value.value / distanceScale())
+fun MotorEx.atPosition(value: Angle) = atPosition(value.inRad / angleScale())
+
 var MotorEx.targetDistance: Distance
     get() = Distance.fromMm(distanceScale() * targetTicks)
     set(value) { targetTicks = value.value / distanceScale(); kinds[this] = TargetKind.DISTANCE }

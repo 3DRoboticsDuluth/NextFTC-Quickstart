@@ -325,6 +325,16 @@ Use targets relative to that established zero; a positive distance is not an
 incremental move. Angles are unwrapped: two revolutions means two revolutions,
 not zero or a shortest-path turn.
 
+The shared `atPosition(Distance)` and `atPosition(Angle)` overloads convert a
+known physical position through the configured calibration and delegate to native
+`atPosition(ticks)`. They return the same motor and preserve lazy hardware access.
+For example, after homing at a launch endpoint, `motor.atPosition(8.inches)` declares
+that the current location is eight inches; `motor.targetDistance = 0.inches` can
+then request the load location. Zero and negative references are supported.
+Assigning a reference does not move the motor, stop it, change its mode, or rewrite
+an existing SDK target. Stop homing output first, then establish the reference and
+set the intended next target. This adds no homing or stall detection behavior.
+
 Setters round to the nearest encoder tick (ties toward positive infinity). Missing
 calibration, invalid scale, nonfinite converted targets, and targets outside the
 SDK Int range fail clearly. Missing calibration and nonfinite targets fail before

@@ -10,6 +10,43 @@ import org.mockito.Mockito.*
 
 class MotorTargetsTests : SubsystemTests() {
     @Test
+    fun typedReferencesAreLazyAndDistanceTargetsUseTheAssignedPosition() {
+        val map = ActiveOpMode.hardwareMap
+        val motor = MotorEx("referencedMotor").ticks(100.0).travel(10.inches)
+        clearInvocations(map)
+        assertSame(motor, motor.atPosition(8.inches))
+        verifyNoInteractions(map)
+        val sdk = motor.motor
+        assertEquals(80.0, motor.currentPosition, 1e-9)
+        clearInvocations(sdk)
+        motor.targetDistance = 9.inches
+        verify(sdk).targetPosition = 10
+        verify(sdk, never()).setPower(anyDouble())
+        verify(sdk, never()).setMode(any())
+        for (position in listOf(0.0, -1.0)) {
+            motor.atPosition(position.inches)
+            assertEquals(position * 10, motor.currentPosition, 1e-9)
+        }
+    }
+
+    @Test
+    fun typedAngleReferenceRespectsReversalAndDoesNotMoveHardware() {
+        val sdk = mock(DcMotorEx::class.java)
+        `when`(sdk.currentPosition).thenReturn(100)
+        val motor = MotorEx(sdk).anglePerTick(2.deg)
+        motor.initialize()
+        motor.reverse()
+        assertSame(motor, motor.atPosition(90.deg))
+        assertEquals(45.0, motor.currentPosition, 1e-9)
+        motor.targetAngle = 100.deg
+        verify(sdk).targetPosition = 95
+        motor.atPosition((-0.5).rev)
+        assertEquals(-90.0, motor.currentPosition, 1e-9)
+        verify(sdk, never()).setPower(anyDouble())
+        verify(sdk, never()).setMode(any())
+    }
+
+    @Test
     fun calibrationIsLazyFluentAndRetainsTheNativeTypeWithoutAnOpMode() {
         val active = ActiveOpMode.it
         try {
@@ -99,6 +136,8 @@ class MotorTargetsTests : SubsystemTests() {
         assertThrows(IllegalStateException::class.java) { motor.targetDistance = 1.mm }
         assertThrows(IllegalStateException::class.java) { motor.targetAngle }
         assertThrows(IllegalStateException::class.java) { motor.targetAngle = 1.rad }
+        assertThrows(IllegalStateException::class.java) { motor.atPosition(1.mm) }
+        assertThrows(IllegalStateException::class.java) { motor.atPosition(1.rad) }
         verifyNoInteractions(map)
     }
 

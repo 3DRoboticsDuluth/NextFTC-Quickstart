@@ -98,6 +98,11 @@ logical encoder zero/direction, unwrapped angles, nearest-tick rounding, and SDK
 Int bounds. Calibration MUST be independent per motor/dimension; missing or invalid
 calibration and invalid targets MUST fail clearly without target writes. Target
 access MUST NOT change mode/power, run a software controller, or infer robot geometry.
+Typed `atPosition(Distance)` and `atPosition(Angle)` overloads MUST use the same
+calibration to establish native logical encoder references, including zero and
+negative positions, while preserving lazy initialization and returning the native
+motor instance. Assigning a reference MUST NOT command movement or change mode,
+power, or the existing SDK target. Homing detection remains caller policy.
 See [typed motor targets](../architecture/hardware.md#typed-hub-motor-targets) and
 `MotorTargetsTests` for the implementation and observable-behavior traceability.
 
