@@ -1,5 +1,12 @@
 # Reusable Platform Requirements
 
+`REQ-PLT-063`: CRServoEx initialization MUST remember the first successfully
+initialized SDK direction and restore it after subsequent OpMode resets, without
+commanding power, toggling direction, changing the native type, or acquiring
+hardware during declaration. Runtime direction changes MUST NOT replace the
+remembered startup direction. Regression tests use SDK CRServoImpl resets and
+verify power direction afterward. See the [hardware architecture](../architecture/hardware.md#continuous-rotation-servo-direction-across-opmodes).
+
 The platform is the architecture shared by teams and seasons. It ends before any
 Osiris motor name, Decode field coordinate, or season strategy is introduced.
 

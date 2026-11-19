@@ -184,6 +184,26 @@ before. Native failure messages identify the subsystem field: obtaining a displa
 name must not trigger another failed hardware lookup. Servo and IMU telemetry use registered
 hardware-map names, falling back to the SDK device name for an unregistered instance.
 
+### Continuous-rotation servo direction across OpModes
+
+For `CRServoEx`, the SDK resets direction to forward for each OpMode, whereas
+native `.reversed()` configures the lazily acquired SDK device once. The shared
+`initialize()` extension remembers direction after the first acquisition and
+restores that direction on later initializations (REQ-PLT-063). This supports
+both the project factory and upstream constructors without replacing the native
+type or acquiring hardware during declaration. Repeated initialization does not
+toggle direction or command power. Temporary runtime direction changes do not
+replace the remembered startup direction.
+
+```kotlin
+val kicker = CRServoEx("kicker").reversed()
+```
+
+With that declaration, positive power uses the configured reverse direction on
+each OpMode. The subsystem component calls initialization automatically. This
+does not change physical servo programming or diagnose mechanical direction on
+the robot; verify the intended direction with a full deployment.
+
 ### Migration and imports
 
 This removes the four custom adapter runtime classes and is a binary compatibility

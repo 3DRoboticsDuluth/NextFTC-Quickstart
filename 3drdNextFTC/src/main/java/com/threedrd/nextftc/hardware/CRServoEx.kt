@@ -2,8 +2,11 @@ package com.threedrd.nextftc.hardware
 
 import com.qualcomm.robotcore.hardware.*
 import dev.nextftc.ftc.ActiveOpMode.hardwareMap
+import java.util.WeakHashMap
 
 typealias CRServoEx = dev.nextftc.hardware.impl.CRServoEx
+
+private val directions = WeakHashMap<CRServoEx, DcMotorSimple.Direction>()
 
 fun CRServoEx(name: String) = CRServoEx(name, configure = {})
 
@@ -15,4 +18,4 @@ fun CRServoEx(
 
 val CRServoEx.name get() = hardwareMap.getNamesOf(servo).firstOrNull() ?: servo.deviceName
 
-fun CRServoEx.initialize() { servo }
+fun CRServoEx.initialize() { servo.direction = directions.getOrPut(this) { servo.direction } }
