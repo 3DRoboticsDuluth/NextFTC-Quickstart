@@ -1,5 +1,52 @@
 # Telemetry and Logging
 
+## Capturing an intermittent app hang during practice
+
+Connect the laptop to the robot over ADB, then run from the repository root:
+
+```powershell
+.\scripts\capture-hang.cmd
+```
+
+On Linux, use `bash scripts/capture-hang.sh`. Python 3 and Android platform-tools
+are required. With multiple ADB devices, add `--serial <device-serial>`.
+This does not deploy or modify robot code. Keep the terminal open; Ctrl+C stops it.
+
+The command saves continuous Logcat to a separate timestamped folder under the
+computer's temporary `robot-captures` directory and prints that folder's path.
+Use `--output <directory>` to choose a longer-lived location. Logs can contain
+network credentials and other private details; review them before sharing.
+
+After receiving a live Sinister app heartbeat, it prints **ARMED**. A heartbeat
+gap longer than 6.5 seconds triggers an ADB SIGQUIT request for a Java thread dump,
+before the observed ten-second Control Hub watchdog deadline. It copies Android's
+thread trace and the retained robot log into a numbered capture folder, then
+rearms after heartbeats resume. It runs until stopped, with no match time limit.
+
+This watches the Sinister heartbeat used by this project, not the OpMode loop.
+A heartbeat gap can also reflect a deployment or connection problem. Dump requests
+may fail or finish too late if Android or ADB is unresponsive; inspect `status.txt`,
+`signal.txt`, and the thread files before assuming a dump was captured. A thread
+dump briefly adds diagnostic work, so use this for practice diagnosis. If ADB's
+log stream ends, reconnect and restart the command. No logs are automatically
+sent anywhere. Long sessions can consume disk space; archive or delete captures
+after investigation.
+
+Practice workflow:
+
+1. Start the command and wait for **ARMED** before reproducing the problem.
+2. Note the approximate failure time and driver action. Let the watcher collect
+   its files; restarting or clearing logs immediately can lose evidence.
+3. After practice, press Ctrl+C and open the printed session folder.
+4. Read `status.txt` to locate the capture, then check its `hang-N` folder.
+   `signal.txt` records whether the dump request failed. `threads-0.txt` through
+   `threads-2.txt` are successive attempts to read Android's thread dump; verify
+   their process and time match the incident, since Android may retain an older
+   dump or return a permission error. `robotControllerLog.txt` contains the
+   retained robot log; the session's `logcat.txt` provides continuous context.
+5. Preserve the complete session folder with your notes for diagnosis. A saved
+   folder or successful signal alone does not establish the cause of the freeze.
+
 Telemetry and logging share level names and optional filters, but they solve
 different problems and have different lifetimes.
 

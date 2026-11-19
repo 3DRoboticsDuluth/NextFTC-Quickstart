@@ -95,3 +95,6 @@ site/
 
 # Kotlin compiler session cache
 .kotlin/
+
+# Python helper caches
+__pycache__/
