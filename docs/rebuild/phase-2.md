@@ -404,3 +404,7 @@ metadata is absent. Keep settings on the singleton and do not add order numbers.
 The normal library check also runs processor tests. Verify metadata after a source
 reorder and deletion, verify offline compilation and Sloth task wiring, and use a
 full robot install for Android/source-order acceptance.
+
+For REQ-PLT-053 mode inspection, add read-only MotorEx extension properties
+`isPositionMode`, `isVelocityMode`, and `isPowerMode` that compare the live SDK
+mode. Test all three operating modes and encoder-reset mode without hardware writes.

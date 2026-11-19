@@ -1,5 +1,7 @@
 package com.threedrd.nextftc.hardware
 
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode.*
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.*
 import com.threedrd.testing.*
 import org.junit.Assert.*
@@ -110,4 +112,19 @@ class MotorExTests : SubsystemTests() {
         assertEquals(dev.nextftc.hardware.impl.MotorEx::class.java, motor.javaClass)
     }
 
+
+    @Test
+    fun propertiesReadTheCurrentSdkModeWithoutChangingIt() {
+        val sdk = mock(DcMotorEx::class.java)
+        val motor = MotorEx(sdk)
+        for (mode in listOf(RUN_TO_POSITION, RUN_USING_ENCODER, RUN_WITHOUT_ENCODER, STOP_AND_RESET_ENCODER)) {
+            `when`(sdk.mode).thenReturn(mode)
+            clearInvocations(sdk)
+            assertEquals(mode == RUN_TO_POSITION, motor.isPositionMode)
+            assertEquals(mode == RUN_USING_ENCODER, motor.isVelocityMode)
+            assertEquals(mode == RUN_WITHOUT_ENCODER, motor.isPowerMode)
+            verify(sdk, times(3)).mode
+            verifyNoMoreInteractions(sdk)
+        }
+    }
 }

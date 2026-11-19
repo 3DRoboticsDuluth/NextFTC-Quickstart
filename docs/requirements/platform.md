@@ -139,6 +139,8 @@ NOT change modes. Speed writes MUST select Hub position mode before applying
 power without changing the target or logical zero. Speed reads MUST require Hub
 position mode, and speed MUST remain distinct from measured velocity. Generic target readback MUST use the most recently
 calibrated or successfully assigned dimension, including explicit typed setters.
+Read-only isPositionMode, isVelocityMode, and isPowerMode MUST reflect the live SDK
+mode without writes; all three MUST be false during encoder reset.
 Unsupported/incomplete quantities and invalid speed MUST fail clearly without
 actuation. Existing helper signatures MUST remain available. Tests and reconstruction
 trace to [the live surface](../architecture/hardware.md#position-mode-with-live-target-and-speed).

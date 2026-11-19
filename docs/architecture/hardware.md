@@ -556,3 +556,13 @@ within that range, so do not clamp them again to full-travel endpoint values.
 Use the reusable [ServoAngle mapper](servo-angle.md) to convert measured angles
 into those logical positions. It handles wrapping and reachability without owning
 the servo or introducing another hardware wrapper.
+
+### Inspecting motor modes
+
+`MotorEx.isPositionMode`, `isVelocityMode`, and `isPowerMode` read the current
+SDK mode directly, corresponding to `RUN_TO_POSITION`, `RUN_USING_ENCODER`,
+and `RUN_WITHOUT_ENCODER`. They do not change hardware state or cache a second
+mode value. All three are false during `STOP_AND_RESET_ENCODER`.
+Use `if (!motor.isPositionMode) return` when periodic position updates should
+pause during open-loop calibration. MotorExTests verifies each mode and
+that reading the properties performs no writes (REQ-PLT-053).

@@ -1,9 +1,14 @@
 package com.threedrd.nextftc.hardware
 
 import com.qualcomm.robotcore.hardware.*
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode.*
 import dev.nextftc.ftc.ActiveOpMode.hardwareMap
 
 typealias MotorEx = dev.nextftc.hardware.impl.MotorEx
+
+val MotorEx.isPositionMode get() = motor.mode == RUN_TO_POSITION
+val MotorEx.isVelocityMode get() = motor.mode == RUN_USING_ENCODER
+val MotorEx.isPowerMode get() = motor.mode == RUN_WITHOUT_ENCODER
 
 fun MotorEx(name: String) = MotorEx(name, configure = {})
 
