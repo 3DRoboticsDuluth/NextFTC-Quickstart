@@ -48,6 +48,8 @@ class TelemetryComponentTests {
 
     @After
     fun tearDown() {
+        verify(telemetryLog, never()).add(anyString())
+        verify(telemetryLog, never()).clear()
         robotLog.close()
         CommandManager.cancelAll()
         CommandManager.run()
@@ -86,10 +88,11 @@ class TelemetryComponentTests {
 
         TelemetryComponent.preUpdate()
 
-        verify(telemetryLog).clear()
-        verify(telemetryLog).add("I | Gate | Opened")
-        verify(telemetryLog, never()).add("I | Gate | Closed")
-        verify(telemetryLog, never()).add("I | Deflector | Up")
+        TelemetryComponent.postUpdate()
+        verify(telemetryLog, never()).clear()
+        verify(telemetry).addLine("I | Gate | Opened")
+        verify(telemetry, never()).addLine("I | Gate | Closed")
+        verify(telemetry, never()).addLine("I | Deflector | Up")
     }
 
     @Test
@@ -101,9 +104,10 @@ class TelemetryComponentTests {
         TelemetryComponent.preUpdate()
         Logging.add("Gate", INFO, "Closed")
 
-        verify(telemetryLog).clear()
-        verify(telemetryLog, never()).add("I | Gate | Opened")
-        verify(telemetryLog, never()).add("I | Gate | Closed")
+        TelemetryComponent.postUpdate()
+        verify(telemetryLog, never()).clear()
+        verify(telemetry, never()).addLine("I | Gate | Opened")
+        verify(telemetry, never()).addLine("I | Gate | Closed")
     }
 
     @Test
@@ -117,9 +121,10 @@ class TelemetryComponentTests {
 
         TelemetryComponent.preUpdate()
 
-        verify(telemetryLog).clear()
-        verify(telemetryLog, never()).add("V | Gate | Position")
-        verify(telemetryLog).add("I | Gate | Opened")
+        TelemetryComponent.postUpdate()
+        verify(telemetryLog, never()).clear()
+        verify(telemetry, never()).addLine("V | Gate | Position")
+        verify(telemetry).addLine("I | Gate | Opened")
     }
 
     @Test
@@ -130,11 +135,11 @@ class TelemetryComponentTests {
         Logging.add("Test", INFO, "Event 3")
         clearInvocations(telemetryLog)
 
-        Logging.rebuild()
+        TelemetryComponent.postUpdate()
 
-        verify(telemetryLog, never()).add("I | Test | Event 1")
-        verify(telemetryLog).add("I | Test | Event 2")
-        verify(telemetryLog).add("I | Test | Event 3")
+        verify(telemetry, never()).addLine("I | Test | Event 1")
+        verify(telemetry).addLine("I | Test | Event 2")
+        verify(telemetry).addLine("I | Test | Event 3")
     }
 
     @Test
@@ -149,8 +154,9 @@ class TelemetryComponentTests {
         CommandManager.run()
         TelemetryComponent.preUpdate()
 
-        verify(telemetryLog).add("D | Commands | Running | Drive")
-        verify(telemetryLog).add("D | Commands | Idle")
+        TelemetryComponent.postUpdate()
+        verify(telemetry).addLine("D | Commands | Running | Drive")
+        verify(telemetry).addLine("D | Commands | Idle")
         val idle = Logging.history.last()
         org.junit.Assert.assertTrue(idle.matches("Drive"))
     }
@@ -163,6 +169,6 @@ class TelemetryComponentTests {
 
         TelemetryComponent.preUpdate()
 
-        verify(telemetryLog, never()).add("D | Commands | Running | NullCommand")
+        verify(telemetry, never()).addLine("D | Commands | Running | NullCommand")
     }
 }

@@ -38,14 +38,8 @@ class LoggingTests {
     @Test
     fun settingsArePanelsConfigurable() {
         Logging.commandSnapshot = emptyList()
-        Logging.displayedFilter = ""
-        Logging.displayedLevel = OFF
-        Logging.displayedSpecificFilter = ""
         assertEquals("", Logging.FILTER)
         assertTrue(Logging.commandSnapshot.isEmpty())
-        assertEquals("", Logging.displayedFilter)
-        assertEquals(OFF, Logging.displayedLevel)
-        assertEquals("", Logging.displayedSpecificFilter)
         assertTrue(Logging::class.java.isAnnotationPresent(Configurable::class.java))
         assertEquals(setOf("LEVEL", "FILTER"), Logging::class.java.declaredFields
             .filter { !it.isSynthetic && !java.lang.reflect.Modifier.isFinal(it.modifiers) }
@@ -128,7 +122,9 @@ class LoggingTests {
                 VERBOSE, DEBUG, INFO, WARN, ERROR, ASSERT),
             Logging.history.map { it.level }
         )
-        verify(telemetryLog).add("I | Test | Info")
+        assertTrue(Logging.visibleEntries().any { it.line == "I | Test | Info" })
+        verify(telemetryLog, never()).add(anyString())
+        verify(telemetryLog, never()).clear()
     }
 
     @Test

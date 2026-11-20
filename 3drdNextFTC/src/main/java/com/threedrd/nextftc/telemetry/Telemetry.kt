@@ -44,7 +44,11 @@ object Telemetry {
     }
 
     fun update() {
-        if (Logging.visibleEntries().isNotEmpty()) section("LOG")
+        val entries = Logging.visibleEntries()
+        if (entries.isNotEmpty()) {
+            section("LOG")
+            entries.forEach { output.addLine(it.line) }
+        }
         output.update()
     }
 

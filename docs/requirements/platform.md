@@ -250,3 +250,11 @@ tag, and leave both inputs unchanged. Inputs use the same coordinate basis; head
 retains native Pedro addition semantics without extra normalization. PoseTests
 verifies cardinal/noncardinal rotations, negative/zero offsets and unchanged inputs.
 See [local pose transforms](../architecture/drive-navigation.md#local-pose-transforms).
+
+REQ-PLT-025 lock-order correction: the filtered LOG history MUST render using
+ordinary telemetry lines, not SDK telemetry.log().add()/clear(), while RobotLog
+retention, filtering and history capacity remain intact. RobotCore 12.0.0 contains
+a reachable A-to-B/B-to-A inversion between update and log-add paths. Trace:
+TelemetryLockOrderTests (bounded SDK lock-path regression), LoggingTests and
+TelemetryComponentTests (routing, history and no SDK log mutations). See
+[lock ordering](../architecture/diagnostics.md#sdk-telemetry-log-lock-ordering).

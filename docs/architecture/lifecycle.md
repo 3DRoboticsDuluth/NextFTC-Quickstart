@@ -116,3 +116,10 @@ Directly import `isAuto` and `isTeleop` from `threedrd.nextftc.opmodes` for occa
 mode-dependent behavior. These computed properties follow the current ActiveOpMode;
 the existing ActiveOpMode extensions remain compatibility aliases. Prefer discovery
 metadata when the entire subsystem belongs to one mode.
+
+## Optional diagnostic phase monitoring
+
+Normal OpModes do not run a breadcrumb monitor or wrap their components. A dormant
+patch can restore that temporary instrumentation when needed. See
+[loop breadcrumbs](diagnostics.md#loop-breadcrumbs-and-hang-monitor) for restoration,
+cleanup, thresholds and limitations.

@@ -1,0 +1,372 @@
+diff --git a/3drdNextFTC/src/main/java/com/threedrd/nextftc/subsystems/SubsystemComponent.kt b/3drdNextFTC/src/main/java/com/threedrd/nextftc/subsystems/SubsystemComponent.kt
+index 0ba3f354..3d080279 100644
+--- a/3drdNextFTC/src/main/java/com/threedrd/nextftc/subsystems/SubsystemComponent.kt
++++ b/3drdNextFTC/src/main/java/com/threedrd/nextftc/subsystems/SubsystemComponent.kt
+@@ -1,5 +1,6 @@
+ package com.threedrd.nextftc.subsystems
+ 
++import com.threedrd.nextftc.logging.LoopBreadcrumbs
+ import dev.nextftc.core.commands.*
+ import dev.nextftc.core.commands.utility.*
+ import dev.nextftc.core.components.*
+@@ -72,11 +73,12 @@ class SubsystemComponent private constructor(
+                 return@forEach
+             }
+ 
+-            it.periodic()
++            LoopBreadcrumbs.during("${it.javaClass.simpleName}.periodic") { it.periodic() }
+ 
+             if (scheduleDefaults && !CommandManager.hasCommandsUsing(it)) {
+                 val command = it.defaultCommand
+-                if (command !is NullCommand) command.schedule()
++                if (command !is NullCommand)
++                    LoopBreadcrumbs.during("${it.javaClass.simpleName}.defaultCommand.schedule") { command.schedule() }
+             }
+         }
+     }
+diff --git a/3drdNextFTC/src/test/java/com/threedrd/nextftc/subsystems/SubsystemComponentTests.kt b/3drdNextFTC/src/test/java/com/threedrd/nextftc/subsystems/SubsystemComponentTests.kt
+index ef1d36c8..534a2976 100644
+--- a/3drdNextFTC/src/test/java/com/threedrd/nextftc/subsystems/SubsystemComponentTests.kt
++++ b/3drdNextFTC/src/test/java/com/threedrd/nextftc/subsystems/SubsystemComponentTests.kt
+@@ -72,6 +72,7 @@ class SubsystemComponentTests {
+         }
+ 
+         override fun periodic() {
++            assertEquals("${javaClass.simpleName}.periodic", LoopBreadcrumbs.current.phase)
+             updates++
+         }
+ 
+@@ -97,6 +98,7 @@ class SubsystemComponentTests {
+         }
+ 
+         override fun periodic() {
++            assertEquals("${javaClass.simpleName}.periodic", LoopBreadcrumbs.current.phase)
+             updates++
+         }
+     }
+diff --git a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmodes/OpMode.kt b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmodes/OpMode.kt
+index 30130204..ca728328 100644
+--- a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmodes/OpMode.kt
++++ b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmodes/OpMode.kt
+@@ -1,5 +1,6 @@
+ package org.firstinspires.ftc.teamcode.opmodes
+ 
++import com.threedrd.nextftc.logging.HangMonitor
+ import dev.nextftc.ftc.*
+ import dev.nextftc.ftc.components.*
+ import com.threedrd.nextftc.bindings.*
+@@ -11,14 +12,25 @@ import org.firstinspires.ftc.teamcode.adaptations.pedropathing.*
+ import org.firstinspires.ftc.teamcode.subsystems.*
+ 
+ abstract class OpMode : NextFTCOpMode() {
++    val hangMonitor = HangMonitor()
++
+     init {
+         addComponents(
+-            TelemetryComponent,
+-            BindingsComponent,
+-            BulkReadComponent,
+-            PedroComponent(Constants),
+-            ConfigComponent(Config),
+-            SubsystemComponent.all()
++            hangMonitor,
++            hangMonitor.watch(TelemetryComponent),
++            hangMonitor.watch(BindingsComponent),
++            hangMonitor.watch(BulkReadComponent),
++            hangMonitor.watch(PedroComponent(Constants)),
++            hangMonitor.watch(ConfigComponent(Config)),
++            hangMonitor.watch(SubsystemComponent.all())
+         )
+     }
++
++    override fun runOpMode() {
++        try {
++            super.runOpMode()
++        } finally {
++            hangMonitor.close()
++        }
++    }
+ }
+diff --git a/TeamCode/src/test/java/org/firstinspires/ftc/teamcode/opmodes/OpModeTests.kt b/TeamCode/src/test/java/org/firstinspires/ftc/teamcode/opmodes/OpModeTests.kt
+index dfea7375..80ca9379 100644
+--- a/TeamCode/src/test/java/org/firstinspires/ftc/teamcode/opmodes/OpModeTests.kt
++++ b/TeamCode/src/test/java/org/firstinspires/ftc/teamcode/opmodes/OpModeTests.kt
+@@ -1,5 +1,8 @@
+ package org.firstinspires.ftc.teamcode.opmodes
+ 
++import com.threedrd.nextftc.logging.*
++import dev.nextftc.core.components.Component
++import org.mockito.Mockito.*
+ import com.threedrd.nextftc.bindings.*
+ import com.threedrd.nextftc.config.*
+ import com.threedrd.nextftc.telemetry.*
+@@ -13,16 +16,41 @@ class OpModeTests {
+     fun compositionCanBeCreated() {
+         val opMode = object : OpMode() {}
+ 
++        val components = opMode.components.filterIsInstance<MonitoredComponent>().map { it.component }
++        assertSame(opMode.hangMonitor, opMode.components.filterIsInstance<HangMonitor>().single())
++        assertEquals(6, components.size)
+         assertNotNull(opMode)
+-        assertTrue(opMode.components.contains(TelemetryComponent))
+-        assertEquals(1, opMode.components.count { it === BindingsComponent })
++        assertTrue(components.contains(TelemetryComponent))
++        assertEquals(1, components.count { it === BindingsComponent })
+         val next = object : OpMode() {}
+-        assertNotSame(opMode.components.filterIsInstance<PedroComponent>().single(),
+-            next.components.filterIsInstance<PedroComponent>().single())
+-        assertFalse(opMode.components.any { it is PedroDrawingComponent })
+-        val component = opMode.components.filterIsInstance<ConfigComponent<*>>().single()
++        assertNotSame(components.filterIsInstance<PedroComponent>().single(),
++            next.components.filterIsInstance<MonitoredComponent>().map { it.component }.filterIsInstance<PedroComponent>().single())
++        assertFalse(components.any { it is PedroDrawingComponent })
++        val component = components.filterIsInstance<ConfigComponent<*>>().single()
+         assertSame(Config, component.config)
+         assertEquals("config.json", component.persistence.fileName)
+         assertEquals(Config::class.java, component.persistence.type)
+     }
++
++    @Test
++    fun monitorIsClosedOnNormalExitAndInitializationFailure() {
++        for (fails in listOf(false, true)) {
++            val opMode = spy(object : OpMode() {})
++            val components = opMode.components as MutableSet<Component>
++            components.clear()
++            components.add(opMode.hangMonitor)
++            doReturn(false).`when`(opMode).opModeInInit()
++            doReturn(true).`when`(opMode).isStopRequested
++            if (fails) doThrow(IllegalStateException("init failure")).`when`(opMode).onInit()
++            try {
++                opMode.runOpMode()
++                assertFalse(fails)
++            } catch (failure: RuntimeException) {
++                assertTrue(fails)
++                assertEquals("init failure", failure.message)
++            }
++            val worker = HangMonitor::class.java.getDeclaredField("worker").apply { isAccessible = true }
++            assertNull(worker.get(opMode.hangMonitor))
++        }
++    }
+ }
+diff --git a/3drdNextFTC/src/main/java/com/threedrd/nextftc/logging/HangMonitor.kt b/3drdNextFTC/src/main/java/com/threedrd/nextftc/logging/HangMonitor.kt
+new file mode 100644
+index 00000000..b0258f4c
+--- /dev/null
++++ b/3drdNextFTC/src/main/java/com/threedrd/nextftc/logging/HangMonitor.kt
+@@ -0,0 +1,61 @@
++package com.threedrd.nextftc.logging
++
++import com.qualcomm.robotcore.util.RobotLog
++import dev.nextftc.core.components.Component
++import java.util.concurrent.Executors
++import java.util.concurrent.ScheduledExecutorService
++import java.util.concurrent.TimeUnit.MILLISECONDS
++
++class HangMonitor(
++    private val timeoutNanos: Long = 2_000_000_000,
++    private val now: () -> Long = System::nanoTime,
++    private val report: (String) -> Unit = { RobotLog.ee("HangMonitor", it) }
++) : Component, AutoCloseable {
++    internal var worker: ScheduledExecutorService? = null
++    private var reported: LoopBreadcrumbs.Breadcrumb? = null
++
++    override fun preInit() {
++        if (worker != null) return
++        reported = null
++        LoopBreadcrumbs.mark("Initialization between components")
++        worker = Executors.newSingleThreadScheduledExecutor { task ->
++            Thread(task, "LoopHangMonitor").apply { isDaemon = true }
++        }.apply { scheduleAtFixedRate({ check() }, 250, 250, MILLISECONDS) }
++    }
++
++    internal fun check() {
++        val current = LoopBreadcrumbs.current
++        val elapsed = now() - current.since
++        if (elapsed < timeoutNanos || current === reported) return
++        reported = current
++        // Bypass telemetry and Logging's shared history: either could be blocked.
++        report("No loop progress for ${elapsed / 1_000_000} ms | ${current.phase}")
++    }
++
++    fun watch(component: Component) = MonitoredComponent(component)
++
++    override fun preWaitForStart() = LoopBreadcrumbs.mark("Init loop / OpMode.onWaitForStart")
++    override fun postWaitForStart() = LoopBreadcrumbs.mark("CommandManager.postWaitForStart / init loop transition")
++    override fun preUpdate() = LoopBreadcrumbs.mark("Active loop / OpMode.onUpdate")
++    override fun postUpdate() = LoopBreadcrumbs.mark("CommandManager.postUpdate / active loop transition")
++    override fun postStop() = close()
++
++    override fun close() {
++        worker?.shutdownNow()
++        worker = null
++    }
++}
++
++class MonitoredComponent(val component: Component) : Component {
++    private val name = component.javaClass.simpleName
++    override fun preInit() = LoopBreadcrumbs.during("$name.preInit") { component.preInit() }
++    override fun postInit() = LoopBreadcrumbs.during("$name.postInit") { component.postInit() }
++    override fun preWaitForStart() = LoopBreadcrumbs.during("$name.preWaitForStart") { component.preWaitForStart() }
++    override fun postWaitForStart() = LoopBreadcrumbs.during("$name.postWaitForStart") { component.postWaitForStart() }
++    override fun preStartButtonPressed() = LoopBreadcrumbs.during("$name.preStartButtonPressed") { component.preStartButtonPressed() }
++    override fun postStartButtonPressed() = LoopBreadcrumbs.during("$name.postStartButtonPressed") { component.postStartButtonPressed() }
++    override fun preUpdate() = LoopBreadcrumbs.during("$name.preUpdate") { component.preUpdate() }
++    override fun postUpdate() = LoopBreadcrumbs.during("$name.postUpdate") { component.postUpdate() }
++    override fun preStop() = LoopBreadcrumbs.during("$name.preStop") { component.preStop() }
++    override fun postStop() = LoopBreadcrumbs.during("$name.postStop") { component.postStop() }
++}
+diff --git a/3drdNextFTC/src/main/java/com/threedrd/nextftc/logging/LoopBreadcrumbs.kt b/3drdNextFTC/src/main/java/com/threedrd/nextftc/logging/LoopBreadcrumbs.kt
+new file mode 100644
+index 00000000..8fde6a19
+--- /dev/null
++++ b/3drdNextFTC/src/main/java/com/threedrd/nextftc/logging/LoopBreadcrumbs.kt
+@@ -0,0 +1,21 @@
++package com.threedrd.nextftc.logging
++
++object LoopBreadcrumbs {
++    data class Breadcrumb(val phase: String, val since: Long)
++
++    @Volatile
++    var current = Breadcrumb("Idle", System.nanoTime())
++        internal set
++
++    fun mark(phase: String) { current = Breadcrumb(phase, System.nanoTime()) }
++
++    fun <T> during(phase: String, action: () -> T): T {
++        val previous = current.phase
++        mark(phase)
++        try {
++            return action()
++        } finally {
++            mark(previous)
++        }
++    }
++}
+diff --git a/3drdNextFTC/src/test/java/com/threedrd/nextftc/logging/HangMonitorTests.kt b/3drdNextFTC/src/test/java/com/threedrd/nextftc/logging/HangMonitorTests.kt
+new file mode 100644
+index 00000000..a7cf2bb4
+--- /dev/null
++++ b/3drdNextFTC/src/test/java/com/threedrd/nextftc/logging/HangMonitorTests.kt
+@@ -0,0 +1,122 @@
++package com.threedrd.nextftc.logging
++
++import com.qualcomm.robotcore.util.RobotLog
++import dev.nextftc.core.components.Component
++import org.junit.Assert.*
++import org.junit.Test
++import org.mockito.Mockito.*
++import java.util.concurrent.CountDownLatch
++import java.util.concurrent.TimeUnit.SECONDS
++
++class HangMonitorTests {
++    @Test
++    fun breadcrumbsExposeNestedPhasesAndRestoreTheirCallerEvenAfterFailure() {
++        LoopBreadcrumbs.mark("Loop")
++        val result = LoopBreadcrumbs.during("Subsystem.periodic") {
++            assertEquals("Subsystem.periodic", LoopBreadcrumbs.current.phase)
++            LoopBreadcrumbs.during("Motor.update") { assertEquals("Motor.update", LoopBreadcrumbs.current.phase) }
++            assertEquals("Subsystem.periodic", LoopBreadcrumbs.current.phase)
++            42
++        }
++        assertEquals(42, result)
++        assertEquals("Loop", LoopBreadcrumbs.current.phase)
++        val failure = IllegalStateException("test")
++        try {
++            LoopBreadcrumbs.during("Failure") { throw failure }
++            fail("Expected the original failure")
++        } catch (caught: IllegalStateException) {
++            assertSame(failure, caught)
++        }
++        assertEquals("Loop", LoopBreadcrumbs.current.phase)
++    }
++
++    @Test
++    fun monitorReportsOncePerStalledPhaseAndRearmsAfterProgress() {
++        var now = 0L
++        val messages = mutableListOf<String>()
++        val monitor = HangMonitor(now = { now }, report = messages::add)
++        LoopBreadcrumbs.current = LoopBreadcrumbs.Breadcrumb("Turret.periodic", 0)
++        now = 1_999_999_999
++        monitor.check()
++        assertTrue(messages.isEmpty())
++        now = 2_000_000_000
++        monitor.check()
++        assertEquals(listOf("No loop progress for 2000 ms | Turret.periodic"), messages)
++        now = 9_000_000_000
++        monitor.check()
++        assertEquals(1, messages.size)
++        LoopBreadcrumbs.current = LoopBreadcrumbs.Breadcrumb("TelemetryComponent.postUpdate", now)
++        monitor.check()
++        assertEquals(1, messages.size)
++        now += 2_000_000_000
++        monitor.check()
++        assertEquals("No loop progress for 2000 ms | TelemetryComponent.postUpdate", messages.last())
++        assertEquals(2, messages.size)
++    }
++
++    @Test
++    fun monitorWritesDirectlyToRobotLog() {
++        LoopBreadcrumbs.current = LoopBreadcrumbs.Breadcrumb("BindingsComponent.preUpdate", 0)
++        mockStatic(RobotLog::class.java).use { robotLog ->
++            HangMonitor(now = { 2_000_000_000 }).check()
++            robotLog.verify { RobotLog.ee("HangMonitor", "No loop progress for 2000 ms | BindingsComponent.preUpdate") }
++        }
++    }
++
++    @Test
++    fun independentDaemonReportsWhileTheCallingThreadWaitsAndStopsWithoutLeaks() {
++        val captured = CountDownLatch(1)
++        var reportingThread: Thread? = null
++        val monitor = HangMonitor(timeoutNanos = 0, report = {
++            reportingThread = Thread.currentThread()
++            captured.countDown()
++        })
++        try {
++            monitor.preInit()
++            val worker = monitor.worker!!
++            monitor.preInit()
++            assertSame(worker, monitor.worker)
++            assertTrue(captured.await(3, SECONDS))
++            assertEquals("LoopHangMonitor", reportingThread!!.name)
++            assertTrue(reportingThread.isDaemon)
++            assertNotSame(Thread.currentThread(), reportingThread)
++            monitor.postStop()
++            assertTrue(worker.isShutdown)
++            assertTrue(worker.awaitTermination(3, SECONDS))
++            assertNull(monitor.worker)
++            monitor.preInit()
++            assertNotSame(worker, monitor.worker)
++        } finally {
++            monitor.close()
++            monitor.close()
++        }
++        assertNull(monitor.worker)
++    }
++
++    @Test
++    fun componentCallbacksAreForwardedOnceWithNamedBreadcrumbs() {
++        val monitor = HangMonitor()
++        val component = mock(Component::class.java)
++        val wrapper = monitor.watch(component)
++        assertSame(component, wrapper.component)
++        for (method in Component::class.java.methods.filter { it.parameterCount == 0 && it.returnType == Void.TYPE }) {
++            LoopBreadcrumbs.mark("Caller")
++            doAnswer {
++                assertEquals("${component.javaClass.simpleName}.${method.name}", LoopBreadcrumbs.current.phase)
++                null
++            }.`when`(component).let { method.invoke(it) }
++            method.invoke(wrapper)
++            method.invoke(verify(component))
++            assertEquals("Caller", LoopBreadcrumbs.current.phase)
++        }
++        verifyNoMoreInteractions(component)
++        monitor.preWaitForStart()
++        assertEquals("Init loop / OpMode.onWaitForStart", LoopBreadcrumbs.current.phase)
++        monitor.postWaitForStart()
++        assertEquals("CommandManager.postWaitForStart / init loop transition", LoopBreadcrumbs.current.phase)
++        monitor.preUpdate()
++        assertEquals("Active loop / OpMode.onUpdate", LoopBreadcrumbs.current.phase)
++        monitor.postUpdate()
++        assertEquals("CommandManager.postUpdate / active loop transition", LoopBreadcrumbs.current.phase)
++    }
++}

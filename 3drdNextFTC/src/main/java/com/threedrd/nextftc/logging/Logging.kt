@@ -22,12 +22,6 @@ object Logging {
     @field:IgnoreConfigurable
     var commandSnapshot = emptyList<String>()
     @field:IgnoreConfigurable
-    var displayedFilter = ""
-    @field:IgnoreConfigurable
-    var displayedLevel = LEVEL
-    @field:IgnoreConfigurable
-    var displayedSpecificFilter = ""
-    @field:IgnoreConfigurable
     val history = mutableListOf<LogEntry>()
     @field:IgnoreConfigurable
     private var diagnostics: Diagnostics? = null
@@ -39,19 +33,11 @@ object Logging {
         bind(null)
         commandSnapshot = emptyList()
         history.clear()
-        displayedFilter = DISPLAY_FILTER
-        displayedLevel = LEVEL
-        displayedSpecificFilter = FILTER
     }
 
     fun beginFrame() {
         sampleDiagnostics()
         logCommandSnapshotChanges()
-        if (LEVEL != displayedLevel || DISPLAY_FILTER != displayedFilter ||
-            FILTER != displayedSpecificFilter) rebuild()
-        displayedFilter = DISPLAY_FILTER
-        displayedLevel = LEVEL
-        displayedSpecificFilter = FILTER
     }
 
     fun bind(config: Diagnostics?) {
@@ -77,7 +63,6 @@ object Logging {
         writeToRobotLog(level, tag, message)
         val entry = LogEntry(level, tag, message, context)
         retain(entry)
-        if (visible(entry)) ActiveOpMode.telemetry.log().add(entry.line)
     }
 
     fun add(tag: String, level: LogLevel, message: () -> String) = add(tag, level, message())
@@ -112,11 +97,6 @@ object Logging {
         entry.matches(DISPLAY_FILTER) && entry.matches(FILTER)
 
     fun visibleEntries() = history.filter(::visible)
-
-    fun rebuild() {
-        ActiveOpMode.telemetry.log().clear()
-        visibleEntries().forEach { ActiveOpMode.telemetry.log().add(it.line) }
-    }
 }
 
 class Logger(val tag: String) {

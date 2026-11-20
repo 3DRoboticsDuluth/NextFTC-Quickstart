@@ -408,3 +408,20 @@ full robot install for Android/source-order acceptance.
 For REQ-PLT-053 mode inspection, add read-only MotorEx extension properties
 `isPositionMode`, `isVelocityMode`, and `isPowerMode` that compare the live SDK
 mode. Test all three operating modes and encoder-reset mode without hardware writes.
+
+## Optional loop hang diagnostics
+
+The reusable telemetry fix does not require active loop instrumentation. Preserve
+docs/assets/diagnostics/loop-breadcrumbs.patch as a dormant restoration artifact; it
+includes the monitor, component/subsystem boundaries, OpMode wiring and tests.
+Follow [diagnostic restoration](../architecture/diagnostics.md#loop-breadcrumbs-and-hang-monitor)
+only when deeper investigation is needed. Remove it afterward and use Deploy Full
+for both transitions. Do not compile or register the monitor in normal operation.
+
+For REQ-PLT-025, retain filtered log events in Logging and render them from
+Telemetry.update as ordinary joined telemetry lines after LOG. Avoid SDK log
+add/clear calls: RobotCore's update and log-add paths acquire distinct locks in
+opposing order. Keep direct RobotLog routing and the existing capacity getter.
+Recreate TelemetryLockOrderTests against the SDK class with bounded latches and
+an intercepted second-lock request, then verify history rendering and filtering
+with LoggingTests and TelemetryComponentTests.

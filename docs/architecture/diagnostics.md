@@ -80,8 +80,10 @@ log.warn("Target unavailable")
 
 Every non-off entry goes immediately to FTC `RobotLog` at the matching Android
 priority, regardless of whether it is visible on Driver Station. The entry is also
-retained in a bounded in-memory history. Accepted history entries are shown through
-`telemetry.log()` below the `LOG` divider.
+retained in a bounded in-memory history. Accepted history entries are rendered as
+ordinary telemetry lines below the `LOG` divider on each frame. They are not sent
+through SDK telemetry.log().add() or clear(). The SDK log capacity getter still
+sets the retained history bound; in RobotCore 12.0.0 that getter takes no lock.
 
 Command snapshots are logged only when the active named command set changes. This
 provides scheduler evidence without logging the same state every periodic loop.
@@ -140,3 +142,77 @@ live telemetry and historical logs need different focus.
 - Do not duplicate every telemetry value into Logcat. Log transitions, failures,
   decisions, and notable actions instead.
 - Put team-specific hardware field selection in TeamCode's `tel()` extensions.
+
+## Loop breadcrumbs and hang monitor
+
+The breadcrumb/hang-monitor experiment is archived as
+[docs/assets/diagnostics/loop-breadcrumbs.patch](../assets/diagnostics/loop-breadcrumbs.patch).
+It is not compiled or enabled in normal OpModes. The telemetry lock-order fix is
+independent and remains active. The patch restores the library classes, callback
+instrumentation, OpMode wiring and their tests together.
+
+To restore it temporarily from the repository root:
+
+```sh
+git apply --check docs/assets/diagnostics/loop-breadcrumbs.patch
+git apply docs/assets/diagnostics/loop-breadcrumbs.patch
+```
+
+If the check fails after later code changes, adapt the patch to the current
+lifecycle; do not force it or overwrite unrelated work. Run the affected
+HangMonitorTests, SubsystemComponentTests and OpModeTests, then Deploy Full because
+this adds reusable classes. Keep the diagnostic changes local while investigating.
+
+The restored monitor records nested component callbacks, individual subsystem
+periodic updates and default scheduling boundaries without logging each boundary.
+Its independent daemon samples every 250 ms and emits one direct RobotLog ERROR
+when a breadcrumb has not advanced for two seconds. Filter Logcat for HangMonitor:
+
+```text
+E HangMonitor: No loop progress for 2100 ms | Turret.periodic
+```
+
+It bypasses telemetry and normal log history, rearms after progress, closes on
+normal or exceptional OpMode exit, and never changes hardware outputs or command
+policy. It does not collect Java stacks. A whole-runtime freeze may stop the
+monitor too. CommandManager / loop-transition labels include framework work
+between callbacks and do not prove a particular command is blocked.
+
+Save RobotControllerLog.txt and its rotated files after a freeze. Use the last
+phase to add narrower boundaries for the next reproduction. Existing capture-hang
+scripts remain useful for collecting surrounding logs. Once finished, first check
+and then reverse the patch:
+
+```sh
+git apply --reverse --check docs/assets/diagnostics/loop-breadcrumbs.patch
+git apply --reverse docs/assets/diagnostics/loop-breadcrumbs.patch
+```
+
+If diagnostic code has changed since applying it, remove those changes manually
+rather than using a destructive reset. Deploy Full again to remove the diagnostic
+classes from the installed robot app.
+
+## SDK telemetry-log lock ordering
+
+REQ-PLT-025 preserves RobotLog events and the Driver Station LOG presentation while
+avoiding SDK log mutations. RobotCore 12.0.0 TelemetryImpl has two distinct monitors:
+its theLock field (A) and the TelemetryImpl instance used by LogImpl.getLock() (B).
+The SDK update path holds A then requests B while composing log entries. Conversely,
+LogImpl.add() holds B and calls tryUpdate(), which requests A. Concurrent SDK
+EventLoop updates and OpMode log additions can therefore request opposite locks.
+
+TelemetryLockOrderTests exercises the actual SDK class with latches and probes at
+its protected/package boundaries. Once both paths are reached, the test intercepts
+the updater's B request and throws a test-only exception to release A. This proves
+the reachable inversion without leaving permanently deadlocked test threads. It
+does not prove that the earlier on-robot hangs were caused by this inversion; brief
+lock-contention samples and the debugger's separate ART assertion are insufficient.
+
+Logging.add now writes RobotLog and retains history only. Telemetry.update draws
+filtered retained lines after LOG and before the normal joined update. No SDK log
+add/clear calls occur in that integration. Filtering is reevaluated every frame;
+normal telemetry clear removes stale lines. Existing levels, history capacity and
+command snapshot events remain. TelemetryComponentTests checks presentation,
+filters and capacity and rejects any SDK log add/clear invocation; LoggingTests
+checks RobotLog routing and retention. Consumers can keep their existing
+diagnostics unchanged while testing this fix.
