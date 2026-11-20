@@ -213,3 +213,15 @@ NextControl feedback/feedforward integration. `CurrentLimiterTests` verifies
 reduction, recovery, saturation, both power signs, independent motor state, reset,
 and invalid samples. These desktop tests establish the software contract, not
 measured current reduction on a robot.
+
+## Gamepad haptic helpers
+
+REQ-PLT-065: The bindings package exposes Gamepad.startRumble() for one continuous
+SDK rumble request. Native Gamepad.stopRumble() remains the stop operation.
+GamepadEx.startRumble() and GamepadEx.stopRumble() forward to its current underlying
+SDK gamepad each time, so consumers can write gamepad1.startRumble() and
+gamepad1.stopRumble() without retaining a gamepad reference across OpModes.
+
+The helpers add no scheduling, binding, warning condition or cached rumble state.
+Consumers own their trigger conditions and lifecycle cleanup. GamepadTests verifies
+the continuous SDK duration, stop forwarding, and resolving a replacement gamepad.

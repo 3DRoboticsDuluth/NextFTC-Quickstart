@@ -258,3 +258,14 @@ a reachable A-to-B/B-to-A inversion between update and log-add paths. Trace:
 TelemetryLockOrderTests (bounded SDK lock-path regression), LoggingTests and
 TelemetryComponentTests (routing, history and no SDK log mutations). See
 [lock ordering](../architecture/diagnostics.md#sdk-telemetry-log-lock-ordering).
+
+`REQ-PLT-064`: Pose.isFacing(target, tolerance: Angle) MUST compare the absolute
+shortest normalized bearing error inclusively against the typed tolerance without
+mutating either pose or applying robot policy. PoseTests covers cardinal and
+translated bearings, boundaries, wrapping and units. See
+[facing a target](../architecture/drive-navigation.md#facing-a-target-pose).
+
+`REQ-PLT-065`: Gamepad.startRumble() MUST request the SDK continuous duration.
+GamepadEx.startRumble()/stopRumble() MUST forward to the current SDK gamepad without
+caching it or scheduling robot behavior. GamepadTests verifies forwarding and
+replacement. See [haptic helpers](../architecture/control.md#gamepad-haptic-helpers).

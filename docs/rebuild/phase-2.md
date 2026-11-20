@@ -425,3 +425,11 @@ opposing order. Keep direct RobotLog routing and the existing capacity getter.
 Recreate TelemetryLockOrderTests against the SDK class with bounded latches and
 an intercepted second-lock request, then verify history rendering and filtering
 with LoggingTests and TelemetryComponentTests.
+
+For REQ-PLT-064, place isFacing beside the existing Pedro Pose extensions. Compose
+face(target), heading subtraction, normalizeHeading and the typed tolerance; keep
+robot target selection outside the library. Add PoseTests for wraparound and
+inclusive boundaries. For REQ-PLT-065, add the SDK continuous startRumble extension
+and GamepadEx start/stop forwarders in the bindings package, plus GamepadTests
+using two SDK gamepad instances to prove live resolution. A robot's button
+condition and lifecycle cleanup remain in its owning subsystem.

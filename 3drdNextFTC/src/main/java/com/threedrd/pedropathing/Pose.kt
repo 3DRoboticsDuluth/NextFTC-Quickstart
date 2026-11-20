@@ -49,6 +49,9 @@ fun Pose.face(other: Pose, offset: Double = 0.0) = withHeading(
     (atan2(other.y - y, other.x - x) + Math.toRadians(offset)).normalizeHeading()
 )
 
+fun Pose.isFacing(other: Pose, tolerance: Angle) =
+    abs((face(other).heading - heading).normalizeHeading()) <= tolerance.inRad
+
 fun Double.normalizeHeading(): Double {
     var heading = this
     while (heading > PI) heading -= 2 * PI

@@ -8,6 +8,28 @@ import org.junit.*
 
 class PoseTests {
     @Test
+    fun isFacingUsesSignedShortestBearingAndInclusiveTypedToleranceWithoutMutatingPoses() {
+        val target = Pose(10.0, 0.0, 2.0)
+        for ((heading, expected) in listOf(
+            0.0 to true, PI / 2 to true, -PI / 2 to true,
+            PI to false, PI / 2 + 0.01 to false, -PI / 2 - 0.01 to false,
+            2 * PI to true, 3 * PI / 2 to true
+        )) {
+            val pose = Pose(0.0, 0.0, heading)
+            assertEquals(expected, pose.isFacing(target, 90.deg))
+            assertEquals(heading, pose.heading, 0.0)
+            assertEquals(0.0, pose.x, 0.0)
+            assertEquals(0.0, pose.y, 0.0)
+        }
+        assertTrue(Pose(5.0, -5.0, PI / 4).isFacing(target, 0.deg))
+        assertFalse(Pose(5.0, -5.0, 0.0).isFacing(target, 30.deg))
+        assertTrue(Pose(5.0, -5.0, 0.0).isFacing(target, (PI / 4).rad))
+        assertEquals(10.0, target.x, 0.0)
+        assertEquals(0.0, target.y, 0.0)
+        assertEquals(2.0, target.heading, 0.0)
+    }
+
+    @Test
     fun transformRotatesLocalOffsetsAndAddsMountingHeadingOnceWithoutMutatingInputs() {
         val local = Pose(4.0, 2.0, PI / 6)
         val cases = listOf(

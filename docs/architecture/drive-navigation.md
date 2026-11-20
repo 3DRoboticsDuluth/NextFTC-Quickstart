@@ -435,3 +435,20 @@ REQ-PLT-062 and PoseTests cover cardinal/noncardinal headings, negative and zero
 local displacement, mounting-heading addition exactly once, and input immutability.
 This season-neutral helper adds no localization reset, hardware access or aiming
 policy. Physical mounting measurements remain the consumer's responsibility.
+
+## Facing a target pose
+
+REQ-PLT-064: Pose.isFacing(target, tolerance) compares the shortest normalized
+bearing difference against a typed Angle, with an inclusive boundary. For example:
+
+```kotlin
+pose.isFacing(goal, 90.deg)
+```
+
+This means the target lies in the forward hemisphere, including either side at
+90 degrees. The helper uses face(target)'s position-based bearing, ignores the
+target's heading, handles wrapping across +/-180 degrees, and mutates neither pose.
+It does not read localization, choose a target, apply robot-specific heading trim
+or decide when aiming/haptics are enabled. PoseTests covers front/behind, both
+boundaries and just outside, wrapped headings, translated poses, typed tolerances
+and input immutability. Robot policy stays in TeamCode.
