@@ -216,3 +216,9 @@ command snapshot events remain. TelemetryComponentTests checks presentation,
 filters and capacity and rejects any SDK log add/clear invocation; LoggingTests
 checks RobotLog routing and retention. Consumers can keep their existing
 diagnostics unchanged while testing this fix.
+
+Configuration and current telemetry entries are collected during each frame and
+rendered at update in fixed CONFIG, TEL, LOG order. Values and filters are sampled
+when entries are submitted; subsystem execution order remains unchanged. Beginning
+a new frame clears pending entries. TelemetryTests covers reversed submission
+order and discarded pending entries; full validation includes telemetry tests, coverage, lint, and APK assembly.

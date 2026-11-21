@@ -245,6 +245,7 @@ class SubsystemComponentTests {
         assertEquals(0, subsystem.stops)
         assertEquals(0, subsystem.updates)
         assertFalse(CommandManager.hasCommandsUsing(subsystem))
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData(
             "E | AdaptedSubsystem | Status", "Disabled (see Logcat)" as Any
         )
@@ -264,6 +265,7 @@ class SubsystemComponentTests {
 
         assertTrue(active.isScheduled)
         assertFalse(subsystem.idle.isScheduled)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry, times(0)).addData(
             "E | AdaptedSubsystem | Status", "Disabled (see Logcat)" as Any
         )

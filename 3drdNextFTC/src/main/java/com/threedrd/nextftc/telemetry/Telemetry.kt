@@ -27,12 +27,17 @@ object Telemetry {
     @field:IgnoreConfigurable
     private var configuredLevel = OFF
 
+    private val configEntries = mutableListOf<() -> Unit>()
+    private val telEntries = mutableListOf<Pair<String, Any?>>()
+
     fun initialize() {
         diagnostics = null
         bind(null)
         ActiveOpMode.telemetry.setDisplayFormat(HTML)
         output = JoinedTelemetry(ActiveOpMode.telemetry, PanelsTelemetry.ftcTelemetry)
         sections.clear()
+        configEntries.clear()
+        telEntries.clear()
         Logging.initialize()
     }
 
@@ -40,10 +45,22 @@ object Telemetry {
         sampleDiagnostics()
         output.clear()
         sections.clear()
+        configEntries.clear()
+        telEntries.clear()
         Logging.beginFrame()
     }
 
     fun update() {
+        if (configEntries.isNotEmpty()) {
+            section("CONFIG")
+            configEntries.forEach { it() }
+        }
+        if (telEntries.isNotEmpty()) {
+            section("TEL")
+            telEntries.forEach { (caption, value) -> output.addData(caption, value) }
+        }
+        configEntries.clear()
+        telEntries.clear()
         val entries = Logging.visibleEntries()
         if (entries.isNotEmpty()) {
             section("LOG")
@@ -71,24 +88,24 @@ object Telemetry {
     fun Diagnostics?.filter() = if (this == null) "" else filter()
 
     fun config(caption: String, value: Any?) {
-        section("CONFIG")
-        output.addData(caption, value)
+        configEntries.add { output.addData(caption, value) }
     }
 
     fun configWarning(message: String) {
         val warning = "WARNING: $message"
-        ActiveOpMode.telemetry.addLine("<b><font color='#FFC107'>$warning</font></b>")
-        ActiveOpMode.telemetry.addLine()
-        PanelsTelemetry.ftcTelemetry.addLine(warning)
-        PanelsTelemetry.ftcTelemetry.addLine()
+        configEntries.add {
+            ActiveOpMode.telemetry.addLine("<b><font color='#FFC107'>$warning</font></b>")
+            ActiveOpMode.telemetry.addLine()
+            PanelsTelemetry.ftcTelemetry.addLine(warning)
+            PanelsTelemetry.ftcTelemetry.addLine()
+        }
     }
 
     fun add(source: String, level: TelemetryLevel, caption: String, value: Any?): Boolean {
         val text = listOf(level, source, caption, value).joinToString(" ")
         if (!LEVEL.accepts(level) || !text.matches(DISPLAY_FILTER) || !text.matches(FILTER)) return false
 
-        section("TEL")
-        output.addData("${level.indicator} | $source | $caption", value)
+        telEntries.add("${level.indicator} | $source | $caption" to value)
         return true
     }
 

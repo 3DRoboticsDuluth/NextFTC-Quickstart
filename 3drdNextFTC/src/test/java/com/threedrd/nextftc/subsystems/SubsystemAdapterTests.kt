@@ -98,6 +98,7 @@ class SubsystemAdapterTests {
         assertFalse(subsystem.disabled)
         assertTrue(subsystem.errors.isEmpty())
         assertEquals(1, hardware.initializations)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry, never()).addData(
             "E | HardwareSubsystem | Status", "Disabled (see Logcat)"
         )
@@ -135,6 +136,7 @@ class SubsystemAdapterTests {
 
         assertTrue(subsystem.disabled)
         assertEquals(1, hardware.initializations)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData(
             "E | HardwareSubsystem | Status", "Disabled (see Logcat)" as Any
         )

@@ -138,7 +138,9 @@ class ConfigSubsystemTests : SubsystemTests() {
 
         clearInvocations(ActiveOpMode.telemetry)
         MinimalConfig.periodic()
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(ActiveOpMode.telemetry).addData("Enabled", true as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(ActiveOpMode.telemetry).addData(">Live Value", 1.0 as Any)
     }
 }

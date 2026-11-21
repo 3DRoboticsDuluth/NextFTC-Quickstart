@@ -35,14 +35,17 @@ class TelemetryTests : SubsystemTests() {
         clearInvocations(telemetry)
 
         servo.update { assertSame(servo, this); position = 0.426 }
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         val order = inOrder(servo.servo, telemetry)
         order.verify(servo.servo).setPosition(0.426)
         order.verify(telemetry).addData("D | Test Servo | Position", "0.43" as Any)
         `when`(servo.servo.direction).thenReturn(FORWARD)
         servo.tel()
-
-        verify(telemetry, times(2)).addData("D | Test Servo | Position", "0.43" as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
+verify(telemetry, times(2)).addData("D | Test Servo | Position", "0.43" as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("V | Test Servo | Reversed", true as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("V | Test Servo | Reversed", false as Any)
         assertEquals("", "".humanize())
         assertEquals("Test Servo", "testServo".humanize())
@@ -57,14 +60,17 @@ class TelemetryTests : SubsystemTests() {
 
         `when`(servo.servo.direction).thenReturn(CR_REVERSE)
         servo.update { assertSame(servo, this); power = 0.256 }
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         val order = inOrder(servo.servo, telemetry)
         order.verify(servo.servo).setPower(0.256)
         order.verify(telemetry).addData("D | Test Servo | Power", "0.26" as Any)
         `when`(servo.servo.direction).thenReturn(CR_FORWARD)
         servo.update { }
-
-        verify(telemetry, times(2)).addData("D | Test Servo | Power", "0.26" as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
+verify(telemetry, times(2)).addData("D | Test Servo | Power", "0.26" as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("V | Test Servo | Reversed", true as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("V | Test Servo | Reversed", false as Any)
     }
 
@@ -84,15 +90,22 @@ class TelemetryTests : SubsystemTests() {
 
         `when`(motor.motor.power).thenReturn(0.456)
         motor.update { assertSame(motor, this); power = 0.456 }
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         val order = inOrder(motor.motor, telemetry)
         order.verify(motor.motor).setPower(0.456)
         order.verify(telemetry).addData("V | Test Motor | Current (A)", 1.234 as Any)
 
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("V | Test Motor | Current (A)", 1.234 as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("D | Test Motor | Power", 0.456 as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("D | Test Motor | Velocity", 241.23 as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("D | Test Motor | Position", 42 as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("V | Test Motor | Velocity (%)", (241.23 / 480.0 * 100) as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("V | Test Motor | RPM", (241.23 / 120.0 * 60) as Any)
     }
 
@@ -112,10 +125,14 @@ class TelemetryTests : SubsystemTests() {
 
         `when`(imu.imu.robotYawPitchRollAngles).thenAnswer { assertTrue(updated); angles }
         imu.update { assertSame(imu, this); updated = true }
+        com.threedrd.nextftc.telemetry.Telemetry.update()
 
         assertTrue(updated)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("D | Test Imu | Yaw (deg)", "10.1" as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("D | Test Imu | Pitch (deg)", "20.0" as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("D | Test Imu | Roll (deg)", "30.1" as Any)
     }
 
@@ -128,6 +145,7 @@ class TelemetryTests : SubsystemTests() {
 
         assertSame(failure, assertThrows(IllegalStateException::class.java) { motor.update { throw failure } })
 
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry, never()).addData(anyString(), any())
         verifyNoInteractions(ActiveOpMode.hardwareMap)
     }
@@ -140,8 +158,8 @@ class TelemetryTests : SubsystemTests() {
         clearInvocations(telemetry)
 
         servo.tel()
-
-        verify(telemetry, never()).addData(anyString(), any())
+        com.threedrd.nextftc.telemetry.Telemetry.update()
+verify(telemetry, never()).addData(anyString(), any())
     }
     @Test
     fun pairedDriveSlotsReportEachPhysicalMotorOnce() {
@@ -160,8 +178,11 @@ class TelemetryTests : SubsystemTests() {
 
         listOf(left, left, right, right).tel()
 
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("D | Left Motor | Power", 0.2 as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry).addData("D | Right Motor | Power", 0.4 as Any)
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry, times(12)).addData(anyString(), any<Any>())
         verify(ActiveOpMode.hardwareMap).getNamesOf(left)
         verify(ActiveOpMode.hardwareMap).getNamesOf(right)
@@ -176,6 +197,7 @@ class TelemetryTests : SubsystemTests() {
         val telemetry = ActiveOpMode.telemetry
         clearInvocations(telemetry, ActiveOpMode.hardwareMap)
         emptyList<com.qualcomm.robotcore.hardware.DcMotorEx>().tel()
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry, never()).addData(anyString(), any())
         verify(ActiveOpMode.hardwareMap, never()).getNamesOf(any())
     }
@@ -187,6 +209,7 @@ class TelemetryTests : SubsystemTests() {
         mock(com.pedropathing.drivetrain.Drivetrain::class.java).tel()
         mock(com.pedropathing.ftc.drivetrains.Swerve::class.java).tel()
         mock(com.pedropathing.ftc.drivetrains.MecanumEx::class.java).tel()
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry, never()).addData(anyString(), any())
         verify(ActiveOpMode.hardwareMap, never()).getNamesOf(any())
     }
@@ -196,6 +219,7 @@ class TelemetryTests : SubsystemTests() {
         val telemetry = ActiveOpMode.telemetry
         clearInvocations(telemetry, ActiveOpMode.hardwareMap)
         mock(com.pedropathing.ftc.drivetrains.Mecanum::class.java).tel()
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(telemetry, never()).addData(anyString(), any())
         verify(ActiveOpMode.hardwareMap, never()).getNamesOf(any())
     }
@@ -210,6 +234,7 @@ class TelemetryTests : SubsystemTests() {
         TeamTelemetry.LEVEL = INFO
 
         servo.tel()
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         continuous.tel()
         motor.tel()
         imu.tel()

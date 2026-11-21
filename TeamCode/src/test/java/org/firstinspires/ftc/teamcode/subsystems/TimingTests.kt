@@ -43,6 +43,8 @@ class TimingTests : SubsystemTests() {
 
         Timing.periodic()
 
+        com.threedrd.nextftc.telemetry.Telemetry.update()
+
         verify(ActiveOpMode.telemetry).addLine(TeamTelemetry.title("TEL"))
         verify(ActiveOpMode.telemetry).addData("D | Timing | Runtime (s)", "10.1" as Any)
         verify(ActiveOpMode.telemetry).addData("D | Timing | Loop (ms)", "20" as Any)

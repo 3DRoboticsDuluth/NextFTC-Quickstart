@@ -41,7 +41,7 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 | `REQ-PLT-021` | Generated menu metadata MUST preserve annotated source declaration order for singleton settings independently of runtime reflection order, without manual priorities or lists. Preserve numeric format, range, increment, and live-edit policy. | Alliance/side and other important choices must appear where students wrote them. | SettingsProcessorTests verify source-order emission and isolating dependencies; SettingsTests verify shuffled-field lookup and legacy fallback; ConfigTests verify the generated team menu. |
 | `REQ-PLT-022` | Configuration MUST persist only `@Setting` fields to Robot Controller storage after changes, with debounce, and restore them on init. | Persistence is convenient, but runtime subsystem state must not leak into JSON and per-loop serialization creates avoidable pauses. | Persistence and configuration tests verify field selection, change detection, delay, load, and invalid data handling. |
 | `REQ-PLT-023` | Telemetry and logging MUST be separate APIs with independent levels and filters, while a config diagnostics level/filter may feed both. | Repeated live state and historical events have different volume and destinations. | Diagnostics, telemetry, and logging tests pass. |
-| `REQ-PLT-024` | Telemetry MUST render structured `CONFIG`, `TEL`, and conditional `LOG` sections to Driver Station and Panels. | Drivers need a readable hierarchy while Panels needs the same current values. | Telemetry tests verify sections, filtering, clearing, and mirroring. |
+| `REQ-PLT-024` | Telemetry MUST render structured `CONFIG`, `TEL`, and conditional `LOG` sections in that fixed order, to Driver Station and Panels, independently of producer execution order. | Drivers need a readable hierarchy while Panels needs the same current values. | Telemetry tests verify sections, filtering, clearing, and mirroring. |
 | `REQ-PLT-025` | Logging MUST write to RobotLog/Logcat and retain a filtered Driver Station history, including command snapshot changes. | Detailed evidence must survive beyond the current telemetry frame without flooding live state. | Logging tests cover levels, filters, history, RobotLog routing, and rebuild. |
 | `REQ-PLT-026` | Panels MUST expose configurable values, reflect restored and Driver Station-edited settings, and remain optional for competition operation. | Panels accelerates tuning and visualization, but Driver Station operation must remain complete and both surfaces should show the same live configuration from initialization onward. | Robot operates with Panels absent; configurables appear when connected; configuration component tests verify startup and menu-edit refresh across supported Panels APIs. |
 
@@ -214,6 +214,12 @@ derivatives. The former curves helper is removed. PathBuilderTests checks real
 geometry and join derivatives. DriveSubsystemTests checks execution-time start,
 heading, ownership, naming and hold choices. See the
 [navigation contract](../architecture/drive-navigation.md#curve-control-points-and-through-waypoints).
+
+`REQ-PLT-059`: QuanomousSubsystem MUST load the named program through the compiler
+provided by TeamCode, assemble a fresh sequence, and convert drive poses using the
+supplied NavSubsystem. TeamCode owns the command map and Auto applies the match
+deadline. QuanomousTests covers
+sequence assembly and pose conversion. AutoTests covers deadline cancellation.
 
 `REQ-PLT-060`: The shared PedroComponent MUST lazily create one retained follower
 for the current hardware-map instance and reuse it across component and OpMode

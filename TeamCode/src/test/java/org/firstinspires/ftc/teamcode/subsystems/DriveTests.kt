@@ -100,6 +100,8 @@ class DriveTests : SubsystemTests() {
 
         Drive.periodic()
 
+        com.threedrd.nextftc.telemetry.Telemetry.update()
+
         verify(ActiveOpMode.telemetry).addData("I | Drive | Power", "0.70" as Any)
         verify(ActiveOpMode.telemetry).addData("D | Drive | X", "12.3" as Any)
         verify(ActiveOpMode.telemetry).addData("D | Drive | Y", "56.8" as Any)
@@ -122,6 +124,7 @@ class DriveTests : SubsystemTests() {
         }
         clearInvocations(ActiveOpMode.telemetry, ActiveOpMode.hardwareMap)
         Drive.periodic()
+        com.threedrd.nextftc.telemetry.Telemetry.update()
         verify(ActiveOpMode.hardwareMap, org.mockito.Mockito.never()).get(
             org.mockito.ArgumentMatchers.eq(DcMotorEx::class.java), org.mockito.ArgumentMatchers.anyString()
         )

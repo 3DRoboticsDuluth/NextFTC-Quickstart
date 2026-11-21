@@ -92,6 +92,8 @@ class TelemetryTests {
         tel.error("Lazy error") { 12 }
         tel.fatal("Lazy fatal") { 13 }
 
+        Telemetry.update()
+
         verify(output).addLine(Telemetry.title("TEL"))
         verify(output).addData("V | Gate | Verbose", 1 as Any)
         verify(output).addData("D | Gate | Debug", 2 as Any)
@@ -122,6 +124,7 @@ class TelemetryTests {
         assertFalse(Telemetry.add("Gate", INFO, "Reversed", true))
         assertFalse(Telemetry.add("Deflector", INFO, "Position", 0.5))
 
+        Telemetry.update()
         verify(output).addData("I | Gate | Position", 0.5 as Any)
     }
 
@@ -135,6 +138,7 @@ class TelemetryTests {
         tel.debug("Hidden") { ++evaluations }
         tel.info("Visible") { ++evaluations }
 
+        Telemetry.update()
         assertEquals(1, evaluations)
         verify(output, never()).addData("D | Gate | Hidden eager", 99 as Any)
         verify(output, never()).addData("D | Gate | Hidden", 1 as Any)
@@ -148,6 +152,7 @@ class TelemetryTests {
         Telemetry.FILTER = "Hidden"
 
         Telemetry.config("Alliance", "BLUE")
+        Telemetry.update()
 
         verify(output).addLine(Telemetry.title("CONFIG"))
         verify(output).addData("Alliance", "BLUE" as Any)
@@ -156,10 +161,36 @@ class TelemetryTests {
     @Test
     fun configurationWarningsAppearOnTheDriverStation() {
         Telemetry.configWarning("Select Alliance")
+        Telemetry.update()
 
         verify(ActiveOpMode.telemetry)
             .addLine("<b><font color='#FFC107'>WARNING: Select Alliance</font></b>")
         verify(ActiveOpMode.telemetry).addLine()
+    }
+
+    @Test
+    fun configurationRendersBeforeTelemetryEvenWhenWrittenLater() {
+        Telemetry.add("Gate", INFO, "Position", 0.5)
+        Telemetry.config("Alliance", "BLUE")
+        verifyNoInteractions(output)
+        Telemetry.update()
+
+        val ordered = inOrder(output)
+        ordered.verify(output).addLine(Telemetry.title("CONFIG"))
+        ordered.verify(output).addData("Alliance", "BLUE" as Any)
+        ordered.verify(output).addLine(Telemetry.title("TEL"))
+        ordered.verify(output).addData("I | Gate | Position", 0.5 as Any)
+        ordered.verify(output).update()
+    }
+
+    @Test
+    fun beginningANewFrameDiscardsUnrenderedEntries() {
+        Telemetry.config("Old", 1)
+        Telemetry.add("Gate", INFO, "Old", 2)
+        Telemetry.beginFrame()
+        Telemetry.update()
+        verify(output, never()).addData("Old", 1 as Any)
+        verify(output, never()).addData("I | Gate | Old", 2 as Any)
     }
 
     @Test
