@@ -31,7 +31,7 @@ Osiris motor name, Decode field coordinate, or season strategy is introduced.
 | `REQ-PLT-014` | Subsystems MUST support default commands that are scheduled only when no active command requires the subsystem. | Continuous driving should be declarative and command ownership must prevent conflicts. | Subsystem component tests cover scheduling and `NullCommand`. |
 | `REQ-PLT-015` | Delegated instant commands MUST infer `Subsystem.property`, claim the subsystem, skip disabled owners, and log execution. | Students get useful naming and safety without repeating strings or logging calls. | Instant command tests verify naming, requirements, disabled behavior, and logs. |
 | `REQ-PLT-016` | Deferred commands MUST construct children at execution time, forward lifecycle calls, and validate child requirements. | Paths and decisions depend on live pose/config, but command ownership must remain predictable. | Deferred command tests cover creation, reuse, failures, and requirements. |
-| `REQ-PLT-017` | Reusable composition MUST include sequential NextFTC composition, `alongWith`, and finite repetition. | Autonomous routines should read as a compact chain of intentions. | Composition and repeat tests pass. |
+| `REQ-PLT-017` | Reusable composition MUST include sequential NextFTC composition, `and`, and finite repetition. | Autonomous routines should read as a compact chain of intentions. | Composition and repeat tests pass. |
 
 ## Configuration and Diagnostics
 
@@ -275,3 +275,12 @@ translated bearings, boundaries, wrapping and units. See
 GamepadEx.startRumble()/stopRumble() MUST forward to the current SDK gamepad without
 caching it or scheduling robot behavior. GamepadTests verifies forwarding and
 replacement. See [haptic helpers](../architecture/control.md#gamepad-haptic-helpers).
+
+`REQ-PLT-066`: Command.onlyIf(predicate) MUST return a non-null native Command
+wrapper that evaluates the predicate once at phase start, executes the receiver
+when true and a no-op when false, and reevaluates on a later start. Selection MUST
+remain fixed within a run and preserve native lifecycle/requirement behavior.
+It MUST NOT evaluate the predicate during composition or prevent construction of
+the receiver. CompositionTests verifies selection timing, no-op behavior,
+forwarding, completion, interruption, and reuse. See
+[optional phases](../architecture/commands.md#optional-phases).

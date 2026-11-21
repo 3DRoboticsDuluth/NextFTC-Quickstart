@@ -1,6 +1,6 @@
 package com.threedrd.nextftc.commands
 
 import dev.nextftc.core.commands.*
-import dev.nextftc.core.commands.groups.*
+import dev.nextftc.core.commands.conditionals.IfElseCommand
 
-fun Command.alongWith(vararg commands: Command) = ParallelGroup(this, *commands)
+fun Command.onlyIf(predicate: () -> Boolean): Command = IfElseCommand(predicate, this)

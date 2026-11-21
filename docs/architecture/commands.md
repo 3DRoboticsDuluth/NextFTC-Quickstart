@@ -41,7 +41,8 @@ assembled. Named property delegates still infer the property name.
 | Expression | Meaning |
 |---|---|
 | `a.then(b, c)` | Run commands sequentially using NextFTC composition. |
-| `a.alongWith(b, c)` | Run commands together in a parallel group. |
+| `a.and(b, c)` | Run commands together using the native NextFTC parallel group. |
+| `a.onlyIf { enabled }` | Select the command or a no-op when this phase starts. |
 | `a.raceWith(b)` | Complete when the first branch completes. |
 | `command.times(4)` | Re-run one command lifecycle four times. |
 | `command.endAfter(1.5)` | Interrupt the command after the time limit. |
@@ -73,3 +74,17 @@ A deferred command refuses to:
 
 If child start fails, internal state is cleared so the wrapper remains reusable.
 Stop forwards the interruption flag and always releases the current child.
+
+## Optional phases
+
+`Command.onlyIf` wraps NextFTC's IfElseCommand without changing the native command
+type. It checks the predicate once when the phase starts, rather than when the
+routine is assembled. True starts the original command; false selects the native
+no-op. The selected branch remains fixed until completion or cancellation, and a
+later start evaluates the predicate again. Command construction still happens
+upfront; this helper defers selection, not construction. Standard NextFTC
+requirements and lifecycle forwarding remain in effect.
+
+Use native `and` for parallel composition; the redundant `alongWith` alias is
+removed. CompositionTests verifies deferred selection, skipped execution, updates,
+completion, interruption, and reuse. This is REQ-PLT-066.

@@ -48,7 +48,7 @@ Checkpoint: one test file per wrapper passes without a robot.
 ### 4. Commands and Subsystem Lifecycle — `9889ceaa`
 
 Implement bindings cleanup, delegated/named/logged instant commands, deferred
-command/factories, `alongWith`, repetition, base `Subsystem`, discovery, and
+command/factories, `and`, repetition, base `Subsystem`, discovery, and
 `SubsystemComponent`. Enforce command requirements. Initialize reflected hardware,
 isolate disabled subsystems, run explicit start/controls/stop phases, schedule
 defaults, and stop healthy subsystems in reverse order.
@@ -433,3 +433,7 @@ inclusive boundaries. For REQ-PLT-065, add the SDK continuous startRumble extens
 and GamepadEx start/stop forwarders in the bindings package, plus GamepadTests
 using two SDK gamepad instances to prove live resolution. A robot's button
 condition and lifecycle cleanup remain in its owning subsystem.
+
+Include Command.onlyIf in the composition helpers; use the upstream and method
+for parallel groups. Reconstruct the phase-start predicate and no-op contract in
+[optional phases](../architecture/commands.md#optional-phases), with CompositionTests.
